@@ -1,20 +1,3 @@
-library(shiny)
-library(dplyr)
-library(DT)
-library(sf)
-library(openxlsx)
-library(plotly)
-
-data <- read.xlsx("data/complete_database_edit.xlsx")
-geom <- st_read("data/geom_paises.gpkg")
-dict <- read.xlsx("data/dictionary.xlsx") %>% filter(viewable == 1, scope == "subnational")
-
-country_bboxes <- list(
-  ARGENTINA = list(lng1 = -73.5, lat1 = -55.1, lng2 = -53.6, lat2 = -21.8),
-  BRAZIL    = list(lng1 = -73.9, lat1 = -33.7, lng2 = -34.8, lat2 = 5.3),
-  MEXICO    = list(lng1 = -118.5, lat1 = 14.5, lng2 = -86.7, lat2 = 32.7),
-  `Select a country`  = list(lng1 = -118.5, lat1 = -55.1, lng2 = -34.8, lat2 = 32.7)
-)
 
 
 server <- function(input, output, session) {
@@ -43,8 +26,9 @@ server <- function(input, output, session) {
     
     data %>%
       filter(country_name == input$country_sel, year == input$year_sel) %>%
-      left_join(geom, by = c("la_state_name")) %>%
+      left_join(filter(geom, country_name == input$country_sel), by = c("state_code")) %>%
       st_as_sf()
+    
   }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
   
   
@@ -70,6 +54,19 @@ server <- function(input, output, session) {
   }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
   
   
+  output$table_info <- DT::renderDT({
+    DT::datatable(
+      data_info,
+      options = list(
+        scrollY = "400px",  # Altura visible con scroll vertical
+        paging = FALSE,     # Sin paginación
+        scrollCollapse = TRUE,
+        dom = 't'           # Solo la tabla, sin barra de búsqueda ni info
+      ),
+      class = 'cell-border stripe',
+      rownames = FALSE
+    )
+  })
   
   
   
@@ -104,8 +101,8 @@ server <- function(input, output, session) {
     req(input$country_sel)
     
     if (input$tabs == "timeline") {
-      states <- unique(data$state_name[data$country_name == input$country_sel])
-      selectInput("state", "Select State", choices = states)
+      states <- c(unique(data$state_name[data$country_name == input$country_sel]),"Select a state")
+      selectInput("state", "Select a state", choices = states)
     }
   })
   

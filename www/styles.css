@@ -1,0 +1,17 @@
+/* Fondo blanco para toda la tabla */
+table.dataTable {
+  background-color: white;
+}
+
+/* Encabezado: azul marino con texto blanco */
+table.dataTable thead {
+  background-color: #003366; /* Azul marino */
+  color: white;
+}
+
+/* Celdas de encabezado: texto blanco y sin borde visible */
+table.dataTable thead th {
+  color: white;
+  border-bottom: 1px solid #ccc;
+}
+
