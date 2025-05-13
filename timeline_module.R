@@ -10,7 +10,11 @@ vistime_module_ui <- function(id) {
 vistime_module_server <- function(id, data, gov_type) {
   moduleServer(id, function(input, output, session) {
     output$timeline <- plotly::renderPlotly({
-      req(data())
+      
+      validate(
+        need(!is.null(data()) && nrow(data()) > 0, "Please select a country to display the timeline.")
+      )
+      
       
       # Copy the reactive data to avoid mutating data()
       df <- data()
@@ -28,7 +32,7 @@ vistime_module_server <- function(id, data, gov_type) {
         "<br>Party: ", df$party
       )
       
-      # Map group numbers to labels
+      # Map group numbers to labels 
       df$group <- factor(df$group, levels = 1:4, labels = group_labels)
       
       # Render the timeline
