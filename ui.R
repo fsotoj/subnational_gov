@@ -11,9 +11,9 @@ ui <- dashboardPage(
     ),
     selectInput("country_sel", "Country", choices = c(unique(data$country_name), "Select a country"), selected = "Select a country"),
     uiOutput("conditional_year_ui"),
-    selectInput("var_sel", "Variable", choices = c(unique(dict$variable), "Select a variable"), selected = "Select a variable"),
+    uiOutput("conditional_select_var_ui"),
     uiOutput("conditional_state_ui"),
-    actionButton("apply_filters", "Apply Filters", icon = icon("arrows-rotate"))
+    uiOutput("conditional_apply_ui")
   ),
   dashboardBody(
     
@@ -28,6 +28,7 @@ ui <- dashboardPage(
         fluidRow(
           box(
             title = "Electoral Map", status = "primary", solidHeader = TRUE, width = 8,
+            shinybusy::use_busy_spinner(spin = "fading-circle", color = "#112446"),
             mapModuleUI("map1")
           ),
           column(width = 4,
@@ -47,8 +48,10 @@ ui <- dashboardPage(
       tabItem(
         tabName = "timeline",
         fluidRow(
-          box(title = "Governor Timeline", status = "primary", solidHeader = TRUE, width = 8, vistime_module_ui("timeline1")),
-          box(title = "Presidential Timeline", status = "primary", solidHeader = TRUE, width = 8, vistime_module_ui("timeline2")),
+          box(title = "Governor Timeline", status = "primary", solidHeader = TRUE, 
+              height = "480px", width = 8, vistime_module_ui("timeline1")),
+          box(title = "Presidential Timeline", status = "primary", solidHeader = TRUE, 
+              height = "480px", width = 8, vistime_module_ui("timeline2")),
          )
       ),
       tabItem(tabName = "data", DT::DTOutput("table_info", height = "100%")),

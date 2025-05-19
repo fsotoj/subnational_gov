@@ -1,5 +1,3 @@
-library(shiny)
-library(shinydashboard)
 source("ui.R")
 source("server.R")
 
@@ -13,3 +11,9 @@ shinyApp(ui, server)
 # ideology by whom
 # milei has an end date
 # eduardo angeloz in cordova
+# Maranhao roseana sarney II doesnt have end term date
+# bolsonaro has two ideologies 
+# pedro salvstori in neuquen is duplicated with no apparent difference
+#tocatins brasil  
+# CATAMARCA
+# TUCUMAN

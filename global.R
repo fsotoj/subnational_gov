@@ -5,7 +5,8 @@ library(openxlsx)
 library(sf)
 library(dplyr)
 library(DT)
-
+library(leaflet)
+library(classInt)
 
 source("map_module.R")
 source("timeline_module.R")

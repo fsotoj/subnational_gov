@@ -15,12 +15,22 @@ vistime_module_server <- function(id, data, gov_type) {
         need(!is.null(data()) && nrow(data()) > 0, "Please select a country to display the timeline.")
       )
       
-      
       # Copy the reactive data to avoid mutating data()
       df <- data()
       
+      
+      
+      
+      early_exit_dates <- df %>% filter(early_exit == 1) %>% 
+        pull(end)
+      
+      df <- df %>% 
+        select(!c(year,early_exit)) %>% 
+        distinct()
+      
       # Replace NA end dates with today's date
       df$end[is.na(df$end)] <- Sys.Date()
+      
       
       # Define group labels
       group_labels <- c("Left", "Center Left", "Center Right", "Right")
@@ -36,7 +46,7 @@ vistime_module_server <- function(id, data, gov_type) {
       df$group <- factor(df$group, levels = 1:4, labels = group_labels)
       
       # Render the timeline
-      vistime(
+      plot <- vistime(
         df,
         col.event = "popup_content",
         col.group = "group",
@@ -46,6 +56,52 @@ vistime_module_server <- function(id, data, gov_type) {
         optimize_y = TRUE,
         show_labels = FALSE
       )
+      
+      if (!is.null(early_exit_dates)) {
+        
+        # Build annotation list
+        annotations <- list()
+        
+        for (date in early_exit_dates) {
+          date <- as.POSIXct(date, format = "%Y-%m-%d")
+          
+          # Add vertical line
+          plot <- plot %>%
+            add_trace(
+              x = c(date, date),
+              y = c(0, 9),  # adjust to your actual y range
+              type = "scatter",
+              mode = "lines",
+              line = list(color = "red", width = 2, dash = "dot"),
+              showlegend = FALSE,
+              inherit = FALSE
+            )
+          
+          # Add rotated label
+          annotations <- c(annotations, list(
+            list(
+              x = date,
+              y = 1,  # slightly above top
+              xref = "x",
+              yref = "paper",
+              text = format(date, "%Y-%m-%d"),
+              textangle = -90,  # rotate text
+              showarrow = FALSE,
+              #align = "right",
+              xanchor = "right",
+              font = list(color = "red", size = 10)
+            )
+          ))
+        }
+        
+        # Add all annotations at once
+        plot <- plot %>% layout(annotations = annotations)
+      }
+      
+      
+      plot
+      
+      
     })
   })
 }
