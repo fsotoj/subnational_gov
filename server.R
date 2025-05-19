@@ -3,21 +3,37 @@
 server <- function(input, output, session) {
   
   output$conditional_year_ui <- renderUI({
-    if (is.null(input$tabs) || input$tabs != "timeline") {
+    if (is.null(input$tabs) || input$tabs == "map_tab") {
       selectInput("year_sel", "Year", choices = c(unique(data$year), "Select a year"), selected = "Select a year")
     }
   })
   
   
+  output$conditional_apply_ui <- renderUI({
+    if (is.null(input$tabs) || input$tabs == "map_tab") {
+      actionButton("apply_filters", "Apply Filters", icon = icon("arrows-rotate"))
+    }
+  })
   
-  #current_tab <- reactive(input$tabs)
+  
+  output$conditional_select_var_ui <- renderUI({
+    if (is.null(input$tabs) || input$tabs == "map_tab") {
+      selectInput("var_sel", "Variable", choices = c(unique(dict$variable), "Select a variable"), selected = "Select a variable")
+    }
+  })
+  
+  
   
   apply_filters <- reactive(input$apply_filters)
   
   output$var_description <- reactive({
-    var_info <- dict %>% filter(variable == input$var_sel) %>% slice(1)
-    paste0(var_info$variable, ": ", var_info$description)
-  })
+    ifelse(
+      input$var_sel == "Select a variable", 
+      "Please select a variable to see the description.",{
+        var_info <- dict %>% filter(variable == input$var_sel) %>% slice(1)
+        paste0(var_info$variable, ": ", var_info$description)
+    })
+    })
   
   data_map <- reactive({
     
@@ -26,32 +42,31 @@ server <- function(input, output, session) {
     
     data %>%
       filter(country_name == input$country_sel, year == input$year_sel) %>%
-      left_join(filter(geom, country_name == input$country_sel), by = c("state_code")) %>%
+      left_join(geom, by = c("country_state_code")) %>%
       st_as_sf()
     
   }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
   
   
   output$last_elect_nat_box <- renderValueBox({
-    req(input$country_sel)
-    req(input$year_sel)
     
-    max_year <- data %>% 
-      filter(
-        year <= input$year_sel, 
-        country_name == input$country_sel,
-        electoral_national_year == 1
-      ) %>% 
-      pull(year) %>% max()
+    ifelse(input$year_sel == "Select a year" || input$country_sel == "Select a country",
+           {
+             value = "-"
+             subtitle = "Please use the apply filters button"
+             },
+           {
+             value = data %>% 
+               filter(year <= input$year_sel, 
+                      country_name == input$country_sel,
+                      electoral_national_year == 1) %>% 
+               pull(year) %>% max()
+             subtitle = "Last National Election Year"
+             })
     
-    valueBox(
-      value = max_year,
-      subtitle = "Last National Election Year",
-      icon = icon("calendar"),
-      color = "aqua",
-      width = 12
-    )
-  }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
+    valueBox(value = value, subtitle = subtitle,
+             icon = icon("calendar"), color = "aqua",width = 12)
+    }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
   
   
   output$table_info <- DT::renderDT({
@@ -102,38 +117,43 @@ server <- function(input, output, session) {
     
     if (input$tabs == "timeline") {
       states <- c(unique(data$state_name[data$country_name == input$country_sel]),"Select a state")
-      selectInput("state", "Select a state", choices = states)
+      selectInput("state_sel", "Select a state", choices = states)
     }
   })
   
   # Reactive expression to filter and preprocess data
   timeline_data1 <- reactive({
+    req(input$state_sel)
+    
+    
     data %>%
-      filter(country_name == input$country_sel, state_name == input$state) %>%
-      select(year, head_name_sub, ideo_party_sub, term_head_sub,party = head_party_sub) %>%
+      filter(country_name == input$country_sel, state_name == input$state_sel) %>%
       tidyr::separate(term_head_sub, into = c("start", "end"), sep = "-") %>%
-      rename(content = head_name_sub, group = ideo_party_sub) %>%
-      select(content, group, start, end,group,party) %>%
-      distinct() %>% 
+      select(year, content = head_name_sub, group = ideo_party_sub, 
+             party = head_party_sub, early_exit = early_exit_sub, start, end) %>%
+      distinct() %>% #seguira siendo necesario?
       mutate(start = as.POSIXct(start, format = "%d/%m/%Y"),
              end = as.POSIXct(end, format = "%d/%m/%Y")
-      )
+      ) %>% 
+      filter(!is.na(start))
   })
   
   vistime_module_server("timeline1", data = timeline_data1, "Governor")
   
   timeline_data2 <- reactive({
+    req(input$state_sel)
+    
     data %>%
       filter(country_name == input$country_sel) %>%
-      select(year, head_name_national, ideo_party_national, term_head_national,party = head_party_national) %>%
       tidyr::separate(term_head_national, into = c("start", "end"), sep = "-") %>%
-      rename(content = head_name_national, group = ideo_party_national) %>%
-      select(content, group, start, end,group,party) %>%
-      distinct() %>% 
+      select(year, content = head_name_national, group = ideo_party_national, 
+             party = head_party_national, early_exit = early_exit_nat, start, end) %>%
+      distinct() %>% #seguira siendo necesario?
       mutate(start = as.POSIXct(start, format = "%d/%m/%Y"),
              end = as.POSIXct(end, format = "%d/%m/%Y")
-      )
-  })
+      ) %>% 
+      filter(!is.na(start))
+    })
   
   vistime_module_server("timeline2", data = timeline_data2, "Presidential")
   

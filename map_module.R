@@ -1,6 +1,3 @@
-library(leaflet)
-library(dplyr)
-library(classInt)
 
 get_leaflet_palette <- function(type, palette_vector, values) {
   values <- values[!is.na(values)]
@@ -44,6 +41,9 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     })%>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
     
     observeEvent(apply_filters(), {
+      
+      shinybusy::show_spinner()
+      
       df_map <- data_map()
       values <- df_map[[input_var_sel()]]
       var_info <- dict %>% filter(variable == input_var_sel()) %>% slice(1)
@@ -85,6 +85,9 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           opacity = 0.8,
           title = input_var_sel()
         )
+      
+      shinybusy::hide_spinner()
+      
     })
   })
 }
