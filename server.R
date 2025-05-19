@@ -22,6 +22,19 @@ server <- function(input, output, session) {
     }
   })
   
+  # Update state choices based on selected country
+  output$conditional_state_ui <- renderUI({
+    req(input$country_sel)
+    
+    if (input$tabs == "timeline" || input$tabs == "votes_tab") {
+      states <- c(unique(data$state_name[data$country_name == input$country_sel])) %>% sort()
+      states <- c("Select a state",states)
+      
+      
+      selectInput("state_sel", "Select a state", choices = states)
+    }
+  })
+  
   
   
   apply_filters <- reactive(input$apply_filters)
@@ -111,15 +124,7 @@ server <- function(input, output, session) {
     apply_filters = apply_filters
   )
   
-  # Update state choices based on selected country
-  output$conditional_state_ui <- renderUI({
-    req(input$country_sel)
-    
-    if (input$tabs == "timeline") {
-      states <- c(unique(data$state_name[data$country_name == input$country_sel]),"Select a state")
-      selectInput("state_sel", "Select a state", choices = states)
-    }
-  })
+
   
   # Reactive expression to filter and preprocess data
   timeline_data1 <- reactive({
@@ -156,6 +161,17 @@ server <- function(input, output, session) {
     })
   
   vistime_module_server("timeline2", data = timeline_data2, "Presidential")
+  
+  data_votes <- reactive({
+    
+    req(input$state_sel)
+    
+    data %>%
+      filter(country_name == input$country_sel, state_name == input$state_sel) %>%
+      filter(electoral_sub_year == 1)
+  })
+  
+  mod_vote_bubbles_server("votes_module", data = data_votes)
   
 
 

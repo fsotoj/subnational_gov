@@ -5,7 +5,7 @@ account: flipo
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 14732464
-bundleId: 10266585
+bundleId: 10308831
 url: https://flipo.shinyapps.io/subn_v3/
 version: 1
 asMultiple: FALSE
