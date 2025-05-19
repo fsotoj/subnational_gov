@@ -5,7 +5,8 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(id = "tabs",
       menuItem("Map", tabName = "map_tab", icon = icon("map")),
-      menuItem("Timeline", tabName = "timeline", icon = icon("clock")),
+      menuItem("Ideology", tabName = "timeline", icon = icon("clock")),
+      menuItem("Votes", tabName = "votes_tab", icon = icon("clock")),
       menuItem("Data", tabName = "data", icon = icon("table")),
       menuItem("About", tabName = "about", icon = icon("info-circle"))
     ),
@@ -16,11 +17,6 @@ ui <- dashboardPage(
     uiOutput("conditional_apply_ui")
   ),
   dashboardBody(
-    
-    # Carga del CSS personalizado
-    # tags$head(
-    #   tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
-    # ),
     
     tabItems(
       tabItem(
@@ -48,12 +44,21 @@ ui <- dashboardPage(
       tabItem(
         tabName = "timeline",
         fluidRow(
-          box(title = "Governor Timeline", status = "primary", solidHeader = TRUE, 
-              height = "480px", width = 8, vistime_module_ui("timeline1")),
-          box(title = "Presidential Timeline", status = "primary", solidHeader = TRUE, 
-              height = "480px", width = 8, vistime_module_ui("timeline2")),
+          box(title = "Governor Ideology Timeline", status = "primary", solidHeader = TRUE, 
+              width = 8, vistime_module_ui("timeline1")),
+          box(title = "Presidential Ideology Timeline", status = "primary", solidHeader = TRUE, 
+              width = 8, vistime_module_ui("timeline2"))
          )
       ),
+      
+      tabItem(
+        tabName = "votes_tab",
+        fluidRow(
+          box(title = "Governor Votes Timeline", status = "primary", solidHeader = TRUE, 
+              width = 12, mod_vote_bubbles_ui("votes_module"))
+          )
+      ),
+      
       tabItem(tabName = "data", DT::DTOutput("table_info", height = "100%")),
       
       tabItem(tabName = "about", box(fluidRow(textOutput("ajajjajajaja"))))
