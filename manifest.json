@@ -2242,6 +2242,32 @@
         "Built": "R 4.3.3; ; 2024-09-01 02:08:06 UTC; windows"
       }
     },
+    "shinybusy": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "shinybusy",
+        "Title": "Busy Indicators and Notifications for 'Shiny' Applications",
+        "Version": "0.3.3",
+        "Authors@R": "c(person(\"Fanny\", \"Meyer\", role = \"aut\"),\n  person(\"Victor\", \"Perrier\", email = \"victor.perrier@dreamrs.fr\", role = c(\"aut\", \"cre\")),\n  person(\"Silex Technologies\", comment = \"https://www.silex-ip.com\", role = \"fnd\"))",
+        "Description": "Add indicators (spinner, progress bar, gif) in your 'shiny'\n  applications to show the user that the server is busy. And other tools to let\n  your users know something is happening (send notifications, reports, ...).",
+        "License": "GPL-3",
+        "Encoding": "UTF-8",
+        "Imports": "htmltools, shiny, jsonlite, htmlwidgets",
+        "RoxygenNote": "7.3.1",
+        "URL": "https://github.com/dreamRs/shinybusy,\nhttps://dreamrs.github.io/shinybusy/",
+        "BugReports": "https://github.com/dreamRs/shinybusy/issues",
+        "Suggests": "testthat, covr, knitr, rmarkdown",
+        "VignetteBuilder": "knitr",
+        "NeedsCompilation": "no",
+        "Packaged": "2024-03-09 10:44:38 UTC; perri",
+        "Author": "Fanny Meyer [aut],\n  Victor Perrier [aut, cre],\n  Silex Technologies [fnd] (https://www.silex-ip.com)",
+        "Maintainer": "Victor Perrier <victor.perrier@dreamrs.fr>",
+        "Repository": "CRAN",
+        "Date/Publication": "2024-03-09 11:20:02 UTC",
+        "Built": "R 4.3.3; ; 2025-04-07 02:35:03 UTC; windows"
+      }
+    },
     "shinydashboard": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -2903,11 +2929,20 @@
     }
   },
   "files": {
+    ".gitattributes": {
+      "checksum": "05bdb783ee6514c8c072e47680af8ff7"
+    },
+    ".RData": {
+      "checksum": "76f90632319a873338f53248c95675c7"
+    },
     "app.R": {
-      "checksum": "3c05cee859db7fe65cfb9901aaee713a"
+      "checksum": "9967ae73a4f03009b494c946df33b188"
     },
     "data/complete_database_edit.xlsx": {
       "checksum": "ec7e8574bca6f6b65063d6a59cd34155"
+    },
+    "data/complete_database_edit2.xlsx": {
+      "checksum": "97d34be64f2dc0912574101bb08a964f"
     },
     "data/dictionary.xlsx": {
       "checksum": "85abf02ed567005134ec99371d9b887c"
@@ -2915,17 +2950,29 @@
     "data/geom_paises.gpkg": {
       "checksum": "0aa1c0e7d662f3f4de9dd86a250e2c78"
     },
+    "data/geom_paises_simplified.gpkg": {
+      "checksum": "a5502c91e383d23d566534de7e3844bb"
+    },
+    "global.R": {
+      "checksum": "f0f080efda0c086d88533922719d044b"
+    },
     "map_module.R": {
-      "checksum": "bdf7dcef4633ff33e4d60930ffcfdc1d"
+      "checksum": "aae0cfb88f66099242bf71222f23c3a0"
+    },
+    "module_votes.R": {
+      "checksum": "03beed5b65370703957f90c4b21efec0"
     },
     "server.R": {
-      "checksum": "803de60ff1c71eb68c22e7978d57e436"
+      "checksum": "c02331a10de68d0fd71c54eeb87ead5a"
     },
     "timeline_module.R": {
-      "checksum": "417e402d158c16f63386eb19691b24f9"
+      "checksum": "7929afc496e6b24566730b3a31a6fdd4"
     },
     "ui.R": {
-      "checksum": "33e854c084ceabedd11ac966490b93db"
+      "checksum": "3b8316e76be1e8107f8fce10f4d5497b"
+    },
+    "www/styles.css": {
+      "checksum": "6fcb7d793bddfd11d2781b907761a1ff"
     }
   },
   "users": null

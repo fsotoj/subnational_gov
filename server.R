@@ -25,7 +25,7 @@ server <- function(input, output, session) {
   # Update state choices based on selected country
   output$conditional_state_ui <- renderUI({
     
-    if (input$tabs != "timeline" || input$tabs == "votes_tab") {
+    if (input$tabs == "timeline" || input$tabs == "votes_tab") {
       states <- c(unique(data$state_name[data$country_name == input$country_sel])) %>% sort()
       states <- c("Select a state",states)
       
