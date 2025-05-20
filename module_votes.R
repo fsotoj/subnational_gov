@@ -20,6 +20,11 @@ mod_vote_bubbles_server <- function(id, data) {
       
       df <- df %>% filter(!is.na(voters_registered_sub))
       
+      validate(
+        need(nrow(df) > 0, paste("No data available for the subnational elections of the years :",paste(votes_na,collapse = ",")))
+      )
+      
+      
       group_labels <- c("Left", "Center Left", "Center Right", "Right")
       names(group_labels) <- c(1, 2, 3, 4)
       

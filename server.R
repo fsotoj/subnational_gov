@@ -24,9 +24,8 @@ server <- function(input, output, session) {
   
   # Update state choices based on selected country
   output$conditional_state_ui <- renderUI({
-    req(input$country_sel)
     
-    if (input$tabs == "timeline" || input$tabs == "votes_tab") {
+    if (input$tabs != "timeline" || input$tabs == "votes_tab") {
       states <- c(unique(data$state_name[data$country_name == input$country_sel])) %>% sort()
       states <- c("Select a state",states)
       
@@ -98,18 +97,27 @@ server <- function(input, output, session) {
   
   
   
+
   output$table <- DT::renderDT({
-    table <- data_map() %>%
-      st_drop_geometry() %>%
+    
+    validate(
+      need(input$year_sel != "Select a year" && input$country_sel != "Select a country",
+           "Please use the apply filters button.")
+    )
+    
+    table <- data %>%
+      filter(country_name == input$country_sel, year == input$year_sel) %>%
       select(
         head_name_national, sex_head_national, head_party_national,
         ideo_party_national, years_nat_gov, reelec_nat_gov,
         early_exit_nat, electoral_national_year
-      ) %>%
+        ) %>%
       slice(1) %>%
       t() %>%
       as.data.frame()
+    
     colnames(table) <- NULL
+    
     DT::datatable(table, colnames = NULL, options = list(dom = 't',
                                                          headerCallback = DT::JS("function(thead, data, start, end, display){ $(thead).remove(); }")))
   }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
