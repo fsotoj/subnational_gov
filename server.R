@@ -46,19 +46,7 @@ server <- function(input, output, session) {
         paste0(var_info$variable, ": ", var_info$description)
     })
     })
-  
-  data_map <- reactive({
-    
-    req(input$country_sel)
-    req(input$year_sel)
-    
-    data %>%
-      filter(country_name == input$country_sel, year == input$year_sel) %>%
-      left_join(geom, by = c("country_state_code")) %>%
-      st_as_sf()
-    
-  }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
-  
+
   
   output$last_elect_nat_box <- renderValueBox({
     
@@ -96,17 +84,25 @@ server <- function(input, output, session) {
   })
   
   
+  data_map <- reactive({
+    req(input$country_sel, input$year_sel)
+    
+    geom_filtered <- geom %>%
+      filter(country_name == input$country_sel)
+    
+    data_filtered <- data %>%
+      filter(country_name == input$country_sel, year == input$year_sel)
+    
+    left_join(geom_filtered, data_filtered, by = "country_state_code")
+  }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
+  
+  
   
 
   output$table <- DT::renderDT({
     
-    validate(
-      need(input$year_sel != "Select a year" && input$country_sel != "Select a country",
-           "Please use the apply filters button.")
-    )
-    
-    table <- data %>%
-      filter(country_name == input$country_sel, year == input$year_sel) %>%
+    table <- data_map() %>%
+      st_drop_geometry() %>%
       select(
         head_name_national, sex_head_national, head_party_national,
         ideo_party_national, years_nat_gov, reelec_nat_gov,
