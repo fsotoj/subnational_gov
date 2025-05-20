@@ -23,14 +23,36 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    observeEvent(apply_filters(), {
-      leafletProxy(ns("map"), data = data_map()) %>%
-        clearShapes() %>%
-        clearControls()
-    }, ignoreNULL = FALSE)
+    # Reactive components for optimization -------------------------------
     
+    df_map <- reactive({
+      req(data_map())
+      data <- data_map()
+      data[[".leaflet_value"]] <- data[[input_var_sel()]]  # Precompute for efficiency
+      data
+    }) %>% bindEvent(apply_filters())
+    
+    values <- reactive({
+      df_map()[[".leaflet_value"]]
+    })
+    
+    var_info <- reactive({
+      dict %>%
+        filter(variable == input_var_sel()) %>%
+        slice(1)
+    })
+    
+    palette_vector <- reactive({
+      unlist(strsplit(var_info()$palette, ","))
+    })
+    
+    pal <- reactive({
+      get_leaflet_palette(var_info()$type, palette_vector(), values())
+    })
+    
+    # Initial map render -------------------------------------------------
     output$map <- renderLeaflet({
-      leaflet() %>%
+      leaflet(options = leafletOptions(preferCanvas = F)) %>%
         fitBounds(
           lng1 = country_bboxes[[input_country_sel()]]$lng1,
           lat1 = country_bboxes[[input_country_sel()]]$lat1,
@@ -38,20 +60,20 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           lat2 = country_bboxes[[input_country_sel()]]$lat2
         ) %>%
         addTiles()
-    })%>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
+    }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
     
+    # Clear map when filters are applied ---------------------------------
     observeEvent(apply_filters(), {
-      
+      leafletProxy(ns("map"), data = data_map()) %>%
+        clearShapes() %>%
+        clearControls()
+    }, ignoreNULL = FALSE)
+    
+    # Draw map polygons and legend ---------------------------------------
+    observeEvent(apply_filters(), {
       shinybusy::show_spinner()
       
-      df_map <- data_map()
-      values <- df_map[[input_var_sel()]]
-      var_info <- dict %>% filter(variable == input_var_sel()) %>% slice(1)
-      palette_vector <- unlist(strsplit(var_info$palette, ","))
-      type <- var_info$type
-      pal <- get_leaflet_palette(type, palette_vector, values)
-      
-      leafletProxy(ns("map"), data = df_map) %>%
+      leafletProxy(ns("map"), data = df_map()) %>%
         fitBounds(
           lng1 = country_bboxes[[input_country_sel()]]$lng1,
           lat1 = country_bboxes[[input_country_sel()]]$lat1,
@@ -59,7 +81,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           lat2 = country_bboxes[[input_country_sel()]]$lat2
         ) %>%
         addPolygons(
-          fillColor = ~pal(get(input_var_sel())),
+          fillColor = ~pal()(.leaflet_value),
           color = "#444444",
           weight = 1,
           fillOpacity = 0.8,
@@ -80,19 +102,13 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
         ) %>%
         addLegend(
           position = "bottomright",
-          pal = pal,
-          values = ~get(input_var_sel()),
+          pal = pal(),
+          values = df_map()$.leaflet_value,
           opacity = 0.8,
           title = input_var_sel()
         )
       
       shinybusy::hide_spinner()
-      
     })
   })
 }
-
-
-
-
-    
