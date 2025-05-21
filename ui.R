@@ -5,16 +5,13 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(id = "tabs",
       menuItem("Map", tabName = "map_tab", icon = icon("map")),
-      menuItem("Ideology", tabName = "timeline", icon = icon("clock")),
-      menuItem("Votes", tabName = "votes_tab", icon = icon("clock")),
       menuItem("Data", tabName = "data", icon = icon("table")),
       menuItem("About", tabName = "about", icon = icon("info-circle"))
     ),
     selectInput("country_sel", "Country", choices = c(unique(data$country_name), "Select a country"), selected = "Select a country"),
-    uiOutput("conditional_year_ui"),
-    uiOutput("conditional_select_var_ui"),
-    uiOutput("conditional_state_ui"),
-    uiOutput("conditional_apply_ui")
+    selectInput("year_sel", "Year", choices = c(unique(data$year), "Select a year"), selected = "Select a year"),
+    selectInput("var_sel", "Variable", choices = c(unique(dict$variable), "Select a variable"), selected = "Select a variable"),
+    actionButton("apply_filters", "Apply Filters", icon = icon("arrows-rotate"))
   ),
   dashboardBody(
     
@@ -39,26 +36,7 @@ ui <- dashboardPage(
           box(title = "Variable description", status = "info", solidHeader = TRUE, width = 8, textOutput("var_description"))
         )
       ),
-      
-      
-      tabItem(
-        tabName = "timeline",
-        fluidRow(
-          box(title = "Governor Ideology Timeline", status = "primary", solidHeader = TRUE, 
-              width = 8, vistime_module_ui("timeline1")),
-          box(title = "Presidential Ideology Timeline", status = "primary", solidHeader = TRUE, 
-              width = 8, vistime_module_ui("timeline2"))
-         )
-      ),
-      
-      tabItem(
-        tabName = "votes_tab",
-        fluidRow(
-          box(title = "Governor Votes Timeline", status = "primary", solidHeader = TRUE, 
-              width = 12, mod_vote_bubbles_ui("votes_module"))
-          )
-      ),
-      
+
       tabItem(tabName = "data", DT::DTOutput("table_info", height = "100%")),
       
       tabItem(tabName = "about", box(fluidRow(textOutput("ajajjajajaja"))))
