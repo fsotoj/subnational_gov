@@ -9,8 +9,7 @@ library(leaflet)
 library(classInt)
 
 source("map_module.R")
-source("timeline_module.R")
-source("module_votes.R")
+
 
 data <- read.xlsx("data/complete_database_edit2.xlsx")
 geom <- st_read("data/geom_paises_simplified.gpkg")
