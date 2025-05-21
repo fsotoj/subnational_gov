@@ -12,7 +12,7 @@ source("map_module.R")
 
 
 data <- read.xlsx("data/complete_database_edit2.xlsx")
-geom <- st_read("data/geom_paises_simplified.gpkg")
+geom <- st_read("data/geom_paises_simplified4.gpkg")
 
 data_info <- read.xlsx("data/dictionary.xlsx") %>% 
   filter(category %in% c("Identification", "Electoral")) %>% 
