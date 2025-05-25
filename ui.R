@@ -12,7 +12,7 @@ ui <- dashboardPage(
     selectInput("year_sel", "Year", choices = c("Select a year",sort(unique(data$year),decreasing = T)), selected = "2024"),
     selectInput("var_sel", "Variable", choices = c("Select a variable",unique(dict$pretty_name)), selected = "Subnat. Leader Sex"),
     actionButton("apply_filters", "Apply Filters", icon = icon("arrows-rotate")),
-    switchInput("dark_mode", "Modo oscuro", value = TRUE)
+    checkboxInput("dark_mode", "Dark", value = TRUE)
   ),
   dashboardBody(
     tags$head(
