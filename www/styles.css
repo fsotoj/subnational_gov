@@ -1,17 +1,185 @@
-/* Fondo blanco para toda la tabla */
-table.dataTable {
-  background-color: white;
+/* GENERAL BACKGROUND AND TEXT */
+body, .content-wrapper, .right-side {
+  background-color: #121212 !important;
+  color: #f0f0f0 !important;
 }
 
-/* Encabezado: azul marino con texto blanco */
-table.dataTable thead {
-  background-color: #003366; /* Azul marino */
-  color: white;
+.skin-black .main-header .logo {
+  background-color: #1a1a1a !important;
+  color: #f0f0f0 !important;
+  border-bottom: 1px solid #333 !important;
 }
 
-/* Celdas de encabezado: texto blanco y sin borde visible */
-table.dataTable thead th {
-  color: white;
-  border-bottom: 1px solid #ccc;
+.skin-black .main-header .logo:hover {
+  background-color: #1f1f1f !important;
 }
 
+.skin-black .main-header .navbar {
+  background-color: #1a1a1a !important;
+}
+
+.skin-black .main-sidebar {
+  background-color: #1a1a1a !important;
+}
+
+.skin-black .sidebar-menu>li.active>a {
+  background-color: #00ccff !important; /* Azul cian para activo */
+  color: #000 !important;
+}
+
+.skin-black .sidebar-menu>li>a {
+  color: #f0f0f0 !important;
+}
+
+.skin-black .sidebar-menu>li>a:hover {
+  background-color: #333 !important;
+  color: #00ccff !important;
+}
+
+/* BOXES */
+.box {
+  background-color: #1a1a1a !important;
+  color: #f0f0f0 !important;
+  border-radius: 5px !important;
+  border: 1px solid #2e2e2e !important;
+}
+
+/* PRIMARY = Azul Cian Brillante */
+.box.box-primary {
+  border-top-color: #00ccff !important;
+}
+
+/* SUCCESS = Verde Neón */
+.box.box-success {
+  border-top-color: #00ff99 !important;
+}
+
+/* INFO = Azul claro / cyan */
+.box.box-info {
+  border-top-color: #00ffff !important;
+}
+
+/* WARNING = Amarillo Brillante */
+.box.box-warning {
+  border-top-color: #ffff00 !important;
+}
+
+/* DANGER = Rojo Brillante */
+.box.box-danger {
+  border-top-color: #ff3300 !important;
+}
+
+/* BUTTONS */
+.btn {
+  border-radius: 4px !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+.btn-default {
+  background-color: #2a2a2a !important;
+}
+
+.btn-primary {
+  background-color: #00ccff !important;
+  color: #000 !important;
+}
+
+.btn-success {
+  background-color: #00ff99 !important;
+  color: #000 !important;
+}
+
+.btn-info {
+  background-color: #00ffff !important;
+  color: #000 !important;
+}
+
+.btn-warning {
+  background-color: #ffff00 !important;
+  color: #000 !important;
+}
+
+.btn-danger {
+  background-color: #ff3300 !important;
+  color: #000 !important;
+}
+
+/* TABLES */
+table {
+  background-color: #1e1e1e !important;
+  color: #f0f0f0 !important;
+}
+
+table th {
+  background-color: #2b2b2b !important;
+  color: #ffffff !important;
+}
+
+table td {
+  background-color: #1e1e1e !important;
+  color: #dddddd !important;
+}
+
+/* HEADINGS */
+h1, h2, h3, h4, h5, h6 {
+  color: #ffffff !important;
+}
+
+/* TABS */
+.nav-tabs-custom > .nav-tabs > li.active > a {
+  background-color: #1a1a1a !important;
+  border-color: #00ccff #1a1a1a transparent !important;
+  color: #00ccff !important;
+}
+
+.nav-tabs-custom > .nav-tabs > li > a {
+  background-color: #1a1a1a !important;
+  color: #ccc !important;
+}
+
+.nav-tabs-custom > .nav-tabs > li > a:hover {
+  color: #00ccff !important;
+}
+
+/* SIDEBAR USER PANEL */
+.user-panel {
+  background-color: #1a1a1a !important;
+  border-bottom: 1px solid #333 !important;
+}
+
+/* FOOTER */
+.main-footer {
+  background-color: #1a1a1a !important;
+  color: #aaa !important;
+  border-top: 1px solid #333 !important;
+}
+
+
+/* Navbar (main-header) background and text color */
+.skin-blue .main-header,
+.skin-blue .main-header .logo {
+  background-color: #111 !important;  /* Fondo oscuro */
+  color: #fff !important;             /* Texto blanco */
+}
+
+/* Hover y color de enlaces en la barra */
+.skin-blue .main-header .navbar {
+  background-color: #111 !important;
+}
+
+.skin-blue .main-header .navbar .nav > li > a {
+  color: #ddd !important;
+}
+
+.skin-blue .main-header .navbar .nav > li > a:hover,
+.skin-blue .main-header .navbar .nav > li > a:focus {
+  background-color: #222 !important;
+  color: #fff !important;
+}
+
+/* Logo hover */
+.skin-blue .main-header .logo:hover {
+  background-color: #222 !important;
+  color: #fff !important;
+}

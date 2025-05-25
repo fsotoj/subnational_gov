@@ -101,8 +101,22 @@ server <- function(input, output, session) {
   )
   
 
+  # session$onSessionEnded(function() {
+  #   message("Cleaning global environment...")  # optional: for visibility
+  #   rm(list = ls(envir = .GlobalEnv), envir = .GlobalEnv)
+  #   gc()  # optional: trigger garbage collection
+  # })
 
-
+  observeEvent(input$dark_mode, {
+    if (input$dark_mode) {
+      # Toggle activado: modo oscuro (cargar CSS)
+      session$sendCustomMessage("update-theme", "styles.css")
+    } else {
+      # Toggle apagado: modo claro (sin CSS)
+      session$sendCustomMessage("update-theme", "")
+    }
+  })
+  
   
   
 }

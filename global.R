@@ -7,6 +7,8 @@ library(dplyr)
 library(DT)
 library(leaflet)
 library(classInt)
+library(shinyWidgets)
+
 
 source("map_module.R")
 
