@@ -1,17 +1,69 @@
 
 get_leaflet_palette <- function(type, palette_vector, values) {
-  values <- values[!is.na(values)]
-  if (type == "binary") {
-    pal <- colorFactor(palette = palette_vector, domain = c(0,1))
-  } else if (type == "categorical" || type == "ordinal") {
-    pal <- colorFactor(palette = palette_vector, domain = unique(values))
-  } else if (type == "numerical" || type == "ratio") {
-    breaks <- classInt::classIntervals(values, n = length(palette_vector), style = "quantile")$brks
-    pal <- colorBin(palette = palette_vector, domain = values, bins = breaks, pretty = FALSE)
-  } else {
-    pal <- NULL
+  if (length(values) != 0){
+    
+    
+    if (type == "binary") {
+      
+      pal <- colorFactor(palette = palette_vector, domain = c(0,1))
+      legend_labels <- c("0", "1")
+      
+      return(list(pal = pal, legend = legend_labels))
+      
+      
+    } else if (type == "categorical" || type == "ordinal") {
+      
+      pal <- colorFactor(palette = palette_vector, domain = unique(values))
+      legend_labels <- as.character(unique(values))
+      
+      return(list(pal = pal, legend = legend_labels))
+      
+      
+      
+    } else if (type == "numerical" || type == "ratio") {
+      
+      
+      pal <- tryCatch({
+        
+        ci <- classInt::classIntervals(values, n = length(palette_vector), style = "jenks")
+        breaks <- ci$brks
+        
+        if(anyDuplicated(breaks)){ ####
+          
+          ci <- classInt::classIntervals(values, n = length(palette_vector), style = "pretty")
+          breaks <- ci$brks
+        }
+        
+        pal <- colorBin(palette = palette_vector, domain = values, bins = breaks, pretty = T)
+        
+        
+        legend_labels <- paste0(
+          format(round(breaks[-length(breaks)], 2), nsmall = 2),
+          " – ",
+          format(round(breaks[-1], 2), nsmall = 2)
+        )
+        
+        list(pal = pal, legend = legend_labels)
+        
+      }, error = function(e) {
+        if (grepl("single unique value", e$message)) {
+          val <- unique(values)[1]
+          breaks <- c(val, val + 1e-6)  # crea un rango mínimo artificial
+          pal <- colorBin(palette = tail(palette_vector, 1), domain = values, bins = breaks, pretty = FALSE)
+          
+          list(pal = pal, legend = paste0(val, " (único valor)"))
+          
+        } else {
+          list(pal = NULL, legend = NULL)
+        }
+      })
+      
+    } else {
+      pal <- NULL
+      legend_labels <- NULL
+      
+    }
   }
-  return(pal)
 }
 
 mapModuleUI <- function(id) {
@@ -81,12 +133,13 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           lat2 = country_bboxes[[input_country_sel()]]$lat2
         ) %>%
         addPolygons(
-          fillColor = ~pal()(.leaflet_value),
+          fillColor = ~pal()$pal(.leaflet_value),
           color = "#444444",
           weight = 1,
           fillOpacity = 0.8,
           highlightOptions = highlightOptions(weight = 3, color = "#666", fillOpacity = 0.9),
           popup = ~paste0(
+            "<b>",input_var_sel(),":</b> ",.leaflet_value, "<br/>",
             "<b>State:</b> ", state_name, "<br/>",
             "<b>Region:</b> ", region_name, "<br/>",
             "<b>Governor:</b> ", head_name_sub, "<br/>",
@@ -102,8 +155,9 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
         ) %>%
         addLegend(
           position = "bottomright",
-          pal = pal(),
+          pal = pal()$pal,
           values = df_map()$.leaflet_value,
+          labFormat = function(type, cuts, p) { pal()$legend },
           opacity = 0.8,
           title = input_var_sel()
         )
