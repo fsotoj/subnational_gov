@@ -6,21 +6,29 @@ get_leaflet_palette <- function(type, palette_vector, values) {
     if (type == "binary") {
       
       pal <- colorFactor(palette = palette_vector, domain = c(0,1))
-      legend_labels <- c("0", "1")
+      legend_labels <- c("No", "Yes")
       
       return(list(pal = pal, legend = legend_labels))
       
       
-    } else if (type == "categorical" || type == "ordinal") {
+    } else if(type == "gender"){
       
-      pal <- colorFactor(palette = palette_vector, domain = unique(values))
-      legend_labels <- as.character(unique(values))
+      pal <- colorFactor(palette = palette_vector, domain = c(0,1))
+      legend_labels <- c("Male", "Female")
+      
+      return(list(pal = pal, legend = legend_labels))
+      
+    } else if(type == "ordinal") {
+      
+      pal <- colorFactor(palette = palette_vector, domain = 1:4)
+      legend_labels <- c("Left","Center Left", "Center Right", "Right")
       
       return(list(pal = pal, legend = legend_labels))
       
       
       
-    } else if (type == "numerical" || type == "ratio") {
+    } else if (type == "discrete" || type == "continuous") {
+      
       
       
       pal <- tryCatch({
@@ -36,11 +44,12 @@ get_leaflet_palette <- function(type, palette_vector, values) {
         
         pal <- colorBin(palette = palette_vector, domain = values, bins = breaks, pretty = T)
         
+        n_round <- ifelse(type=="continuous", 2, 0)
         
         legend_labels <- paste0(
-          format(round(breaks[-length(breaks)], 2), nsmall = 2),
+          format(round(breaks[-length(breaks)], n_round), nsmall = n_round, big.mark = ","),
           " – ",
-          format(round(breaks[-1], 2), nsmall = 2)
+          format(round(breaks[-1], n_round), nsmall = n_round, big.mark = ",")
         )
         
         list(pal = pal, legend = legend_labels)
@@ -77,6 +86,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     
     # Reactive components for optimization -------------------------------
     
+    
     df_map <- reactive({
       req(data_map())
       data <- data_map()
@@ -111,8 +121,8 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           lng2 = country_bboxes[[input_country_sel()]]$lng2,
           lat2 = country_bboxes[[input_country_sel()]]$lat2
         ) %>%
-        addTiles()
-    }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
+        addProviderTiles("CartoDB.DarkMatterNoLabels")
+      }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
     
     # Clear map when filters are applied ---------------------------------
     observeEvent(apply_filters(), {
@@ -134,12 +144,12 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
         ) %>%
         addPolygons(
           fillColor = ~pal()$pal(.leaflet_value),
-          color = "#444444",
-          weight = 1,
-          fillOpacity = 0.8,
-          highlightOptions = highlightOptions(weight = 3, color = "#666", fillOpacity = 0.9),
+          color = "white",
+          weight = 2,
+          fillOpacity = 0.9,
+          highlightOptions = highlightOptions(weight = 5, color = "#666", fillOpacity = 1),
           popup = ~paste0(
-            "<b>",input_var_sel(),":</b> ",.leaflet_value, "<br/>",
+            "<b>",input_var_sel(),": ",.leaflet_value, "</b><br/>",
             "<b>State:</b> ", state_name, "<br/>",
             "<b>Region:</b> ", region_name, "<br/>",
             "<b>Governor:</b> ", head_name_sub, "<br/>",
@@ -158,8 +168,8 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           pal = pal()$pal,
           values = df_map()$.leaflet_value,
           labFormat = function(type, cuts, p) { pal()$legend },
-          opacity = 0.8,
-          title = input_var_sel()
+          opacity = 0.9,
+          title = var_info()$pretty_name
         )
       
       shinybusy::hide_spinner()

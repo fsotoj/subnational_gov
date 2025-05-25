@@ -8,11 +8,17 @@ server <- function(input, output, session) {
     ifelse(
       input$var_sel == "Select a variable", 
       "Please select a variable to see the description.",{
-        var_info <- dict %>% filter(variable == input$var_sel) %>% slice(1)
-        paste0(var_info$variable, ": ", var_info$description)
+        var_info <- dict %>% filter(pretty_name == input$var_sel) %>% slice(1)
+        paste0(var_info$pretty_name, ": ", var_info$description)
     })
     })
 
+  
+  var_normal_name <- reactive({
+    dict %>% filter(pretty_name == input$var_sel) %>% 
+      pull(variable)
+    }) 
+  
   
   output$last_elect_nat_box <- renderValueBox({
     
@@ -87,7 +93,7 @@ server <- function(input, output, session) {
   mapModuleServer(
     "map1",
     data_map = data_map,
-    input_var_sel = reactive(input$var_sel),
+    input_var_sel = var_normal_name,
     dict = dict,
     country_bboxes = country_bboxes,
     input_country_sel = reactive(input$country_sel),

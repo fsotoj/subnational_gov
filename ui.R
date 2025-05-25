@@ -8,9 +8,9 @@ ui <- dashboardPage(
       menuItem("Data", tabName = "data", icon = icon("table")),
       menuItem("About", tabName = "about", icon = icon("info-circle"))
     ),
-    selectInput("country_sel", "Country", choices = c(unique(data$country_name), "Select a country"), selected = "Select a country"),
-    selectInput("year_sel", "Year", choices = c(unique(data$year), "Select a year"), selected = "Select a year"),
-    selectInput("var_sel", "Variable", choices = c(unique(dict$variable), "Select a variable"), selected = "Select a variable"),
+    selectInput("country_sel", "Country", choices = c("Select a country",unique(data$country_name)), selected = "Select a country"),
+    selectInput("year_sel", "Year", choices = c("Select a year",sort(unique(data$year),decreasing = T)), selected = "Select a year"),
+    selectInput("var_sel", "Variable", choices = c("Select a variable",unique(dict$pretty_name)), selected = "Select a variable"),
     actionButton("apply_filters", "Apply Filters", icon = icon("arrows-rotate"))
   ),
   dashboardBody(
