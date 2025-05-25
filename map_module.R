@@ -48,7 +48,7 @@ get_leaflet_palette <- function(type, palette_vector, values) {
         
         legend_labels <- paste0(
           format(round(breaks[-length(breaks)], n_round), nsmall = n_round, big.mark = ","),
-          "-",
+          " - ",
           format(round(breaks[-1], n_round), nsmall = n_round, big.mark = ",")
         )
         
