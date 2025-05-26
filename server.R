@@ -71,23 +71,47 @@ server <- function(input, output, session) {
   
   
 
-  output$table <- DT::renderDT({
+  output$leader_summary <- renderUI({
+    req(data_map(),input$country_sel)
     
-    table <- data_map() %>%
+    leader_info <- data_map() %>%
       st_drop_geometry() %>%
       select(
         head_name_national, sex_head_national, head_party_national,
         ideo_party_national, years_nat_gov, reelec_nat_gov,
-        early_exit_nat, electoral_national_year
-        ) %>%
-      slice(1) %>%
-      t() %>%
-      as.data.frame()
+        early_exit_nat, electoral_national_year,year,
+      ) %>%
+      slice(1)
     
-    colnames(table) <- NULL
+    country_name <- stringr::str_to_title(input$country_sel)
     
-    DT::datatable(table, colnames = NULL, options = list(dom = 't',
-                                                         headerCallback = DT::JS("function(thead, data, start, end, display){ $(thead).remove(); }")))
+    
+    # Traducir sexo
+    sex <- ifelse(leader_info$sex_head_national == 1, "female", "male")
+    
+    # Traducir ideología
+    ideologies <- c("Left", "Center Left", "Center Right", "Right")
+    ideology_text <- ifelse(
+      leader_info$ideo_party_national %in% 1:4,
+      ideologies[leader_info$ideo_party_national],
+      "Unknown"
+    )
+    
+    # Traducciones para otros campos binarios
+    reelec <- ifelse(leader_info$reelec_nat_gov == 1, "was reelected", "was not reelected")
+    early_exit <- ifelse(leader_info$early_exit_nat == 1, "left office early", "completed the full term")
+    election_year <- ifelse(leader_info$electoral_national_year == 1, "There was a national election that year.", "No national election was held that year.")
+    
+    # Texto narrativo
+    text <- glue::glue(
+      "<div style='padding:10px; font-size:16px; line-height:1.5em;'>",
+      " In ther year <strong>{leader_info$year}</strong> the national leader in <strong>{country_name}</strong> was <strong>{leader_info$head_name_national}</strong>, a {sex} politician affiliated with the <strong>{leader_info$head_party_national}</strong> party, which leans towards the <strong>{ideology_text}</strong> on the political spectrum. ",
+      "They served for <strong>{leader_info$years_nat_gov}</strong> years in office, {reelec}, and {early_exit}. ",
+      "{election_year}",
+      "</div>"
+    )
+    
+    HTML(text)
   }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
   
   mapModuleServer(
