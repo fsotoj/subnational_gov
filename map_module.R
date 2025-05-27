@@ -1,79 +1,74 @@
 
 get_leaflet_palette <- function(type, palette_vector, values) {
-  if (length(values) != 0){
+  if (length(values) == 0) return(list(pal = NULL, legend = NULL, domain = NULL, colors = NULL))
+  
+  na_color <- "#999999"  # default NA color
+  
+  if (type == "binary") {
+    domain <- c(0, 1)
+    pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
+    legend_labels <- c("No", "Yes")
     
+  } else if (type == "gender") {
+    domain <- c(0, 1)
+    pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
+    legend_labels <- c("Male", "Female")
     
-    if (type == "binary") {
+  } else if (type == "ordinal") {
+    domain <- 1:4
+    pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
+    legend_labels <- c("Left", "Center Left", "Center Right", "Right")
+    
+  } else if (type %in% c("discrete", "continuous")) {
+    pal <- tryCatch({
+      ci <- classInt::classIntervals(values, n = length(palette_vector), style = "jenks")
+      breaks <- ci$brks
       
-      pal <- colorFactor(palette = palette_vector, domain = c(0,1))
-      legend_labels <- c("No", "Yes")
-      
-      return(list(pal = pal, legend = legend_labels))
-      
-      
-    } else if(type == "gender"){
-      
-      pal <- colorFactor(palette = palette_vector, domain = c(0,1))
-      legend_labels <- c("Male", "Female")
-      
-      return(list(pal = pal, legend = legend_labels))
-      
-    } else if(type == "ordinal") {
-      
-      pal <- colorFactor(palette = palette_vector, domain = 1:4)
-      legend_labels <- c("Left","Center Left", "Center Right", "Right")
-      
-      return(list(pal = pal, legend = legend_labels))
-      
-      
-      
-    } else if (type == "discrete" || type == "continuous") {
-      
-      
-      
-      pal <- tryCatch({
-        
-        ci <- classInt::classIntervals(values, n = length(palette_vector), style = "jenks")
+      if (anyDuplicated(breaks)) {
+        ci <- classInt::classIntervals(values, n = length(palette_vector), style = "pretty")
         breaks <- ci$brks
-        
-        if(anyDuplicated(breaks)){ ####
-          
-          ci <- classInt::classIntervals(values, n = length(palette_vector), style = "pretty")
-          breaks <- ci$brks
-        }
-        
-        pal <- colorBin(palette = palette_vector, domain = values, bins = breaks, pretty = T)
-        
-        n_round <- ifelse(type=="continuous", 2, 0)
-        
-        legend_labels <- paste0(
-          format(round(breaks[-length(breaks)], n_round), nsmall = n_round, big.mark = ","),
-          " - ",
-          format(round(breaks[-1], n_round), nsmall = n_round, big.mark = ",")
-        )
-        
-        list(pal = pal, legend = legend_labels)
-        
-      }, error = function(e) {
-        if (grepl("single unique value", e$message)) {
-          val <- unique(values)[1]
-          breaks <- c(val, val + 1e-6)  # crea un rango mínimo artificial
-          pal <- colorBin(palette = tail(palette_vector, 1), domain = values, bins = breaks, pretty = FALSE)
-          
-          list(pal = pal, legend = paste0(val, " (único valor)"))
-          
-        } else {
-          list(pal = NULL, legend = NULL)
-        }
-      })
+      }
       
-    } else {
-      pal <- NULL
-      legend_labels <- NULL
+      pal <- colorBin(palette = palette_vector, domain = values, bins = breaks, pretty = TRUE, na.color = na_color)
+      n_round <- ifelse(type == "continuous", 2, 0)
+      legend_labels <- paste0(
+        format(round(breaks[-length(breaks)], n_round), nsmall = n_round, big.mark = ","),
+        " - ",
+        format(round(breaks[-1], n_round), nsmall = n_round, big.mark = ",")
+      )
       
-    }
+      list(pal = pal, legend = legend_labels, domain = values, colors = NULL)
+    }, error = function(e) {
+      if (grepl("single unique value", e$message)) {
+        val <- unique(values)[1]
+        breaks <- c(val, val + 1e-6)
+        pal <- colorBin(palette = tail(palette_vector, 1), domain = values, bins = breaks, pretty = FALSE, na.color = na_color)
+        legend_labels <- paste0(val, " (único valor)")
+        list(pal = pal, legend = legend_labels, domain = values, colors = NULL)
+      } else {
+        list(pal = NULL, legend = NULL, domain = NULL, colors = NULL)
+      }
+    })
+    return(pal)
+    
+  } else {
+    return(list(pal = NULL, legend = NULL, domain = NULL, colors = NULL))
   }
+  
+  # Add NA label
+  legend_labels <- c("Not available",legend_labels)
+  domain <- c(NA,domain)
+  
+  return(list(
+    pal = pal,
+    legend = legend_labels,
+    domain = domain,
+    colors = c(palette_vector, na_color)
+  ))
 }
+
+
+
 
 addLegend_decreasing <- function (map, position = c("topright", "bottomright", "bottomleft","topleft"),
                                   pal, values, na.label = "NA", bins = 7, colors, 
@@ -293,6 +288,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           weight = 1,
           fillOpacity = 0.9,
           highlightOptions = highlightOptions(weight = 5, color = "#666", fillOpacity = 1),
+          label = ~format_leaflet_value(.leaflet_value,var_info()$type),
           popup = ~paste0(
             "<div style='background-color:#041d2d; color:#f4e842; padding:6px 6px;
              border-radius:3px; font-weight:bold; font-size:15px; text-align:center;'>",
@@ -320,7 +316,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
         addLegend_decreasing(
           position = "bottomright",
           pal = pal()$pal,
-          values = df_map()$.leaflet_value,
+          values = pal()$domain,  # <- Pass full domain including NA
           labFormat = function(type, cuts, p) { pal()$legend },
           opacity = 0.9,
           title = var_info()$pretty_name
