@@ -1,25 +1,25 @@
 /* GENERAL BACKGROUND AND TEXT */
 body, .content-wrapper, .right-side {
-  background-color: #121212 !important;
+  background-color: rgb(4, 29, 45) !important; /* azul oscuro */
   color: #f0f0f0 !important;
 }
 
 .skin-black .main-header .logo {
-  background-color: #1a1a1a !important;
+  background-color: rgb(4, 29, 45) !important;
   color: #f0f0f0 !important;
-  border-bottom: 1px solid #333 !important;
+  border-bottom: 1px solid #0a426e !important; /* borde azul más claro */
 }
 
 .skin-black .main-header .logo:hover {
-  background-color: #1f1f1f !important;
+  background-color: #05354f !important; /* un poco más claro que azul base */
 }
 
 .skin-black .main-header .navbar {
-  background-color: #1a1a1a !important;
+  background-color: rgb(4, 29, 45) !important;
 }
 
 .skin-black .main-sidebar {
-  background-color: #1a1a1a !important;
+  background-color: rgb(4, 29, 45) !important;
 }
 
 .skin-black .sidebar-menu>li.active>a {
@@ -32,16 +32,16 @@ body, .content-wrapper, .right-side {
 }
 
 .skin-black .sidebar-menu>li>a:hover {
-  background-color: #333 !important;
+  background-color: #05354f !important;
   color: #00ccff !important;
 }
 
 /* BOXES */
 .box {
-  background-color: #1a1a1a !important;
-  color: #f0f0f0 !important;
+  background-color: #05354f ; /* azul oscuro algo más claro para contraste */
+  color: #f0f0f0 ;
   border-radius: 5px !important;
-  border: 1px solid #2e2e2e !important;
+  border: 1px solid #0a426e !important; /* borde azul */
 }
 
 /* PRIMARY = Azul Cian Brillante */
@@ -77,7 +77,7 @@ body, .content-wrapper, .right-side {
 }
 
 .btn-default {
-  background-color: #2a2a2a !important;
+  background-color: #05354f !important;
 }
 
 .btn-primary {
@@ -107,17 +107,17 @@ body, .content-wrapper, .right-side {
 
 /* TABLES */
 table {
-  background-color: #1e1e1e !important;
+  background-color: #064060 !important; /* azul oscuro un poco más claro */
   color: #f0f0f0 !important;
 }
 
 table th {
-  background-color: #2b2b2b !important;
+  background-color: #0a426e !important; /* azul borde */
   color: #ffffff !important;
 }
 
 table td {
-  background-color: #1e1e1e !important;
+  background-color: #064060 !important;
   color: #dddddd !important;
 }
 
@@ -128,13 +128,13 @@ h1, h2, h3, h4, h5, h6 {
 
 /* TABS */
 .nav-tabs-custom > .nav-tabs > li.active > a {
-  background-color: #1a1a1a !important;
-  border-color: #00ccff #1a1a1a transparent !important;
+  background-color: rgb(4, 29, 45) !important;
+  border-color: #00ccff rgb(4, 29, 45) transparent !important;
   color: #00ccff !important;
 }
 
 .nav-tabs-custom > .nav-tabs > li > a {
-  background-color: #1a1a1a !important;
+  background-color: rgb(4, 29, 45) !important;
   color: #ccc !important;
 }
 
@@ -144,28 +144,27 @@ h1, h2, h3, h4, h5, h6 {
 
 /* SIDEBAR USER PANEL */
 .user-panel {
-  background-color: #1a1a1a !important;
-  border-bottom: 1px solid #333 !important;
+  background-color: rgb(4, 29, 45) !important;
+  border-bottom: 1px solid #0a426e !important;
 }
 
 /* FOOTER */
 .main-footer {
-  background-color: #1a1a1a !important;
+  background-color: rgb(4, 29, 45) !important;
   color: #aaa !important;
-  border-top: 1px solid #333 !important;
+  border-top: 1px solid #0a426e !important;
 }
-
 
 /* Navbar (main-header) background and text color */
 .skin-blue .main-header,
 .skin-blue .main-header .logo {
-  background-color: #111 !important;  /* Fondo oscuro */
+  background-color: #05354f !important;  /* Fondo azul oscuro */
   color: #fff !important;             /* Texto blanco */
 }
 
 /* Hover y color de enlaces en la barra */
 .skin-blue .main-header .navbar {
-  background-color: #111 !important;
+  background-color: #05354f !important;
 }
 
 .skin-blue .main-header .navbar .nav > li > a {
@@ -174,12 +173,21 @@ h1, h2, h3, h4, h5, h6 {
 
 .skin-blue .main-header .navbar .nav > li > a:hover,
 .skin-blue .main-header .navbar .nav > li > a:focus {
-  background-color: #222 !important;
+  background-color: #0a426e !important;
   color: #fff !important;
 }
 
 /* Logo hover */
 .skin-blue .main-header .logo:hover {
-  background-color: #222 !important;
+  background-color: #0a426e !important;
   color: #fff !important;
+}
+
+
+.box.light-body-box > .box-body {
+  background-color: #f9f9f9 !important;
+  color: #111 !important;
+  font-size: 14px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
