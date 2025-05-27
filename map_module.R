@@ -272,18 +272,15 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
         addProviderTiles("CartoDB.DarkMatterNoLabels")
       }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
     
-    # Clear map when filters are applied ---------------------------------
-    observeEvent(apply_filters(), {
-      leafletProxy(ns("map"), data = data_map()) %>%
-        clearShapes() %>%
-        clearControls()
-    }, ignoreNULL = FALSE)
+
     
     # Draw map polygons and legend ---------------------------------------
     observeEvent(apply_filters(), {
       shinybusy::show_spinner()
       
       leafletProxy(ns("map"), data = df_map()) %>%
+        clearShapes() %>%
+        clearControls() %>% 
         fitBounds(
           lng1 = country_bboxes[[input_country_sel()]]$lng1,
           lat1 = country_bboxes[[input_country_sel()]]$lat1,
