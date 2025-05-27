@@ -184,9 +184,48 @@ addLegend_decreasing <- function (map, position = c("topright", "bottomright", "
   invokeMethod(map, data, "addLegend", legend)
 }
 
+format_leaflet_value <- function(value, type) {
+  # Asegurarse que type tenga misma longitud o es único
+  if (length(type) == 1) {
+    type <- rep(type, length(value))
+  }
+  
+  out <- vector("character", length(value))
+  
+  for (i in seq_along(value)) {
+    if (is.na(value[i])) {
+      out[i] <- "Not available"
+    } else {
+      out[i] <- switch(type[i],
+                       "binary" = ifelse(value[i] == 1, "Yes", "No"),
+                       "gender" = ifelse(value[i] == 1, "Female", "Male"),
+                       "ordinal" = dplyr::case_when(
+                         value[i] == 1 ~ "Left",
+                         value[i] == 2 ~ "Center Left",
+                         value[i] == 3 ~ "Center Right",
+                         value[i] == 4 ~ "Right",
+                         TRUE ~ as.character(value[i])
+                       ),
+                       "discrete" = format(value[i], big.mark = ",", scientific = FALSE),
+                       "continuous" = format(round(value[i], 2), nsmall = 2, big.mark = ","),
+                       as.character(value[i]) # fallback
+      )
+    }
+  }
+  
+  return(out)
+}
+
+
 mapModuleUI <- function(id) {
   ns <- NS(id)
-  leafletOutput(ns("map"), height = "600px")
+  bootstrapPage(div(class="outer",
+                    tags$style(type = "text/css", ".outer {position: fixed; top: 41px; left: 0; right: 0; bottom: 0; overflow: hidden; padding: 0}"),
+                    leafletOutput(ns("map"), height = "100%")
+                    
+                    ))
+  
+  
 }
 
 mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, input_country_sel, apply_filters) {
@@ -258,18 +297,27 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           fillOpacity = 0.9,
           highlightOptions = highlightOptions(weight = 5, color = "#666", fillOpacity = 1),
           popup = ~paste0(
-            "<b>",input_var_sel(),": ",.leaflet_value, "</b><br/>",
-            "<b>State:</b> ", state_name, "<br/>",
-            "<b>Region:</b> ", region_name, "<br/>",
+            "<div style='background-color:#041d2d; color:#f4e842; padding:6px 6px;
+             border-radius:3px; font-weight:bold; font-size:15px; text-align:center;'>",
+            var_info()$pretty_name, ": ", format_leaflet_value(.leaflet_value,var_info()$type),
+            "</div>",
+            "<b>State:</b> ", stringr::str_to_title(state_name), "<br/>",
+            "<b>Region:</b> ", stringr::str_to_title(region_name), "<br/>",
             "<b>Governor:</b> ", head_name_sub, "<br/>",
-            "<b>Governor sex:</b> ", sex_head_sub, "<br/>",
+            "<b>Governor sex:</b> ", ifelse(sex_head_sub == 1, "Female", "Male"), "<br/>",
             "<b>Party:</b> ", head_party_sub, "<br/>",
-            "<b>Ideology:</b> ", ideo_party_sub, "<br/>",
-            "<b>Alignment:</b> ", alignment, "<br/>",
+            "<b>Ideology:</b> ", dplyr::case_when(
+              ideo_party_sub == 1 ~ "Left",
+              ideo_party_sub == 2 ~ "Center Left",
+              ideo_party_sub == 3 ~ "Center Right",
+              ideo_party_sub == 4 ~ "Right",
+              TRUE ~ as.character(ideo_party_sub)
+            ), "<br/>",
+            "<b>Alignment:</b> ", ifelse(alignment == 1, "Yes", "No"), "<br/>",
             "<b>Years in office:</b> ", years_sub_gov, "<br/>",
-            "<b>Early exit:</b> ", early_exit_sub, "<br/>",
-            "<b>Reelected:</b> ", reelec_sub_gov, "<br/>",
-            "<b>Electoral sub. year:</b> ", electoral_sub_year
+            "<b>Early exit:</b> ", ifelse(early_exit_sub == 1, "Yes", "No"), "<br/>",
+            "<b>Reelected:</b> ", ifelse(reelec_sub_gov == 1, "Yes", "No"), "<br/>",
+            "<b>Electoral sub. year:</b> ", ifelse(electoral_sub_year == 1, "Yes", "No")
           )
         ) %>%
         addLegend_decreasing(

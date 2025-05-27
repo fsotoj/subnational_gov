@@ -35,11 +35,12 @@ ui <- dashboardPage(
           draggable = T,
           box(
             title = "National Leader Summary",
-            status = "primary",
+            #status = "primary",
             solidHeader = TRUE,
             collapsible = TRUE,
             collapsed = TRUE,
             width = NULL,
+            
             uiOutput("leader_summary")
           )
         )
