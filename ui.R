@@ -48,7 +48,21 @@ ui <- dashboardPage(
 
       tabItem(tabName = "data", DT::DTOutput("table_info", height = "100%")),
       
-      tabItem(tabName = "about", box(fluidRow(textOutput("ajajjajajaja"))))
+      tabItem(
+        tabName = "about",
+        box(
+          title = "About This Application",
+          solidHeader = TRUE,
+          status = "info",
+          width = 12,
+          collapsible = TRUE,
+          collapsed = FALSE,
+          p("This interactive dashboard provides a comprehensive overview of subnational political leadership across Argentina, Brazil and Mexico. 
+      It allows users to explore electoral outcomes, leadership profiles, ideological alignments, and regional trends using dynamic visualizations and maps."),
+          p("The application integrates multiple data sources and presents them in an accessible format for researchers, journalists, policymakers, and the general public interested in political dynamics at the subnational level."),
+          p("Use the sidebar menu to navigate between countries, years and variables.")
+        )
+      )
     ),
     skin = "blue"
     
