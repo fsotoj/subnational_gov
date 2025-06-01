@@ -116,7 +116,7 @@ server <- function(input, output, session) {
       paste("data_", Sys.Date(), ".csv", sep = "")
     },
     content = function(file) {
-      write.csv(data, file, row.names = FALSE, fileEncoding = "UTF-8")
+      write.csv(data, file, row.names = FALSE, fileEncoding = "UTF-8-BOM")
     },
     contentType = "text/csv"
   )
