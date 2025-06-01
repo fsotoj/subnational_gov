@@ -113,12 +113,12 @@ server <- function(input, output, session) {
   
   output$download_data <- downloadHandler(
     filename = function() {
-      paste("data_", Sys.Date(), ".csv", sep = "")
+      paste("data_", Sys.Date(), ".xlsx", sep = "")
     },
     content = function(file) {
-      write.csv(data, file, row.names = FALSE, fileEncoding = "UTF-8-BOM")
+      write.xlsx(data, file)
     },
-    contentType = "text/csv"
+    contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
   )
   
   output$download_geom <- downloadHandler(
