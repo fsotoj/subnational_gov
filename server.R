@@ -40,21 +40,7 @@ server <- function(input, output, session) {
              icon = icon("calendar"), color = "aqua",width = 12)
     }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
   
-  
-  output$table_info <- DT::renderDT({
-    DT::datatable(
-      data_info,
-      options = list(
-        scrollY = "400px",  # Altura visible con scroll vertical
-        paging = FALSE,     # Sin paginación
-        scrollCollapse = TRUE,
-        dom = 't'           # Solo la tabla, sin barra de búsqueda ni info
-      ),
-      class = 'cell-border stripe',
-      rownames = FALSE
-    )
-  })
-  
+
   
   data_map <- reactive({
     req(input$country_sel, input$year_sel)
@@ -124,13 +110,39 @@ server <- function(input, output, session) {
     apply_filters = apply_filters
   )
   
+  
+  output$download_data <- downloadHandler(
+    filename = function() {
+      paste("data_", Sys.Date(), ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(data, file, row.names = FALSE, fileEncoding = "UTF-8")
+    }
+  )
+  
+  output$download_geom <- downloadHandler(
+    filename = function() {
+      paste("countries_geom_", Sys.Date(), ".geojson", sep = "")
+    },
+    content = function(file) {
+      st_write(geom, file, append = FALSE)
+    }
+  )
+  
+  output$pdf_visor <- renderUI({
+    tags$iframe(style = "height:800px; width:100%;",
+                src = "codebook.pdf")
+  })
+  
+  
+  
+  
+  session$onSessionEnded(function() {
+    message("Cleaning global environment...")  # optional: for visibility
+    rm(list = ls(envir = .GlobalEnv), envir = .GlobalEnv)
+    gc()  # optional: trigger garbage collection
+  })
 
-  # session$onSessionEnded(function() {
-  #   message("Cleaning global environment...")  # optional: for visibility
-  #   rm(list = ls(envir = .GlobalEnv), envir = .GlobalEnv)
-  #   gc()  # optional: trigger garbage collection
-  # })
-  # 
 
   
   
