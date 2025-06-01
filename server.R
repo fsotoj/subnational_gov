@@ -117,7 +117,8 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       write.csv(data, file, row.names = FALSE, fileEncoding = "UTF-8")
-    }
+    },
+    contentType = "text/csv"
   )
   
   output$download_geom <- downloadHandler(
@@ -126,7 +127,9 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       st_write(geom, file, append = FALSE)
-    }
+    },
+    contentType = "application/geo+json"  
+    
   )
   
   output$pdf_visor <- renderUI({
