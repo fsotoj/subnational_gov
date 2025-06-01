@@ -14,6 +14,14 @@ get_leaflet_palette <- function(type, palette_vector, values) {
     pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
     legend_labels <- c("Male", "Female")
     
+  } else if (type == "categorical") {
+    
+    
+    domain <- sort(unique(values))  # Incluye NA si existe
+    pal <- colorFactor(palette = palette_vector[seq_len(length(domain))], domain = domain, na.color = na_color)
+    
+    legend_labels <- domain
+    
   } else if (type == "ordinal") {
     domain <- 1:4
     pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
@@ -227,8 +235,9 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    # Reactive components for optimization -------------------------------
     
+    
+    # Reactive components for optimization -------------------------------
     
     df_map <- reactive({
       req(data_map())
@@ -237,6 +246,8 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
       data
     }) %>% bindEvent(apply_filters())
     
+    
+
     values <- reactive({
       df_map()[[".leaflet_value"]]
     })
@@ -272,6 +283,17 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     # Draw map polygons and legend ---------------------------------------
     observeEvent(apply_filters(), {
       shinybusy::show_spinner()
+      if (nrow(df_map()) == 0 || all(is.na(df_map()[[".leaflet_value"]]))) {
+        leafletProxy(ns("map")) %>%
+          clearShapes() %>%
+          clearControls() %>%
+          addControl("⚠ No data available for this variable.",
+                     position = "topright",
+                     className = "leaflet-control-warning")
+        
+        shinybusy::hide_spinner()
+        return()
+      }
       
       leafletProxy(ns("map"), data = df_map()) %>%
         clearShapes() %>%
