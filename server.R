@@ -20,26 +20,6 @@ server <- function(input, output, session) {
     }) 
   
   
-  output$last_elect_nat_box <- renderValueBox({
-    
-    ifelse(input$year_sel == "Select a year" || input$country_sel == "Select a country",
-           {
-             value = "-"
-             subtitle = "Please use the apply filters button"
-             },
-           {
-             value = data %>% 
-               filter(year <= input$year_sel, 
-                      country_name == input$country_sel,
-                      electoral_national_year == 1) %>% 
-               pull(year) %>% max()
-             subtitle = "Last National Election Year"
-             })
-    
-    valueBox(value = value, subtitle = subtitle,
-             icon = icon("calendar"), color = "aqua",width = 12)
-    }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
-  
 
   
   data_map <- reactive({

@@ -27,7 +27,7 @@ get_leaflet_palette <- function(type, palette_vector, values) {
     pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
     legend_labels <- c("Left", "Center Left", "Center Right", "Right")
     
-  } else if (type %in% c("discrete", "continuous")) {
+  } else if (type %in% c("discrete", "continuous","percentage")) {
     pal <- tryCatch({
       ci <- classInt::classIntervals(values, n = length(palette_vector), style = "jenks")
       breaks <- ci$brks
@@ -38,14 +38,31 @@ get_leaflet_palette <- function(type, palette_vector, values) {
       }
       
       pal <- colorBin(palette = palette_vector, domain = values, bins = breaks, pretty = TRUE, na.color = na_color)
-      n_round <- ifelse(type == "continuous", 2, 0)
-      legend_labels <- paste0(
-        format(round(breaks[-length(breaks)], n_round), nsmall = n_round, big.mark = ","),
-        " - ",
-        format(round(breaks[-1], n_round), nsmall = n_round, big.mark = ",")
-      )
+      
+      if (type %in% c("discrete", "continuous")) {
+        
+        n_round <- ifelse(type == "continuous", 2, 0)
+        legend_labels <- paste0(
+          format(round(breaks[-length(breaks)], n_round), nsmall = n_round, big.mark = ","),
+          " - ",
+          format(round(breaks[-1], n_round), nsmall = n_round, big.mark = ",")
+        )
+        
+      } else {
+        legend_labels <- paste0(
+          format(round(breaks[-length(breaks)] * 100, 2), nsmall = 2, big.mark = ","),
+          "% - ",
+          format(round(breaks[-1] * 100, 2), nsmall = 2, big.mark = ","),
+          "%"
+        )
+        
+        
+        }
       
       list(pal = pal, legend = legend_labels, domain = values, colors = NULL)
+      
+      
+      
     }, error = function(e) {
       if (grepl("single unique value", e$message)) {
         val <- unique(values)[1]
@@ -211,6 +228,7 @@ format_leaflet_value <- function(value, type) {
                        ),
                        "discrete" = format(value[i], big.mark = ",", scientific = FALSE),
                        "continuous" = format(round(value[i], 2), nsmall = 2, big.mark = ","),
+                       "percentage" = paste0(format(round(value[i]*100, 2), nsmall = 2, big.mark = ","),"%"),
                        as.character(value[i]) # fallback
       )
     }
