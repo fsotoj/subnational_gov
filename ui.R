@@ -13,13 +13,13 @@ ui <- dashboardPage(
     selectInput("var_sel", "Variable", choices = c("Select a variable",unique(dict$pretty_name)), selected = "Subnat. Leader Sex"),
     box(title = "Variable description", solidHeader = TRUE, width = 12, textOutput("var_description"), collapsible = T, collapsed = T),
     actionButton("apply_filters", "Apply Filters", icon = icon("arrows-rotate")),
-    br(),br(),br(),
-    downloadButton("download_data", "Download complete data"),
-    downloadButton("download_geom", "Download geometries")
-    
-    
-    
-  ),
+    br(),br(),
+    div(
+      style = "position: absolute; bottom: 20px; width: 100%; padding: 10px;",
+      downloadButton("download_data", "Download complete data"),
+      downloadButton("download_geom", "Download geometries")
+      )
+    ),
   dashboardBody(
     tags$head(
       tags$link(id = "theme-css", rel = "stylesheet", type = "text/css", href = "styles.css")
@@ -35,7 +35,7 @@ ui <- dashboardPage(
         shinybusy::use_busy_spinner(spin = "fading-circle", color = "#112446"),
         mapModuleUI("map1"),
         absolutePanel(
-          top = 65, right = 12, width = 320,
+          top = 100, right = 12, width = 320,
           draggable = T,
           box(
             title = "National Leader Summary",
@@ -63,9 +63,14 @@ ui <- dashboardPage(
           width = 12,
           collapsible = TRUE,
           collapsed = FALSE,
+          
           p("This interactive dashboard provides a comprehensive overview of subnational political leadership across Argentina, Brazil and Mexico. 
-      It allows users to explore electoral outcomes, leadership profiles, ideological alignments, and regional trends using dynamic visualizations and maps."),
-          p("The application integrates multiple data sources and presents them in an accessible format for researchers, journalists, policymakers, and the general public interested in political dynamics at the subnational level."),
+    It allows users to explore electoral outcomes, leadership profiles, ideological alignments, and regional trends using dynamic visualizations and maps."),
+          
+          p(HTML("The application integrates the Database of Subnational Federalism in Latin America (Giraudy, A. 2025) with the geometries of the federal states and provinces from 
+         <a href='https://www.simplemaps.com' target='_blank'>www.simplemaps.com</a>. 
+         It presents them in an accessible format for researchers, journalists, policymakers, and the general public interested in political dynamics at the subnational level.")),
+          
           p("Use the sidebar menu to navigate between countries, years and variables.")
         )
       )
