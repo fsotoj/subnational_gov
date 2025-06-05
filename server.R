@@ -119,13 +119,13 @@ server <- function(input, output, session) {
   
   
   
-  # 
-  # session$onSessionEnded(function() {
-  #   message("Cleaning global environment...")  # optional: for visibility
-  #   rm(list = ls(envir = .GlobalEnv), envir = .GlobalEnv)
-  #   gc()  # optional: trigger garbage collection
-  # })
-  # 
+
+  session$onSessionEnded(function() {
+    message("Cleaning global environment...")  # optional: for visibility
+    rm(list = ls(envir = .GlobalEnv), envir = .GlobalEnv)
+    gc()  # optional: trigger garbage collection
+  })
+
 
   
   
