@@ -13,7 +13,7 @@ ui <- dashboardPage(
     box(title = "Variable description", solidHeader = TRUE, width = 12, textOutput("var_description"), collapsible = T, collapsed = T),
     br(),
     
-    sliderInput("year_sel", "Year", min = min(data$year), max = max(data$year), value = 2024),
+    sliderInput("year_sel", "Year", min = min(data$year), max = max(data$year), value = 2024, animate = T, sep = ""),
     
     #actionButton("apply_filters", "Apply Filters", icon = icon("arrows-rotate")),
     br(),
