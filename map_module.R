@@ -249,23 +249,19 @@ mapModuleUI <- function(id) {
   
 }
 
-mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, input_country_sel, apply_filters) {
+mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, input_country_sel) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    
-    
-    # Reactive components for optimization -------------------------------
+    # Reactive components ------------------------------------------------
     
     df_map <- reactive({
       req(data_map())
       data <- data_map()
       data[[".leaflet_value"]] <- data[[input_var_sel()]]  # Precompute for efficiency
       data
-    }) %>% bindEvent(apply_filters())
+    })
     
-    
-
     values <- reactive({
       df_map()[[".leaflet_value"]]
     })
@@ -294,13 +290,15 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           lat2 = country_bboxes[[input_country_sel()]]$lat2
         ) %>%
         addProviderTiles("CartoDB.DarkMatterNoLabels")
-      }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
+    })
     
-
-    
-    # Draw map polygons and legend ---------------------------------------
-    observeEvent(apply_filters(), {
+    # Observe changes to data_map ----------------------------------------
+    observe({
+      
+      req(df_map(), input_var_sel(), input_country_sel())
+      
       shinybusy::show_spinner()
+      
       if (nrow(df_map()) == 0 || all(is.na(df_map()[[".leaflet_value"]]))) {
         leafletProxy(ns("map")) %>%
           clearShapes() %>%
@@ -308,14 +306,13 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           addControl("⚠ No data available for this variable.",
                      position = "topright",
                      className = "leaflet-control-warning")
-        
         shinybusy::hide_spinner()
         return()
       }
       
       leafletProxy(ns("map"), data = df_map()) %>%
         clearShapes() %>%
-        clearControls() %>% 
+        clearControls() %>%
         fitBounds(
           lng1 = country_bboxes[[input_country_sel()]]$lng1,
           lat1 = country_bboxes[[input_country_sel()]]$lat1,
@@ -328,11 +325,11 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           weight = 1,
           fillOpacity = 0.9,
           highlightOptions = highlightOptions(weight = 5, color = "#666", fillOpacity = 1),
-          label = ~format_leaflet_value(.leaflet_value,var_info()$type),
+          label = ~format_leaflet_value(.leaflet_value, var_info()$type),
           popup = ~paste0(
             "<div style='background-color:#041d2d; color:#f4e842; padding:6px 6px;
              border-radius:3px; font-weight:bold; font-size:15px; text-align:center;'>",
-            var_info()$pretty_name, ": ", format_leaflet_value(.leaflet_value,var_info()$type),
+            var_info()$pretty_name, ": ", format_leaflet_value(.leaflet_value, var_info()$type),
             "</div>",
             "<b>State:</b> ", stringr::str_to_title(state_name), "<br/>",
             "<b>Region:</b> ", stringr::str_to_title(region_name), "<br/>",
@@ -356,7 +353,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
         addLegend_decreasing(
           position = "bottomright",
           pal = pal()$pal,
-          values = pal()$domain,  # <- Pass full domain including NA
+          values = pal()$domain,
           labFormat = function(type, cuts, p) { pal()$legend },
           opacity = 0.9,
           title = var_info()$pretty_name
@@ -366,3 +363,4 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     })
   })
 }
+

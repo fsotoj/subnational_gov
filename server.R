@@ -2,7 +2,7 @@
 
 server <- function(input, output, session) {
   
-  apply_filters <- reactive(input$apply_filters)
+  #apply_filters <- reactive(input$apply_filters)
   
   output$var_description <- reactive({
     ifelse(
@@ -32,7 +32,7 @@ server <- function(input, output, session) {
       filter(country_name == input$country_sel, year == input$year_sel)
     
     left_join(geom_filtered, data_filtered, by = "country_state_code")
-  }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
+  }) 
   
   
   
@@ -78,7 +78,7 @@ server <- function(input, output, session) {
     )
     
     HTML(text)
-  }) %>% bindEvent(input$apply_filters, ignoreNULL = FALSE)
+  }) 
   
   mapModuleServer(
     "map1",
@@ -86,8 +86,7 @@ server <- function(input, output, session) {
     input_var_sel = var_normal_name,
     dict = dict,
     country_bboxes = country_bboxes,
-    input_country_sel = reactive(input$country_sel),
-    apply_filters = apply_filters
+    input_country_sel = reactive(input$country_sel)
   )
   
   

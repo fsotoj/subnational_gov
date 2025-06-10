@@ -9,10 +9,13 @@ ui <- dashboardPage(
       menuItem("About", tabName = "about", icon = icon("info-circle"))
     ),
     selectInput("country_sel", "Country", choices = c("Select a country",unique(data$country_name)), selected = "ARGENTINA"),
-    selectInput("year_sel", "Year", choices = c("Select a year",sort(unique(data$year),decreasing = T)), selected = "2024"),
     selectInput("var_sel", "Variable", choices = c("Select a variable",unique(dict$pretty_name)), selected = "Subnat. Leader Sex"),
     box(title = "Variable description", solidHeader = TRUE, width = 12, textOutput("var_description"), collapsible = T, collapsed = T),
-    actionButton("apply_filters", "Apply Filters", icon = icon("arrows-rotate")),
+    br(),
+    
+    sliderInput("year_sel", "Year", min = min(data$year), max = max(data$year), value = 2024),
+    
+    #actionButton("apply_filters", "Apply Filters", icon = icon("arrows-rotate")),
     br(),
     downloadButton("download_data", "Download complete data"),
     downloadButton("download_geom", "Download geometries")
