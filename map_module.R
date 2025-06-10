@@ -303,7 +303,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
         leafletProxy(ns("map")) %>%
           clearShapes() %>%
           clearControls() %>%
-          addControl("⚠ No data available for this variable.",
+          addControl("⚠ No data available for this country, variable and year.",
                      position = "topright",
                      className = "leaflet-control-warning")
         shinybusy::hide_spinner()
