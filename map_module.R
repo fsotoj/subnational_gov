@@ -286,7 +286,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     
     # Initial map render -------------------------------------------------
     output$map <- renderLeaflet({
-      leaflet(options = leafletOptions(preferCanvas = F)) %>%
+      leaflet(options = leafletOptions(preferCanvas = T, zoomControl = FALSE)) %>%
         fitBounds(
           lng1 = country_bboxes[[input_country_sel()]]$lng1,
           lat1 = country_bboxes[[input_country_sel()]]$lat1,
