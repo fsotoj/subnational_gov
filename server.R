@@ -4,6 +4,59 @@ server <- function(input, output, session) {
   
   #apply_filters <- reactive(input$apply_filters)
   
+  # selected_states <- stateSelectorModuleServer(
+  #   id = "state_selector",
+  #   data = data,  
+  #   active_tab = reactive(input$tabs)
+  # )
+  # 
+  # 
+  # output$selected_states <- renderPrint({
+  #   selected_states()
+  # })
+  
+  
+  output$state_selector <- renderUI({
+    req(input$tabs == "graph_tab")  # solo renderiza si esta pestaña está activa
+    
+    # Agrupamos estados por país
+    states_choices <- data %>%
+      distinct(country_name, state_name) %>%
+      arrange(country_name, state_name) %>%
+      group_by(country_name) %>%
+      group_split()
+    
+    choices_list <- lapply(states_choices, function(group) {
+      setNames(as.list(group$state_name), group$state_name)
+    })
+    names(choices_list) <- sapply(states_choices, function(g) unique(g$country_name))
+    
+    selectizeInput(
+      inputId = "state_sel",
+      label = "Select states from any country:",
+      choices = choices_list,
+      multiple = TRUE,
+      options = list(plugins = list("remove_button"))
+    )
+  })
+  
+  
+  output$country_selector <- renderUI({
+    req(input$tabs == "map_tab")
+    selectInput("country_sel", "Country", choices = c("Select a country",unique(data$country_name)), 
+                selected = "Select a country")
+    })
+  
+  
+  
+  
+  output$year_selector <- renderUI({
+    req(input$tabs == "map_tab")
+    sliderInput("year_sel", "Year", min = min(data$year), max = max(data$year), value = 2024, animate = T, sep = "")
+  })
+  
+  
+  
   output$var_description <- reactive({
     ifelse(
       input$var_sel == "Select a variable", 
@@ -86,8 +139,25 @@ server <- function(input, output, session) {
     input_var_sel = var_normal_name,
     dict = dict,
     country_bboxes = country_bboxes,
-    input_country_sel = reactive(input$country_sel)
+    input_country_sel = reactive(input$country_sel),
+    active_tab = reactive(input$tabs) 
+    )
+  
+  
+  linePlotModuleServer(
+    id = "line_plot1",
+    data = reactive(data),
+    input_variable = var_normal_name,
+    input_states = reactive(input$state_sel),
+    active_tab = reactive(input$tabs)
   )
+  
+  
+  
+  
+  
+  
+  
   
   
   output$download_data <- downloadHandler(

@@ -7,11 +7,14 @@ library(dplyr)
 library(DT)
 library(leaflet)
 library(classInt)
+library(shinyWidgets)
+
 
 
 
 source("map_module.R")
-
+source("line_module.R")
+#source("state_selector_module.R")
 
 data <- read.xlsx("data/complete_database_edit.xlsx")
 geom <- st_read("data/geom_simple_maps.geojson")
@@ -20,6 +23,7 @@ data_info <- read.xlsx("data/dictionary.xlsx") %>%
   filter(category %in% c("Identification", "Electoral")) %>% 
   select(Category= category, Variable = variable, Description = description)
 dict <- read.xlsx("data/dictionary.xlsx") %>% filter(viewable == 1, scope == "subnational")
+party_colors <- read.xlsx("data/party_colors.xlsx")
 
 country_bboxes <- list(
   ARGENTINA = list(lng1 = -73.5, lat1 = -55.1, lng2 = -53.6, lat2 = -21.8),
