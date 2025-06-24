@@ -16,10 +16,25 @@ get_leaflet_palette <- function(type, palette_vector, values) {
     
   } else if (type == "categorical") {
     
+   # Extract unique parties appearing in 'values'
+    domain <- sort(unique(values))
     
-    domain <- sort(unique(values))  # Incluye NA si existe
-    pal <- colorFactor(palette = palette_vector[seq_len(length(domain))], domain = domain, na.color = na_color)
+    # Filter party_colors for parties present in 'domain'
+    # Make sure 'party_colors' corresponds to the current country context
+    party_colors_subset <- party_colors %>%
+      filter(head_party_sub %in% domain)
     
+    # Reorder colors to match the order of 'domain'
+    party_colors_ordered <- party_colors_subset %>%
+      slice(match(domain, head_party_sub))
+    
+    # Extract the color vector
+    palette_vector <- party_colors_ordered$color
+    
+    # Create color palette using colorFactor with the extracted colors
+    pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
+    
+    # Labels for the legend
     legend_labels <- domain
     
   } else if (type == "ordinal") {
@@ -249,7 +264,7 @@ mapModuleUI <- function(id) {
   
 }
 
-mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, input_country_sel) {
+mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, input_country_sel, active_tab) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -294,14 +309,11 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     
     # Observe changes to data_map ----------------------------------------
     observe({
-      
-      req(df_map(), input_var_sel(), input_country_sel())
-      
-      shinybusy::show_spinner()
+      req(df_map(), input_var_sel(), input_country_sel(), active_tab() == "map_tab")
       
       if (nrow(df_map()) == 0 || all(is.na(df_map()[[".leaflet_value"]]))) {
         leafletProxy(ns("map")) %>%
-          clearShapes() %>%
+          clearShapes() %>% 
           clearControls() %>%
           addControl("⚠ No data available for this country, variable and year.",
                      position = "topright",
@@ -311,15 +323,10 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
       }
       
       leafletProxy(ns("map"), data = df_map()) %>%
-        clearShapes() %>%
+        # No clearShapes() aquí
         clearControls() %>%
-        fitBounds(
-          lng1 = country_bboxes[[input_country_sel()]]$lng1,
-          lat1 = country_bboxes[[input_country_sel()]]$lat1,
-          lng2 = country_bboxes[[input_country_sel()]]$lng2,
-          lat2 = country_bboxes[[input_country_sel()]]$lat2
-        ) %>%
         addPolygons(
+          layerId = ~country_state_code,       # Importante para actualización incremental
           fillColor = ~pal()$pal(.leaflet_value),
           color = "black",
           weight = 1,
@@ -328,7 +335,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           label = ~format_leaflet_value(.leaflet_value, var_info()$type),
           popup = ~paste0(
             "<div style='background-color:#041d2d; color:#f4e842; padding:6px 6px;
-             border-radius:3px; font-weight:bold; font-size:15px; text-align:center;'>",
+         border-radius:3px; font-weight:bold; font-size:15px; text-align:center;'>",
             var_info()$pretty_name, ": ", format_leaflet_value(.leaflet_value, var_info()$type),
             "</div>",
             "<b>State:</b> ", stringr::str_to_title(state_name), "<br/>",
@@ -359,8 +366,8 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           title = var_info()$pretty_name
         )
       
-      shinybusy::hide_spinner()
     })
+    
   })
 }
 

@@ -4,16 +4,24 @@ ui <- dashboardPage(
   dashboardHeader(title = "Subnational Elections"),
   dashboardSidebar(
     sidebarMenu(id = "tabs",
-      menuItem("Map", tabName = "map_tab", icon = icon("map")),
+      menuItem("Mapping tool", tabName = "map_tab", icon = icon("map")),
+      menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
       menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
       menuItem("About", tabName = "about", icon = icon("info-circle"))
     ),
-    selectInput("country_sel", "Country", choices = c("Select a country",unique(data$country_name)), selected = "ARGENTINA"),
+    
+    uiOutput("country_selector"),
+    
+    uiOutput("state_selector"),
+    
     selectInput("var_sel", "Variable", choices = c("Select a variable",unique(dict$pretty_name)), selected = "Subnat. Leader Sex"),
     box(title = "Variable description", solidHeader = TRUE, width = 12, textOutput("var_description"), collapsible = T, collapsed = T),
     br(),
     
-    sliderInput("year_sel", "Year", min = min(data$year), max = max(data$year), value = 2024, animate = T, sep = ""),
+    uiOutput("year_selector"),
+    
+    
+    
     
     #actionButton("apply_filters", "Apply Filters", icon = icon("arrows-rotate")),
     br(),
@@ -50,6 +58,15 @@ ui <- dashboardPage(
         )
         
       ),
+      
+      tabItem(tabName = "graph_tab", 
+              linePlotModuleUI("line_plot1")
+              ),
+      
+      
+      
+      
+      
 
       tabItem(tabName = "codebook", 
               uiOutput("pdf_visor")),
