@@ -41,6 +41,28 @@ server <- function(input, output, session) {
   })
   
   
+  output$variable_selector <- renderUI({
+    req(input$tabs)
+    
+    if (input$tabs == "map_tab"){
+      
+      variables <- dict %>% filter(viewable_map == 1) %>% pull(pretty_name) %>% unique()
+      
+      selectInput("var_sel", "Variable", 
+                  choices = c("Select a variable",variables), 
+                  selected = "Subnat. Leader Sex")
+    } else {
+      variables <- dict %>% filter(viewable_graph == 1) %>% pull(pretty_name) %>% unique()
+      
+      selectInput("var_sel", "Variable", 
+                  choices = c("Select a variable",variables), 
+                  selected = "Select a variable")
+      }
+    })
+  
+  
+  
+  
   output$country_selector <- renderUI({
     req(input$tabs == "map_tab")
     selectInput("country_sel", "Country", choices = c("Select a country",unique(data$country_name)), 

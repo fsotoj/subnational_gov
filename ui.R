@@ -14,7 +14,9 @@ ui <- dashboardPage(
     
     uiOutput("state_selector"),
     
-    selectInput("var_sel", "Variable", choices = c("Select a variable",unique(dict$pretty_name)), selected = "Subnat. Leader Sex"),
+    uiOutput("variable_selector"),
+    
+    
     box(title = "Variable description", solidHeader = TRUE, width = 12, textOutput("var_description"), collapsible = T, collapsed = T),
     br(),
     

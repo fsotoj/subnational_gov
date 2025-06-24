@@ -271,7 +271,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     # Reactive components ------------------------------------------------
     
     df_map <- reactive({
-      req(data_map())
+      req(data_map(),input_var_sel())
       data <- data_map()
       data[[".leaflet_value"]] <- data[[input_var_sel()]]  # Precompute for efficiency
       data
@@ -297,7 +297,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     
     # Initial map render -------------------------------------------------
     output$map <- renderLeaflet({
-      req(active_tab() == "map_tab", input_country_sel()!= "")
+      req(active_tab() == "map_tab", input_country_sel()!= "", input_var_sel())
       
       leaflet(options = leafletOptions(preferCanvas = T, zoomControl = FALSE)) %>%
         fitBounds(
