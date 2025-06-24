@@ -22,7 +22,7 @@ geom <- st_read("data/geom_simple_maps.geojson")
 data_info <- read.xlsx("data/dictionary.xlsx") %>% 
   filter(category %in% c("Identification", "Electoral")) %>% 
   select(Category= category, Variable = variable, Description = description)
-dict <- read.xlsx("data/dictionary.xlsx") %>% filter(viewable == 1, scope == "subnational")
+dict <- read.xlsx("data/dictionary.xlsx") %>% filter(scope == "subnational")
 party_colors <- read.xlsx("data/party_colors.xlsx")
 
 country_bboxes <- list(
