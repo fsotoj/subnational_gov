@@ -44,7 +44,7 @@ server <- function(input, output, session) {
   output$country_selector <- renderUI({
     req(input$tabs == "map_tab")
     selectInput("country_sel", "Country", choices = c("Select a country",unique(data$country_name)), 
-                selected = "Select a country")
+                selected = "ARGENTINA")
     })
   
   

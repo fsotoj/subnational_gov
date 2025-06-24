@@ -264,7 +264,7 @@ mapModuleUI <- function(id) {
   
 }
 
-mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, input_country_sel, active_tab) {
+mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, input_country_sel = "ARGENTINA", active_tab) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -297,6 +297,8 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     
     # Initial map render -------------------------------------------------
     output$map <- renderLeaflet({
+      req(active_tab() == "map_tab", input_country_sel()!= "")
+      
       leaflet(options = leafletOptions(preferCanvas = T, zoomControl = FALSE)) %>%
         fitBounds(
           lng1 = country_bboxes[[input_country_sel()]]$lng1,

@@ -50,7 +50,7 @@ ui <- dashboardPage(
             #status = "primary",
             solidHeader = TRUE,
             collapsible = TRUE,
-            collapsed = TRUE,
+            collapsed = F,
             width = NULL,
             
             uiOutput("leader_summary")
