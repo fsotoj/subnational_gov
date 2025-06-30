@@ -50,13 +50,13 @@ server <- function(input, output, session) {
       
       selectInput("var_sel", "Variable", 
                   choices = c("Select a variable",variables), 
-                  selected = "Subnat. Leader Sex")
+                  selected = "Subnatl. Head of State Cummulative Alternation")
     } else {
       variables <- dict %>% filter(viewable_graph == 1) %>% pull(pretty_name) %>% unique()
       
       selectInput("var_sel", "Variable", 
                   choices = c("Select a variable",variables), 
-                  selected = "Select a variable")
+                  selected = "Subnatl. Head of State Cummulative Alternation")
       }
     })
   
@@ -74,7 +74,19 @@ server <- function(input, output, session) {
   
   output$year_selector <- renderUI({
     req(input$tabs == "map_tab")
-    sliderInput("year_sel", "Year", min = min(data$year), max = max(data$year), value = 2024, animate = T, sep = "")
+    # sliderInput("year_sel", "Year", min = min(data$year), max = max(data$year),
+    #             step = 1,
+    #             value = 2024, animate = T, sep = "", width = "100%")
+    shinyWidgets::sliderTextInput(
+      inputId = "year_sel",
+      label = "Year",
+      choices = as.character(seq(1983, 2024, 1)),  # Only specific years
+      #selected = "2010",
+      grid = TRUE,  # Show tick marks
+      width = "100%",
+      animate = T
+    )
+    
   })
   
   

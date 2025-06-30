@@ -17,10 +17,10 @@ ui <- dashboardPage(
     uiOutput("variable_selector"),
     
     
-    box(title = "Variable description", solidHeader = TRUE, width = 12, textOutput("var_description"), collapsible = T, collapsed = T),
+    
     br(),
     
-    uiOutput("year_selector"),
+    #uiOutput("year_selector"),
     
     
     
@@ -41,24 +41,39 @@ ui <- dashboardPage(
       ")),
     tabItems(
       tabItem(
-        tabName = "map_tab",
-        shinybusy::use_busy_spinner(spin = "fading-circle", color = "#112446"),
-        mapModuleUI("map1"),
-        absolutePanel(
-          top = 100, right = 12, width = 320,
-          draggable = T,
-          box(
-            title = "National Leader Summary",
-            #status = "primary",
-            solidHeader = TRUE,
-            collapsible = TRUE,
-            collapsed = F,
-            width = NULL,
-            
-            uiOutput("leader_summary")
+        tabName = "map_tab", # QUE PASA ACAAAAAA
+        tagList(
+          mapModuleUI("map1"),
+          
+          absolutePanel(
+            top = 100, right = 12, 
+            width = 320,
+            draggable = TRUE,
+            box(
+              title = "Variable description", 
+              solidHeader = TRUE,
+              collapsible = TRUE, 
+              collapsed = FALSE,
+              width = NULL,
+              textOutput("var_description")
+            ),
+            box(
+              title = "National Leader Summary",
+              solidHeader = TRUE,
+              collapsible = TRUE,
+              collapsed = TRUE,
+              width = NULL,
+              uiOutput("leader_summary")
+            )
+          ),
+          
+          # Custom year selector placed at the bottom of the tab
+          div(
+            style = "position: absolute; bottom: 20px; left: 30%; right: 30%; z-index: 1000;",
+            uiOutput("year_selector")
           )
+          
         )
-        
       ),
       
       tabItem(tabName = "graph_tab", 
