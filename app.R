@@ -6,5 +6,6 @@ shinyApp(ui, server)
 
 
 
+#rsconnect::writeManifest(appDir = ".", appPrimaryDoc = NULL, contentCategory = NULL)
 
 # tabasco invalid votes 2017
