@@ -3,13 +3,18 @@ linePlotModuleUI <- function(id) {
   plotlyOutput(ns("line_plot"))
 }
 
-linePlotModuleServer <- function(id, data, input_variable, input_states, active_tab) {
+linePlotModuleServer <- function(id, data, dict, input_variable, input_states, active_tab) {
   moduleServer(id, function(input, output, session) {
     output$line_plot <- renderPlotly({
       req(data(), input_variable(), input_states(), active_tab() == "graph_tab")
       df <- data() %>%
         filter(state_name %in% input_states()) %>%
         select(country_name, state_name, year, value = all_of(input_variable()))
+      
+      
+      pretty_name <- dict %>% 
+        filter(variable == input_variable()) %>% 
+        pull(pretty_name)
       
       req(nrow(df) > 0)
       
@@ -32,7 +37,7 @@ linePlotModuleServer <- function(id, data, input_variable, input_states, active_
         layout(
           title = "Comparison of States across Countries",
           xaxis = list(title = "Year"),
-          yaxis = list(title = input_variable()),
+          yaxis = list(title = pretty_name),
           showlegend = TRUE,
           legend = list(
             orientation = "h",
