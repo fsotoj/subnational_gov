@@ -16,8 +16,13 @@ server <- function(input, output, session) {
   # })
   
   
+  current_tab <- reactive({
+    input$tabs
+  })
+  
+  
   output$state_selector <- renderUI({
-    req(input$tabs == "graph_tab")  # solo renderiza si esta pestaña está activa
+    req(current_tab() == "graph_tab")  # solo renderiza si esta pestaña está activa
     
     # Agrupamos estados por país
     states_choices <- data %>%
@@ -34,6 +39,7 @@ server <- function(input, output, session) {
     selectizeInput(
       inputId = "state_sel",
       label = "Select states from any country:",
+      selected = c("CAPITAL FEDERAL","DISTRITO FEDERAL","CDMX"),
       choices = choices_list,
       multiple = TRUE,
       options = list(plugins = list("remove_button"))
@@ -44,19 +50,19 @@ server <- function(input, output, session) {
   output$variable_selector <- renderUI({
     req(input$tabs)
     
-    if (input$tabs == "map_tab"){
+    if (current_tab() == "map_tab"){
       
       variables <- dict %>% filter(viewable_map == 1) %>% pull(pretty_name) %>% unique()
       
       selectInput("var_sel", "Variable", 
-                  choices = c("Select a variable",variables), 
-                  selected = "Subnatl. Head of State Cummulative Alternation")
+                  choices = c(variables), 
+                  selected = "Subnatl. Head of State Party Affiliation")
     } else {
       variables <- dict %>% filter(viewable_graph == 1) %>% pull(pretty_name) %>% unique()
       
       selectInput("var_sel", "Variable", 
-                  choices = c("Select a variable",variables), 
-                  selected = "Subnatl. Head of State Cummulative Alternation")
+                  choices = c(variables), 
+                  selected = "Subnatl. Turnout Rate")
       }
     })
   
@@ -64,7 +70,7 @@ server <- function(input, output, session) {
   
   
   output$country_selector <- renderUI({
-    req(input$tabs == "map_tab")
+    req(current_tab() == "map_tab")
     selectInput("country_sel", "Country", choices = c("Select a country",unique(data$country_name)), 
                 selected = "ARGENTINA")
     })
@@ -73,7 +79,7 @@ server <- function(input, output, session) {
   
   
   output$year_selector <- renderUI({
-    req(input$tabs == "map_tab")
+    req(current_tab() == "map_tab")
     # sliderInput("year_sel", "Year", min = min(data$year), max = max(data$year),
     #             step = 1,
     #             value = 2024, animate = T, sep = "", width = "100%")
@@ -174,16 +180,17 @@ server <- function(input, output, session) {
     dict = dict,
     country_bboxes = country_bboxes,
     input_country_sel = reactive(input$country_sel),
-    active_tab = reactive(input$tabs) 
+    active_tab = current_tab 
     )
   
   
   linePlotModuleServer(
     id = "line_plot1",
     data = reactive(data),
+    dict = dict,
     input_variable = var_normal_name,
     input_states = reactive(input$state_sel),
-    active_tab = reactive(input$tabs)
+    active_tab = current_tab
   )
   
   
