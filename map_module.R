@@ -268,12 +268,10 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    # Reactive components ------------------------------------------------
-    
     df_map <- reactive({
-      req(data_map(),input_var_sel())
+      req(data_map(),input_var_sel(),active_tab() == "map_tab")
       data <- data_map()
-      data[[".leaflet_value"]] <- data[[input_var_sel()]]  # Precompute for efficiency
+      data[[".leaflet_value"]] <- data[[input_var_sel()]]
       data
     })
     
@@ -282,9 +280,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     })
     
     var_info <- reactive({
-      dict %>%
-        filter(variable == input_var_sel()) %>%
-        slice(1)
+      dict %>% filter(variable == input_var_sel()) %>% slice(1)
     })
     
     palette_vector <- reactive({
@@ -295,7 +291,8 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
       get_leaflet_palette(var_info()$type, palette_vector(), values())
     })
     
-    # Initial map render -------------------------------------------------
+    prev_domain <- reactiveVal(NULL)  # Guarda dominio previo para comparar
+    
     output$map <- renderLeaflet({
       req(active_tab() == "map_tab", input_country_sel()!= "", input_var_sel())
       
@@ -309,7 +306,6 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
         addProviderTiles("CartoDB.DarkMatterNoLabels")
     })
     
-    # Observe changes to data_map ----------------------------------------
     observe({
       req(df_map(), input_var_sel(), input_country_sel(), active_tab() == "map_tab")
       
@@ -321,14 +317,21 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
                      position = "topright",
                      className = "leaflet-control-warning")
         shinybusy::hide_spinner()
+        prev_domain(NULL)  # Reiniciar dominio previo si no hay datos
         return()
       }
       
-      leafletProxy(ns("map"), data = df_map()) %>%
-        # No clearShapes() aquí
-        clearControls() %>%
+      current_domain <- pal()$domain
+      
+      # ¿Cambió el dominio?
+      domain_changed <- !identical(current_domain, prev_domain())
+      
+      proxy <- leafletProxy(ns("map"), data = df_map())
+      
+      # Actualizar polígonos (sin borrar shapes para evitar parpadeo)
+      proxy %>%
         addPolygons(
-          layerId = ~country_state_code,       # Importante para actualización incremental
+          layerId = ~country_state_code,
           fillColor = ~pal()$pal(.leaflet_value),
           color = "black",
           weight = 1,
@@ -337,7 +340,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           label = ~format_leaflet_value(.leaflet_value, var_info()$type),
           popup = ~paste0(
             "<div style='background-color:#041d2d; color:#f4e842; padding:6px 6px;
-         border-radius:3px; font-weight:bold; font-size:15px; text-align:center;'>",
+           border-radius:3px; font-weight:bold; font-size:15px; text-align:center;'>",
             var_info()$pretty_name, ": ", format_leaflet_value(.leaflet_value, var_info()$type),
             "</div>",
             "<b>State:</b> ", stringr::str_to_title(state_name), "<br/>",
@@ -358,18 +361,24 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
             "<b>Reelected:</b> ", ifelse(reelec_sub_gov == 1, "Yes", "No"), "<br/>",
             "<b>Electoral sub. year:</b> ", ifelse(electoral_sub_year == 1, "Yes", "No")
           )
-        ) %>%
-        addLegend_decreasing(
-          position = "bottomright",
-          pal = pal()$pal,
-          values = pal()$domain,
-          labFormat = function(type, cuts, p) { pal()$legend },
-          opacity = 0.9,
-          title = var_info()$pretty_name
         )
       
+      # Actualizar leyenda solo si cambió el dominio
+      if (domain_changed) {
+        proxy %>%
+          clearControls() %>%
+          addLegend_decreasing(
+            position = "bottomright",
+            pal = pal()$pal,
+            values = pal()$domain,
+            labFormat = function(type, cuts, p) { pal()$legend },
+            opacity = 0.9,
+            title = var_info()$pretty_name
+          )
+        
+        prev_domain(current_domain)  # Guardar nuevo dominio
+      }
     })
     
   })
 }
-
