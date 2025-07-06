@@ -60,7 +60,7 @@ server <- function(input, output, session) {
     } else {
       variables <- dict %>% filter(viewable_graph == 1) %>% pull(pretty_name) %>% unique()
       
-      selectInput("var_sel", "Variable", 
+      selectInput("var_sel2", "Variable", 
                   choices = c(variables), 
                   selected = "Subnatl. Turnout Rate")
       }
@@ -112,6 +112,11 @@ server <- function(input, output, session) {
       pull(variable)
     }) 
   
+  var_normal_name2 <- reactive({
+    req(input$var_sel2)
+    dict %>% filter(pretty_name == input$var_sel2) %>% 
+      pull(variable)
+  }) 
   
 
   
@@ -188,7 +193,7 @@ server <- function(input, output, session) {
     id = "line_plot1",
     data = reactive(data),
     dict = dict,
-    input_variable = var_normal_name,
+    input_variable = var_normal_name2,
     input_states = reactive(input$state_sel),
     active_tab = current_tab
   )
