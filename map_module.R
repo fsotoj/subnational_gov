@@ -255,14 +255,52 @@ format_leaflet_value <- function(value, type) {
 
 mapModuleUI <- function(id) {
   ns <- NS(id)
-  bootstrapPage(div(class="outer",
-                    tags$style(type = "text/css", ".outer {position: fixed; top: 41px; left: 0; right: 0; bottom: 0; overflow: hidden; padding: 0}"),
-                    leafletOutput(ns("map"), height = "100%")
-                    
-                    ))
+  map_id <- ns("map")
   
-  
+  bootstrapPage(
+    div(
+      class = "outer",
+      
+      # Estilo del contenedor del mapa
+      tags$style(
+        type = "text/css",
+        ".outer {
+          position: fixed;
+          top: 41px;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          overflow: hidden;
+          padding: 0;
+        }"
+      ),
+      
+      # Corrige el sprintf: usa solo una variable y repítela correctamente
+      tags$style(
+        HTML(sprintf("
+          #%s .leaflet-control {
+            max-width: 25vw !important;
+          }
+
+          #%s .leaflet-control .leaflet-control-legend {
+            max-width: 100%% !important;
+            white-space: normal !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+          }
+
+          #%s .leaflet-control .leaflet-control-legend div {
+            white-space: normal !important;
+            overflow-wrap: break-word !important;
+          }
+        ", map_id, map_id, map_id))
+      ),
+      
+      leafletOutput(map_id, height = "100%")
+    )
+  )
 }
+
 
 mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, input_country_sel = "ARGENTINA", active_tab) {
   moduleServer(id, function(input, output, session) {
