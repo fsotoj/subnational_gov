@@ -354,7 +354,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           addControl("⚠ No data available for this country, variable and year.",
                      position = "topright",
                      className = "leaflet-control-warning")
-        shinybusy::hide_spinner()
+        
         prev_domain(NULL)  # Reiniciar dominio previo si no hay datos
         return()
       }
