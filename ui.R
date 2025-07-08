@@ -3,6 +3,7 @@
 ui <- dashboardPage(
   dashboardHeader(title = "Subnational Elections"),
   dashboardSidebar(
+    useShinyjs(),
     sidebarMenu(id = "tabs",
       menuItem("Mapping tool", tabName = "map_tab", icon = icon("map")),
       menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
@@ -14,7 +15,8 @@ ui <- dashboardPage(
     
     uiOutput("state_selector"),
     
-    uiOutput("variable_selector"),
+    selectInput("var_sel", "Variable", choices = NULL),
+    selectInput("var_sel2", "Variable", choices = NULL),
     
     
     
@@ -39,6 +41,20 @@ ui <- dashboardPage(
           document.getElementById('theme-css').setAttribute('href', themeFile);
         });
       ")),
+    
+    tags$style(HTML("
+    #year_sel {
+      max-height: 200px !important;
+      overflow-y: hidden !important;
+    }
+    .js-range-slider__play {
+      position: relative !important;
+      top: 25px !important;
+      right: 0 !important;
+      margin-left: 10px !important;
+      z-index: 1100 !important;
+    }
+  ")),
     tabItems(
       tabItem(
         tabName = "map_tab", # QUE PASA ACAAAAAA
@@ -55,7 +71,7 @@ ui <- dashboardPage(
               collapsible = TRUE, 
               collapsed = FALSE,
               width = NULL,
-              textOutput("var_description")
+              textOutput("var_description_map"),
             ),
             box(
               title = "National Leader Summary",
@@ -69,16 +85,35 @@ ui <- dashboardPage(
           
           # Custom year selector placed at the bottom of the tab
           div(
-            style = "position: absolute; bottom: 20px; left: 30%; right: 30%; z-index: 1000;",
+            style = "position: absolute; bottom: 30px; left: 30%; right: 30%; z-index: 1000; overflow-y: hidden; max-height: 200px;",
             uiOutput("year_selector")
           )
+          
           
         )
       ),
       
-      tabItem(tabName = "graph_tab", 
-              linePlotModuleUI("line_plot1")
-              ),
+      tabItem(
+        tabName = "graph_tab",  # Este va directamente dentro de tabItem()
+        fluidRow(
+          column(9,
+                 linePlotModuleUI("line_plot1")
+          ),
+          column(3,
+                 box(
+                   title = "Variable description", 
+                   solidHeader = TRUE,
+                   collapsible = TRUE, 
+                   collapsed = FALSE,
+                   width = NULL,
+                   textOutput("var_description_graph")
+                 )
+          )
+        )
+      ),
+      
+        
+        
       
       
       

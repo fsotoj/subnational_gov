@@ -2268,6 +2268,33 @@
         "Built": "R 4.3.1; ; 2025-05-07 22:06:59 UTC; windows"
       }
     },
+    "shinyjs": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "shinyjs",
+        "Title": "Easily Improve the User Experience of Your Shiny Apps in Seconds",
+        "Version": "2.1.0",
+        "Authors@R": "person(\"Dean\", \"Attali\", \n    email = \"daattali@gmail.com\",\n    role = c(\"aut\", \"cre\"),\n    comment= c(ORCID=\"0000-0002-5645-3493\"))",
+        "Description": "Perform common useful JavaScript operations in Shiny apps that will\n    greatly improve your apps without having to know any JavaScript. Examples\n    include: hiding an element, disabling an input, resetting an input back to\n    its original value, delaying code execution by a few seconds, and many more\n    useful functions for both the end user and the developer. 'shinyjs' can also\n    be used to easily call your own custom JavaScript functions from R.",
+        "URL": "https://deanattali.com/shinyjs/",
+        "BugReports": "https://github.com/daattali/shinyjs/issues",
+        "Depends": "R (>= 3.1.0)",
+        "Imports": "digest (>= 0.6.8), jsonlite, shiny (>= 1.0.0)",
+        "Suggests": "htmltools (>= 0.2.9), knitr (>= 1.7), rmarkdown, shinyAce,\nshinydisconnect, testthat (>= 0.9.1)",
+        "License": "MIT + file LICENSE",
+        "VignetteBuilder": "knitr",
+        "RoxygenNote": "7.1.1",
+        "Encoding": "UTF-8",
+        "NeedsCompilation": "no",
+        "Packaged": "2021-12-21 11:32:22 UTC; Dean-X1C",
+        "Author": "Dean Attali [aut, cre] (<https://orcid.org/0000-0002-5645-3493>)",
+        "Maintainer": "Dean Attali <daattali@gmail.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2021-12-23 10:10:02 UTC",
+        "Built": "R 4.3.3; ; 2025-04-07 02:34:13 UTC; windows"
+      }
+    },
     "sourcetools": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -2881,7 +2908,7 @@
       "checksum": "76f90632319a873338f53248c95675c7"
     },
     "app.R": {
-      "checksum": "5a34239a16d64181d172ce35be73c6ec"
+      "checksum": "e0a5a1bbd1b9c45d658a01a3ac9eba9a"
     },
     "data/complete_database_edit.xlsx": {
       "checksum": "33084cb979c1cd392cb142acfca8b73f"
@@ -2893,7 +2920,7 @@
       "checksum": "c1bbc231c8ef8fe3c14fc2a3271096cb"
     },
     "data/geom_simple_maps.geojson": {
-      "checksum": "b9940d6d506823a950ca11c74eda07b4"
+      "checksum": "2f310ebab2631d27f127e80c28dec61c"
     },
     "data/parties_colors.xlsx": {
       "checksum": "5f3a47ea4f8b895327f11b37915d7f5c"
@@ -2902,22 +2929,22 @@
       "checksum": "5de45ed0c91fb8166f89a765292f4618"
     },
     "global.R": {
-      "checksum": "f90f2eadab8dcb2146adbdfd09c74a17"
+      "checksum": "062b3b95c8684e9c915425c143e445f4"
     },
     "line_module.R": {
-      "checksum": "88eaaaca8effd8a74fe60991c45a7b04"
+      "checksum": "4791d119ef8703303b6ab695ca680773"
     },
     "map_module.R": {
-      "checksum": "1ff30168e08e678c2c3fe236c86444c4"
+      "checksum": "7b28e094705fd75e9e04b8ccff45d4e1"
     },
     "server.R": {
-      "checksum": "6f5f8854b11104f8d587f9b2a0ca1eb4"
+      "checksum": "c1fa8c75639741f1ba704bffd7d11cc2"
     },
     "state_selector_module.R": {
       "checksum": "cfbd1ad3a20fd16beda46e8870cc063b"
     },
     "ui.R": {
-      "checksum": "d6f2133237fd0b8685c9b0e7e98ed9f9"
+      "checksum": "6a6734c321ee764e77bb06df936ef5e7"
     },
     "www/Codebook subnational democracy .docx": {
       "checksum": "c4b59933d10fb3a33c442bb474b6cc10"

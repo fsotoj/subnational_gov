@@ -8,6 +8,7 @@ library(DT)
 library(leaflet)
 library(classInt)
 library(shinyWidgets)
+library(shinyjs)
 #library(shinyWidgets)
 
 

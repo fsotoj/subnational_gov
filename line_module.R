@@ -36,7 +36,13 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, a
               text = ~paste0(state_name)) %>%
         layout(
           title = "Comparison of States across Countries",
-          xaxis = list(title = "Year"),
+          xaxis = list(
+            tickmode = "array",
+            tickvals = 1983:2024,
+            range = c(1983, 2024),
+            ticks = "outside",     # Make ticks point outward
+            title = "Year"
+          ),
           yaxis = list(title = pretty_name),
           showlegend = TRUE,
           legend = list(
