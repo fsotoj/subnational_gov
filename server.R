@@ -47,25 +47,57 @@ server <- function(input, output, session) {
   })
   
   
-  output$variable_selector <- renderUI({
-    req(input$tabs)
+  observe({
+    updateSelectInput(
+      session, "var_sel",
+      choices = dict$pretty_name[dict$viewable_map == 1],
+      selected = "Subnatl. Head of State Party Affiliation"
+    )
     
-    if (current_tab() == "map_tab"){
-      
-      variables <- dict %>% filter(viewable_map == 1) %>% pull(pretty_name) %>% unique()
-      
-      selectInput("var_sel", "Variable", 
-                  choices = c(variables), 
-                  selected = "Subnatl. Head of State Party Affiliation")
-    } else {
-      variables <- dict %>% filter(viewable_graph == 1) %>% pull(pretty_name) %>% unique()
-      
-      selectInput("var_sel2", "Variable", 
-                  choices = c(variables), 
-                  selected = "Subnatl. Turnout Rate")
-      }
-    })
+    updateSelectInput(
+      session, "var_sel2",
+      choices = dict$pretty_name[dict$viewable_graph == 1],
+      selected = "Subnatl. Turnout Rate"
+    )
+  })
   
+  # Mostrar/ocultar según pestaña
+  observe({
+    if (current_tab() == "map_tab") {
+      shinyjs::show("var_sel")
+      shinyjs::hide("var_sel2")
+    } else {
+      shinyjs::hide("var_sel")
+      shinyjs::show("var_sel2")
+    }
+  })
+  
+  # Mostrar descripción de variable
+  output$var_description_map <- renderText({
+    req(current_tab() == "map_tab")
+    req(input$var_sel)
+    var_info <- dict %>% filter(pretty_name == input$var_sel) %>% slice(1)
+    paste0(var_info$pretty_name[1], ": ", var_info$description[1])
+  })
+  
+  output$var_description_graph <- renderText({
+    req(current_tab() == "graph_tab")
+    req(input$var_sel2)
+    var_info <- dict %>% filter(pretty_name == input$var_sel2) %>% slice(1)
+    paste0(var_info$pretty_name[1], ": ", var_info$description[1])
+  })
+  
+  observe({
+    if (current_tab() == "map_tab") {
+      shinyjs::show("var_description_map")
+      shinyjs::hide("var_description_graph")
+    } else {
+      shinyjs::hide("var_description_map")
+      shinyjs::show("var_description_graph")
+    }
+  })
+
+
   
   
   
@@ -80,31 +112,38 @@ server <- function(input, output, session) {
   
   output$year_selector <- renderUI({
     req(current_tab() == "map_tab")
-    # sliderInput("year_sel", "Year", min = min(data$year), max = max(data$year),
-    #             step = 1,
-    #             value = 2024, animate = T, sep = "", width = "100%")
+    
     shinyWidgets::sliderTextInput(
       inputId = "year_sel",
       label = "Year",
       choices = as.character(seq(1983, 2024, 1)),  # Only specific years
-      #selected = "2010",
+      
       grid = TRUE,  # Show tick marks
-      width = "100%",
+      width = "90%",
       animate = T
     )
     
   })
   
+  observe({
+    # Solo actualizar los ticks si estamos en el tab correcto
+    req(current_tab() == "map_tab")
+    
+    # Queremos mostrar ticks solo para estos años:
+    desired_years <- c(1990, 2000, 2010, 2020)
+    all_years <- 1983:2024
+    
+    # Calculamos las posiciones de estos años en el vector de choices
+    indices <- which(all_years %in% desired_years) - 1  # -1 porque JS usa índice base 0
+    
+    session$sendCustomMessage("custom_ticks", list(
+      labels = as.character(desired_years),
+      indices = indices
+    ))
+  })
   
   
-  output$var_description <- reactive({
-    ifelse(
-      input$var_sel == "Select a variable", 
-      "Please select a variable to see the description.",{
-        var_info <- dict %>% filter(pretty_name == input$var_sel) %>% slice(1)
-        paste0(var_info$pretty_name, ": ", var_info$description)
-    })
-    })
+
 
   
   var_normal_name <- reactive({

@@ -375,14 +375,13 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           weight = 1,
           fillOpacity = 0.9,
           highlightOptions = highlightOptions(weight = 5, color = "#666", fillOpacity = 1),
-          label = ~format_leaflet_value(.leaflet_value, var_info()$type),
+          label = ~paste0(stringr::str_to_title(state_name),": ",format_leaflet_value(.leaflet_value, var_info()$type)),
           popup = ~paste0(
             "<div style='background-color:#041d2d; color:#f4e842; padding:6px 6px;
            border-radius:3px; font-weight:bold; font-size:15px; text-align:center;'>",
             var_info()$pretty_name, ": ", format_leaflet_value(.leaflet_value, var_info()$type),
             "</div>",
             "<b>State:</b> ", stringr::str_to_title(state_name), "<br/>",
-            "<b>Region:</b> ", stringr::str_to_title(region_name), "<br/>",
             "<b>Governor:</b> ", head_name_sub, "<br/>",
             "<b>Governor sex:</b> ", ifelse(sex_head_sub == 1, "Female", "Male"), "<br/>",
             "<b>Party:</b> ", head_party_sub, "<br/>",
