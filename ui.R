@@ -48,6 +48,18 @@ ui <- dashboardPage(
       ")),
     
     tags$style(HTML("
+    .btn.dropdown-toggle .filter-option {
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  height: auto !important;
+    }
+.btn-whiteblack {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #ccc !important;
+  box-shadow: none !important;
+}
     #year_sel {
       max-height: 200px !important;
       overflow-y: hidden !important;

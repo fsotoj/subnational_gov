@@ -1,6 +1,6 @@
 linePlotModuleUI <- function(id) {
   ns <- NS(id)
-  plotlyOutput(ns("line_plot"))
+  plotlyOutput(ns("line_plot"),height = "80vh")
 }
 
 linePlotModuleServer <- function(id, data, dict, input_variable, input_states, active_tab) {
