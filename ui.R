@@ -8,6 +8,8 @@ ui <- dashboardPage(
       menuItem("Mapping tool", tabName = "map_tab", icon = icon("map")),
       menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
       menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
+      menuItem("Data", tabName = "data", icon = icon("data")),
+      
       menuItem("About", tabName = "about", icon = icon("info-circle"))
     ),
     
@@ -122,6 +124,9 @@ ui <- dashboardPage(
 
       tabItem(tabName = "codebook", 
               uiOutput("pdf_visor")),
+      
+      tabItem(tabName = "data", DT::DTOutput("table_info", height = "100%")),
+      
       
       tabItem(
         tabName = "about",
