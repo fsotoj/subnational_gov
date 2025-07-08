@@ -57,6 +57,13 @@ server <- function(input, output, session) {
       shinyjs::hide("var_sel")
       shinyjs::show("var_sel2")
     }
+    
+    if (!(current_tab() %in% c("graph_tab", "map_tab"))){
+      shinyjs::hide("var_sel")
+      shinyjs::hide("var_sel2")
+    }
+    
+    # ALGO PASA AQUIIII
   })
   
   # Mostrar descripción de variable
@@ -228,19 +235,54 @@ server <- function(input, output, session) {
   
   
   output$table_info <- DT::renderDT({
+    req(input$country_sel2, input$state_sel2, current_tab() == "data_tab")
+    
+    filtered_data <- data %>%
+      dplyr::filter(
+        country_name == input$country_sel2,
+        state_name == input$state_sel2
+      ) %>%
+      select(all_of(input$columns_sel))
+    
     DT::datatable(
-      data,
+      filtered_data,
       options = list(
-        scrollY = "400px",  # Altura visible con scroll vertical
-        paging = FALSE,     # Sin paginación
+        scrollX = TRUE,         # Scroll horizontal
+        scrollY = "50vh",      # Scroll vertical con altura fija
+        paging = FALSE,         # Sin paginación (muestra todo con scroll)
         scrollCollapse = TRUE,
-        dom = 't'           # Solo la tabla, sin barra de búsqueda ni info
+        dom = 't'               # Solo la tabla, sin barra de búsqueda ni info
       ),
       class = 'cell-border stripe',
       rownames = FALSE
     )
+    
+  })
+
+  
+  observeEvent(input$country_sel2, {
+    states_available <- data %>%
+      dplyr::filter(country_name == input$country_sel2) %>%
+      dplyr::pull(state_name) %>%
+      unique() %>%
+      sort()
+    
+    updateSelectInput(session, "state_sel2",
+                      choices = states_available,
+                      selected = states_available[1])
   })
   
+  observe({
+    if (current_tab() == "data_tab") {
+      shinyjs::show("country_sel2")
+      shinyjs::show("state_sel2")
+      shinyjs::show("columns_sel")
+    } else {
+      shinyjs::hide("country_sel2")
+      shinyjs::hide("state_sel2")
+      shinyjs::hide("columns_sel")
+    }
+  })
   
   
   
