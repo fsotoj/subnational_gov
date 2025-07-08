@@ -2,23 +2,8 @@
 
 server <- function(input, output, session) {
   
-  #apply_filters <- reactive(input$apply_filters)
-  
-  # selected_states <- stateSelectorModuleServer(
-  #   id = "state_selector",
-  #   data = data,  
-  #   active_tab = reactive(input$tabs)
-  # )
-  # 
-  # 
-  # output$selected_states <- renderPrint({
-  #   selected_states()
-  # })
-  
-  
-  current_tab <- reactive({
-    input$tabs
-  })
+
+  current_tab <- reactive({input$tabs})
   
   
   output$state_selector <- renderUI({
@@ -66,7 +51,9 @@ server <- function(input, output, session) {
     if (current_tab() == "map_tab") {
       shinyjs::show("var_sel")
       shinyjs::hide("var_sel2")
-    } else {
+    } 
+    
+    if (current_tab() == "graph_tab") {
       shinyjs::hide("var_sel")
       shinyjs::show("var_sel2")
     }
@@ -91,7 +78,8 @@ server <- function(input, output, session) {
     if (current_tab() == "map_tab") {
       shinyjs::show("var_description_map")
       shinyjs::hide("var_description_graph")
-    } else {
+    } 
+    if (current_tab() == "graph_tab") {
       shinyjs::hide("var_description_map")
       shinyjs::show("var_description_graph")
     }
@@ -239,7 +227,19 @@ server <- function(input, output, session) {
   
   
   
-  
+  output$table_info <- DT::renderDT({
+    DT::datatable(
+      data,
+      options = list(
+        scrollY = "400px",  # Altura visible con scroll vertical
+        paging = FALSE,     # Sin paginación
+        scrollCollapse = TRUE,
+        dom = 't'           # Solo la tabla, sin barra de búsqueda ni info
+      ),
+      class = 'cell-border stripe',
+      rownames = FALSE
+    )
+  })
   
   
   
