@@ -1,39 +1,86 @@
-# UI del módulo
-stateSelectorModuleUI  <- function(id) {
+
+treeSelectorUI <- function(id) {
   ns <- NS(id)
   tagList(
-    uiOutput(ns("tree_ui"))
+    shinyWidgets::dropdownButton(
+      label = "Select states",
+      circle = FALSE,
+      status = "primary",
+      icon = icon("caret-down"),
+      width = "300px",
+      uiOutput(ns("country_list"))
+    ),
+    # input oculto con la selección serializada
+    textInput(ns("states_sel"), label = NULL, value = "")
   )
 }
 
-# Server del módulo
-stateSelectorModuleServer  <- function(id, data, active_tab) {
+treeSelectorServer <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    output$tree_ui <- renderUI({
-      req(active_tab() == "graph_tab")
-      
-      # Crear árbol jerárquico país > estado
-      tree_choices <- create_tree(data %>% select(country_name, state_name))
-      
-      treeInput(
-        inputId = ns("tree"),
-        label = "Selecciona estados:",
-        choices = tree_choices,
-        returnValue = "text",
-        closeDepth = 1,
-        width = "100%"
+    countries <- unique(data$country_name)
+    selected_states <- reactiveVal(character(0))
+    expanded_country <- reactiveVal(NULL)
+    
+    output$country_list <- renderUI({
+      tagList(
+        lapply(countries, function(country) {
+          btn_id <- ns(paste0("btn_", gsub(" ", "_", country)))
+          
+          tagList(
+            actionButton(btn_id, label = country, style = "text-align:left; width:100%; font-weight:bold; margin-bottom: 3px;"),
+            if (!is.null(expanded_country()) && expanded_country() == country) {
+              states <- data %>% filter(country_name == country) %>% pull(state_name)
+              checkboxGroupInput(
+                inputId = ns(paste0("states_", gsub(" ", "_", country))),
+                label = NULL,
+                choices = states,
+                selected = intersect(selected_states(), states),
+                inline = FALSE
+              )
+            }
+          )
+        })
       )
     })
     
-    # Estados seleccionados (solo nombres de estados)
-    selected_states <- reactive({
-      req(input$tree)
-      # Solo estados (excluye países)
-      data$state_name[data$state_name %in% input$tree]
+    observe({
+      lapply(countries, function(country) {
+        btn_id <- paste0("btn_", gsub(" ", "_", country))
+        observeEvent(input[[btn_id]], {
+          if (expanded_country() == country) {
+            expanded_country(NULL)
+          } else {
+            expanded_country(country)
+          }
+        }, ignoreInit = TRUE)
+      })
     })
     
-    return(selected_states)
+    observe({
+      lapply(countries, function(country) {
+        input_id <- paste0("states_", gsub(" ", "_", country))
+        observeEvent(input[[input_id]], {
+          current <- selected_states()
+          states_of_country <- data %>% filter(country_name == country) %>% pull(state_name)
+          current <- setdiff(current, states_of_country)
+          new_selection <- input[[input_id]]
+          if (is.null(new_selection)) new_selection <- character(0)
+          selected_states(c(current, new_selection))
+          
+          # Actualizar input oculto con cadena CSV
+          updateTextInput(session, "states_sel", value = paste(selected_states(), collapse = ","))
+        }, ignoreNULL = FALSE)
+      })
+    })
+    
+    # Inicializa input oculto
+    observe({
+      updateTextInput(session, "states_sel", value = paste(selected_states(), collapse = ","))
+    })
+    
+    # El módulo devuelve la selección en forma reactiva (vector de strings)
+    selected_states
   })
 }
