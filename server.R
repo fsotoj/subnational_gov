@@ -2,43 +2,42 @@ server <- function(input, output, session) {
   
   current_tab <- reactive({input$tabs})
   
-  # Selector dinámico de estados (solo en graph_tab)
-output$state_selector <- renderUI({
-  req(current_tab() == "graph_tab")
-  
-  states_choices <- data %>%
-    distinct(country_name, state_name) %>%
-    arrange(country_name, state_name) %>%
-    group_by(country_name) %>%
-    group_split()
-  
-  choices_list <- lapply(states_choices, function(group) {
-    setNames(as.list(group$state_name), group$state_name)
-  })
-  
-  countries <- sapply(states_choices, function(g) unique(g$country_name))
-  names(choices_list) <- countries
-  
-  pickerInput(
-    inputId = "state_sel",
-    label = "Select states from any country:",
-    choices = choices_list,
-    selected = c("CAPITAL FEDERAL", "DISTRITO FEDERAL", "CDMX"),
-    multiple = TRUE,
-    options = list(
-      `actions-box` = TRUE,
-      `live-search` = TRUE,
-      `selectedTextFormat` = "values",
-      `style` = "btn-whiteblack"
-      
-    )
-  )
-})
+  output$state_selector <- renderUI({
+    
+    req(current_tab() == "graph_tab")
+    
+    states_choices <- data %>%
+      distinct(country_name, state_name) %>%
+      arrange(country_name, state_name) %>%
+      group_by(country_name) %>%
+      group_split()
+    
+    choices_list <- lapply(states_choices, function(group) {
+      setNames(as.list(group$state_name), group$state_name)
+      })
+    
+    countries <- sapply(states_choices, function(g) unique(g$country_name))
+    names(choices_list) <- countries
+    
+    pickerInput(
+      inputId = "state_sel",
+      label = "Select states from any country:",
+      choices = choices_list,
+      selected = c("CAPITAL FEDERAL", "DISTRITO FEDERAL", "CDMX"),
+      multiple = TRUE,
+      options = list(
+        `actions-box` = TRUE,
+        `live-search` = TRUE,
+        `selectedTextFormat` = "values"
+        )
+      )
+    })
 
-observe({
-  req(input$state_sel) # para asegurarse que el input existe
   
-  runjs("
+  observe({
+    req(input$state_sel) # para asegurarse que el input existe
+    
+    runjs("
     $('#state_sel').on('shown.bs.select', function () {
       var color_map = {
         'ARGENTINA': '#74ACDF',
@@ -61,16 +60,10 @@ observe({
             li.css({'background-color': color, 'color': 'white'});
           });
         }
-      });
-    });
-  ")
-})
-
-
-
-
-
-  
+        });
+        });
+          ")
+    })
   
   # Actualizar opciones y selección de var_sel y var_sel2 (independiente de hide/show)
   observe({
@@ -78,25 +71,30 @@ observe({
       session, "var_sel",
       choices = dict$pretty_name[dict$viewable_map == 1],
       selected = "Subnatl. Head of State Party Affiliation"
-    )
+      )
     
     updateSelectInput(
       session, "var_sel2",
       choices = dict$pretty_name[dict$viewable_graph == 1],
       selected = "Subnatl. Turnout Rate"
-    )
-  })
+      )
+    })
   
-  # Mostrar/ocultar var_sel y var_sel2 según pestaña (usando shinyjs)
+  
   observe({
     if (current_tab() == "map_tab") {
-      shinyjs::show("var_sel")
-      shinyjs::hide("var_sel2")
+      show("var_sel")
+      hide("var_sel2")
+      show("var_description_map")
+      hide("var_description_graph")
     } 
     
     if (current_tab() == "graph_tab") {
-      shinyjs::hide("var_sel")
-      shinyjs::show("var_sel2")
+      hide("var_sel")
+      show("var_sel2")
+      hide("var_description_map")
+      show("var_description_graph")
+      show("state_selector")
     }
     
     if (!(current_tab() %in% c("graph_tab", "map_tab"))){
@@ -105,17 +103,20 @@ observe({
     }
   })
   
-  # Mostrar/ocultar descripciones de variables según pestaña
+  
   observe({
-    if (current_tab() == "map_tab") {
-      shinyjs::show("var_description_map")
-      shinyjs::hide("var_description_graph")
-    } 
-    if (current_tab() == "graph_tab") {
-      shinyjs::hide("var_description_map")
-      shinyjs::show("var_description_graph")
+    if (current_tab() == "data_tab") {
+      shinyjs::show("country_sel2")
+      shinyjs::show("state_sel2")
+      shinyjs::show("columns_sel")
+    } else {
+      shinyjs::hide("country_sel2")
+      shinyjs::hide("state_sel2")
+      shinyjs::hide("columns_sel")
     }
   })
+  
+  
   
   # Render texto descripción variable para map_tab
   output$var_description_map <- renderText({
@@ -287,18 +288,6 @@ observe({
                       selected = states_available[1])
   })
   
-  # Mostrar u ocultar inputs en data_tab
-  observe({
-    if (current_tab() == "data_tab") {
-      shinyjs::show("country_sel2")
-      shinyjs::show("state_sel2")
-      shinyjs::show("columns_sel")
-    } else {
-      shinyjs::hide("country_sel2")
-      shinyjs::hide("state_sel2")
-      shinyjs::hide("columns_sel")
-    }
-  })
   
   # Descarga datos (excel)
   output$download_data <- downloadHandler(

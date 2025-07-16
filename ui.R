@@ -5,38 +5,35 @@ ui <- dashboardPage(
   dashboardSidebar(
     useShinyjs(),
     sidebarMenu(id = "tabs",
-      menuItem("Mapping tool", tabName = "map_tab", icon = icon("map")),
-      menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
-      menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
-      menuItem("Data", tabName = "data_tab", icon = icon("table")),
-      
-      menuItem("About", tabName = "about", icon = icon("info-circle"))
+                menuItem("Mapping tool", tabName = "map_tab", icon = icon("map")),
+                menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
+                menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
+                menuItem("Data", tabName = "data_tab", icon = icon("table")),
+                menuItem("About", tabName = "about", icon = icon("info-circle"))
     ),
     
-    uiOutput("country_selector"),
-    
-    uiOutput("state_selector"),
-    
-    selectInput("var_sel", "Variable", choices = NULL),
-    selectInput("var_sel2", "Variable", choices = NULL),
-    
-    
-    selectInput("country_sel2", "Select a country:", choices = c(unique(data$country_name)), 
-                selected = "ARGENTINA"),
-    selectInput("state_sel2", "Select a state:", choices = NULL),
-    pickerInput(
+    uiOutput("country_selector"),  # default: visible
+    hidden(selectInput("var_sel", "Variable", choices = NULL)),
+    hidden(uiOutput("state_selector")),
+    hidden(selectInput("var_sel2", "Variable", choices = NULL)),
+    hidden(selectInput("country_sel2", "Select a country:", choices = c(unique(data$country_name)), selected = "ARGENTINA")),
+    hidden(selectInput("state_sel2", "Select a state:", choices = NULL)),
+    hidden(pickerInput(
       inputId = "columns_sel",
       label = "Select columns to show:",
       choices = colnames(data),
       selected = colnames(data),
       multiple = TRUE,
       options = pickerOptions(
-        actionsBox = TRUE,    # Botones "Seleccionar todo / Deseleccionar todo"
-        liveSearch = TRUE,   # Barra búsqueda en el dropdown
-        selectedTextFormat = "count > 3"  # Muestra texto si seleccionas más de 3 columnas
-      ))
-    
-    ),
+        actionsBox = TRUE,
+        liveSearch = TRUE,
+        selectedTextFormat = "count > 3"
+      )
+    ))
+  ),
+  
+  
+  
   dashboardBody(
     tags$head(
       tags$link(id = "theme-css", rel = "stylesheet", type = "text/css", href = "styles.css")
@@ -47,31 +44,9 @@ ui <- dashboardPage(
         });
       ")),
     
-    tags$style(HTML("
-    .btn.dropdown-toggle .filter-option {
-  white-space: normal !important;
-  overflow-wrap: break-word !important;
-  max-width: 100% !important;
-  height: auto !important;
-    }
-.btn-whiteblack {
-  background-color: #ffffff !important;
-  color: #000000 !important;
-  border: 1px solid #ccc !important;
-  box-shadow: none !important;
-}
-    #year_sel {
-      max-height: 200px !important;
-      overflow-y: hidden !important;
-    }
-    .js-range-slider__play {
-      position: relative !important;
-      top: 25px !important;
-      right: 0 !important;
-      margin-left: 10px !important;
-      z-index: 1100 !important;
-    }
-  ")),
+  #   tags$style(HTML("
+  # 
+  # ")),
     tabItems(
       tabItem(
         tabName = "map_tab", # QUE PASA ACAAAAAA
@@ -142,7 +117,8 @@ ui <- dashboardPage(
       
       tabItem(tabName = "data_tab",   
               fluidRow(DT::DTOutput("table_info")),
-              fluidRow(    downloadButton("download_data", "Download complete data"),
+              br(),
+              fluidRow(downloadButton("download_data", "Download complete data"),
                            downloadButton("download_geom", "Download complete geometries")
                 
                 
