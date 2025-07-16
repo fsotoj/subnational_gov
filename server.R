@@ -34,36 +34,36 @@ server <- function(input, output, session) {
     })
 
   
-  observe({
-    req(input$state_sel) # para asegurarse que el input existe
-    
-    runjs("
-    $('#state_sel').on('shown.bs.select', function () {
-      var color_map = {
-        'ARGENTINA': '#74ACDF',
-        'BRAZIL': '#3CB371',
-        'MEXICO': '#E03C31'
-      };
-
-      $('.dropdown-header').each(function() {
-        var header = $(this);
-        var pais = header.text().trim();
-        var color = color_map[pais];
-        if(color) {
-          header.css({'background-color': color, 'color': 'white', 'font-weight': 'bold'});
-          var siblings = header.nextAll();
-          siblings.each(function() {
-            var li = $(this);
-            if(li.hasClass('dropdown-header')) {
-              return false;
-            }
-            li.css({'background-color': color, 'color': 'white'});
-          });
-        }
-        });
-        });
-          ")
-    })
+  # observe({
+  #   req(input$state_sel) # para asegurarse que el input existe
+  #   
+  #   runjs("
+  #   $('#state_sel').on('shown.bs.select', function () {
+  #     var color_map = {
+  #       'ARGENTINA': '#74ACDF',
+  #       'BRAZIL': '#3CB371',
+  #       'MEXICO': '#E03C31'
+  #     };
+  # 
+  #     $('.dropdown-header').each(function() {
+  #       var header = $(this);
+  #       var pais = header.text().trim();
+  #       var color = color_map[pais];
+  #       if(color) {
+  #         header.css({'background-color': color, 'color': 'white', 'font-weight': 'bold'});
+  #         var siblings = header.nextAll();
+  #         siblings.each(function() {
+  #           var li = $(this);
+  #           if(li.hasClass('dropdown-header')) {
+  #             return false;
+  #           }
+  #           li.css({'background-color': color, 'color': 'white'});
+  #         });
+  #       }
+  #       });
+  #       });
+  #         ")
+  #   })
   
   # Actualizar opciones y selección de var_sel y var_sel2 (independiente de hide/show)
   observe({

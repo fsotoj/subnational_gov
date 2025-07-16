@@ -11,7 +11,6 @@ ui <- dashboardPage(
                 menuItem("Data", tabName = "data_tab", icon = icon("table")),
                 menuItem("About", tabName = "about", icon = icon("info-circle"))
     ),
-    
     uiOutput("country_selector"),  # default: visible
     hidden(selectInput("var_sel", "Variable", choices = NULL)),
     hidden(uiOutput("state_selector")),
@@ -27,6 +26,7 @@ ui <- dashboardPage(
       options = pickerOptions(
         actionsBox = TRUE,
         liveSearch = TRUE,
+        dropupAuto = FALSE,
         selectedTextFormat = "count > 3"
       )
     ))
