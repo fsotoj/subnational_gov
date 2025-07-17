@@ -28,7 +28,7 @@ dict <- read.xlsx("data/dictionary.xlsx") %>% filter(scope == "subnational")
 party_colors <- read.xlsx("data/party_colors.xlsx")
 
 country_bboxes <- list(
-  ARGENTINA = list(lng1 = -73.5, lat1 = -55.1, lng2 = -53.6, lat2 = -21.8),
+  ARGENTINA = list(lng1 = -73.5, lat1 = -59, lng2 = -56, lat2 = -21.8),
   BRAZIL    = list(lng1 = -73.9, lat1 = -33.7, lng2 = -44.5, lat2 = 5.3),
   MEXICO    = list(lng1 = -118.5, lat1 = 14.5, lng2 = -86.7, lat2 = 32.7),
   `Select a country`  = list(lng1 = -118.5, lat1 = -55.1, lng2 = -34.8, lat2 = 32.7)

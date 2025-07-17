@@ -1,7 +1,7 @@
 
 
 ui <- dashboardPage(
-  dashboardHeader(title = "Subnational Elections"),
+  dashboardHeader(title = "Subnational Politics"),
   dashboardSidebar(
     useShinyjs(),
     sidebarMenu(id = "tabs",
@@ -29,7 +29,11 @@ ui <- dashboardPage(
         dropupAuto = FALSE,
         selectedTextFormat = "count > 3"
       )
-    ))
+    )),
+    div(
+      style = "position: absolute; bottom: 10px; width: 100%; text-align: center;",
+      tags$img(src = "tec_logo_white.svg", height = "50px")
+    )
   ),
   
   

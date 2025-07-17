@@ -7,10 +7,10 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, a
   moduleServer(id, function(input, output, session) {
     output$line_plot <- renderPlotly({
       req(data(), input_variable(), input_states(), active_tab() == "graph_tab")
+      
       df <- data() %>%
         filter(state_name %in% input_states()) %>%
         select(country_name, state_name, year, value = all_of(input_variable()))
-      
       
       pretty_name <- dict %>% 
         filter(variable == input_variable()) %>% 
@@ -18,44 +18,88 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, a
       
       req(nrow(df) > 0)
       
-      # Colores fijos para los países específicos
       colores_pais <- c(
-        "ARGENTINA" = "#74ACDF",  # celeste
-        "BRAZIL" = "#3CB371",     # verde
-        "MEXICO" = "#E03C31"      # rojo
+        "ARGENTINA" = "#74ACDF",
+        "BRAZIL" = "#3CB371",
+        "MEXICO" = "#E03C31"
       )
       
-      # Filtrar solo los colores para los países presentes en df
       colores_pais <- colores_pais[names(colores_pais) %in% unique(df$country_name)]
-
-      plot_ly(df, x = ~year, y = ~value,
-              color = ~country_name,
-              colors = colores_pais,
-              split = ~state_name,
-              type = "scatter", mode = "lines+markers",
-              text = ~paste0(state_name)) %>%
+      
+      # Asignar símbolos cíclicos por orden de input_states
+      symbols <- c("x", "circle", "diamond", "square","star","square-open","circle-open")
+      selected_states <- input_states()
+      symbol_map <- setNames(rep(symbols, length.out = length(selected_states)), selected_states)
+      
+      # Crear gráfico vacío
+      fig <- plot_ly()
+      
+      # Agregar una traza por estado
+      for (state in selected_states) {
+        df_state <- df %>% filter(state_name == state)
+        country <- unique(df_state$country_name)
+        color <- colores_pais[[country]]
+        
+        fig <- fig %>%
+          add_trace(
+            data = df_state,
+            x = ~year,
+            y = ~value,
+            type = "scatter",
+            mode = "lines+markers",
+            name = state,
+            text = ~paste("State:", state_name, "<br>Year:", year, "<br>Value:", value),
+            hoverinfo = "text",
+            line = list(color = color, width=3),
+            marker = list(
+              symbol = symbol_map[[state]],
+              size = 12,
+              color = color
+            )
+          )
+      }
+      
+      
+      fig %>%
         layout(
-          title = "Comparison of States across Countries",
+          # title = list(
+          #   text = "Comparison of States across Countries",
+          #   x = 0.05,
+          #   xanchor = "left",
+          #   font = list(size = 18)
+          # ),
           xaxis = list(
             tickmode = "array",
             tickvals = 1983:2024,
             range = c(1983, 2024),
-            ticks = "outside",     # Make ticks point outward
-            title = "Year"
+            ticks = "outside",
+            title = "Year",
+            showgrid = FALSE,
+            tickangle = -45,
+            tickfont = list(size = 10),
+            domain = c(0.05, 0.95)
           ),
-          yaxis = list(title = pretty_name),
+          yaxis = list(
+            title = pretty_name,
+            gridcolor = "lightgray",
+            titlefont = list(size = 14),
+            tickfont = list(size = 10),
+            domain = c(0.025, 0.975)
+          ),
           showlegend = TRUE,
           legend = list(
             orientation = "h",
             x = 0,
-            y = -0.2,
+            y = -0.25,
             xanchor = "left",
             yanchor = "top",
-            traceorder = "normal",
             font = list(size = 10)
           ),
-          margin = list(b = 80)
+          margin = list(l = 20, r = 20, b = 20, t = 40),
+          plot_bgcolor = "#ffffff",
+          paper_bgcolor = "#ffffff"
         )
     })
+    
   })
 }

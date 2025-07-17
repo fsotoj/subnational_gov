@@ -70,14 +70,12 @@ server <- function(input, output, session) {
     updateSelectInput(
       session, "var_sel",
       choices = dict$pretty_name[dict$viewable_map == 1],
-      selected = "Subnatl. Head of State Party Affiliation"
-      )
+      selected = "Subnatl. Head of State Party Affiliation")
     
     updateSelectInput(
       session, "var_sel2",
       choices = dict$pretty_name[dict$viewable_graph == 1],
-      selected = "Subnatl. Turnout Rate"
-      )
+      selected = "Subnatl. Turnout Rate")
     })
   
   
