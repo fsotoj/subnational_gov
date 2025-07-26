@@ -1,5 +1,25 @@
 server <- function(input, output, session) {
   
+  observe({
+    showModal(modalDialog(
+      title = "About the Subnational Politics Project (SPP)",
+      HTML("
+        <p style='text-align:justify;'>
+        The Subnational Politics Project (SPP) is part of a broader research project designed to compile, generate, and disseminate systematic, transparent, and publicly accessible data on subnational political institutions, subnational political processes, and subnational electoral outcomes in Latin America.
+        </p>
+        <p style='text-align:justify;'>
+        The primary objective of the project is to create a centralized and standardized data infrastructure that facilitates both in-depth within-country analyses and cross-national comparative research on subnational political dynamics.
+        </p>
+        <p style='text-align:justify;'>
+        By providing longitudinal and spatially disaggregated data, the SPP seeks to support empirical scholarship on a wide range of topics, including federalism, decentralization, party competition, electoral accountability, and territorial governance.
+        </p>
+      "),
+      easyClose = TRUE,
+      size = "xl",
+      footer = modalButton("Close")
+    ))
+  })
+  
   current_tab <- reactive({input$tabs})
   
   output$state_selector <- renderUI({
@@ -214,14 +234,14 @@ server <- function(input, output, session) {
     )
     reelec <- ifelse(leader_info$reelec_nat_gov == 1, "was reelected", "was not reelected")
     early_exit <- ifelse(leader_info$early_exit_nat == 1, "left office early", "completed the full term")
-    election_year <- ifelse(leader_info$electoral_national_year == 1, "There was a national election that year.", "No national election was held that year.")
+    #election_year <- ifelse(leader_info$electoral_national_year == 1, "There was a national election that year.", "No national election was held that year.")
     
     text <- glue::glue(
-      "<div style='padding:10px; font-size:16px; line-height:1.5em;'>",
-      " In the year <strong>{leader_info$year}</strong> the national leader in <strong>{country_name}</strong> was <strong>{leader_info$head_name_national}</strong>, a {sex} politician affiliated with the <strong>{leader_info$head_party_national}</strong> party, which leans towards the <strong>{ideology_text}</strong> on the political spectrum. ",
-      "They served for <strong>{leader_info$years_nat_gov}</strong> years in office, {reelec}, and {early_exit}. ",
-      "{election_year}",
-      "</div>"
+      "<div>",
+      " In the year <strong>{leader_info$year}</strong> the national leader in <strong>{country_name}</strong> was <strong>{leader_info$head_name_national}</strong>, a {sex} politician affiliated with the <strong>{leader_info$head_party_national}</strong> party, which leans towards the <strong>{ideology_text}</strong> on the ideological spectrum. ",
+      "They served for <strong>{leader_info$years_nat_gov}</strong> years, {reelec}, and {early_exit}. </div>",
+      # "{election_year}",
+      # "</div>"
     )
     
     HTML(text)

@@ -307,7 +307,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     ns <- session$ns
     
     df_map <- reactive({
-      req(data_map(),input_var_sel(),active_tab() == "map_tab")
+      req(data_map(), input_var_sel(), active_tab() == "map_tab")
       data <- data_map()
       data[[".leaflet_value"]] <- data[[input_var_sel()]]
       data
@@ -329,12 +329,13 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
       get_leaflet_palette(var_info()$type, palette_vector(), values())
     })
     
-    prev_domain <- reactiveVal(NULL)  # Guarda dominio previo para comparar
+    prev_domain <- reactiveVal(NULL)
+    prev_country <- reactiveVal(NULL)  # NUEVO: guarda el país anterior
     
     output$map <- renderLeaflet({
-      req(active_tab() == "map_tab", input_country_sel()!= "", input_var_sel())
+      req(active_tab() == "map_tab", input_country_sel() != "", input_var_sel())
       
-      leaflet(options = leafletOptions(preferCanvas = T, zoomControl = FALSE)) %>%
+      leaflet(options = leafletOptions(preferCanvas = TRUE, zoomControl = FALSE)) %>%
         fitBounds(
           lng1 = country_bboxes[[input_country_sel()]]$lng1,
           lat1 = country_bboxes[[input_country_sel()]]$lat1,
@@ -355,18 +356,17 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
                      position = "topright",
                      className = "leaflet-control-warning")
         
-        prev_domain(NULL)  # Reiniciar dominio previo si no hay datos
+        prev_domain(NULL)
+        prev_country(NULL)
         return()
       }
       
       current_domain <- pal()$domain
-      
-      # ¿Cambió el dominio?
       domain_changed <- !identical(current_domain, prev_domain())
+      country_changed <- !identical(input_country_sel(), prev_country())  # NUEVO
       
       proxy <- leafletProxy(ns("map"), data = df_map())
       
-      # Actualizar polígonos (sin borrar shapes para evitar parpadeo)
       proxy %>%
         addPolygons(
           layerId = ~country_state_code,
@@ -375,7 +375,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           weight = 1,
           fillOpacity = 0.9,
           highlightOptions = highlightOptions(weight = 5, color = "#666", fillOpacity = 1),
-          label = ~paste0(stringr::str_to_title(state_name),": ",format_leaflet_value(.leaflet_value, var_info()$type)),
+          label = ~paste0(stringr::str_to_title(state_name), ": ", format_leaflet_value(.leaflet_value, var_info()$type)),
           popup = ~paste0(
             "<div style='background-color:#041d2d; color:#f4e842; padding:6px 6px;
            border-radius:3px; font-weight:bold; font-size:15px; text-align:center;'>",
@@ -400,8 +400,8 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           )
         )
       
-      # Actualizar leyenda solo si cambió el dominio
-      if (domain_changed) {
+      # ACTUALIZAR LEYENDA SI CAMBIÓ DOMINIO O PAÍS
+      if (domain_changed || country_changed) {
         proxy %>%
           clearControls() %>%
           addLegend_decreasing(
@@ -413,9 +413,9 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
             title = var_info()$pretty_name
           )
         
-        prev_domain(current_domain)  # Guardar nuevo dominio
+        prev_domain(current_domain)
+        prev_country(input_country_sel())  # Actualizar país anterior
       }
     })
-    
   })
 }

@@ -1,7 +1,7 @@
 
 
 ui <- dashboardPage(
-  dashboardHeader(title = "Subnational Politics"),
+  dashboardHeader(title = "Subnational Politics Project",titleWidth = 280),
   dashboardSidebar(
     useShinyjs(),
     sidebarMenu(id = "tabs",
@@ -29,11 +29,7 @@ ui <- dashboardPage(
         dropupAuto = FALSE,
         selectedTextFormat = "count > 3"
       )
-    )),
-    div(
-      style = "position: absolute; bottom: 10px; width: 100%; text-align: center;",
-      tags$img(src = "tec_logo_white.svg", height = "50px")
-    )
+    ))
   ),
   
   
@@ -58,26 +54,29 @@ ui <- dashboardPage(
           mapModuleUI("map1"),
           
           absolutePanel(
-            top = 100, right = 12, 
-            width = 320,
-            draggable = TRUE,
-            box(
-              title = "Variable description", 
-              solidHeader = TRUE,
-              collapsible = TRUE, 
-              collapsed = FALSE,
-              width = NULL,
-              textOutput("var_description_map"),
+            top = 90, right = 12, 
+            width = 300,
+            draggable = F,
+            div(class = "small-text-box",
+                box(
+                  title = "Variable description", 
+                  solidHeader = TRUE,
+                  collapsible = TRUE,
+                  collapsed = FALSE,
+                  width = NULL,
+                  textOutput("var_description_map")
+                )
             ),
-            box(
-              title = "National Leader Summary",
-              solidHeader = TRUE,
-              collapsible = TRUE,
-              collapsed = TRUE,
-              width = NULL,
-              uiOutput("leader_summary")
-            )
-          ),
+            div(class = "small-text-box",
+                box(
+                  title = "National Leader Summary",
+                  solidHeader = TRUE,
+                  collapsible = TRUE,
+                  collapsed = TRUE,
+                  width = NULL,
+                  uiOutput("leader_summary")
+                  )
+          )),
           
           # Custom year selector placed at the bottom of the tab
           div(
