@@ -171,18 +171,24 @@ h1, h2, h3, h4, h5, h6 {
 
 
 
-
-/* Reposiciona el botón de animación a la derecha */
-#year_sel + .slider-animate-container {
-  position: absolute !important;
-  top: 40px !important;   /* ajusta verticalmente */
-  right: 0px !important;
-  width: auto;
-  height: auto;
-  transform: scale(0.8);
+/* Contenedor del slider con id 'year_sel' */
+#year_sel {
+  position: relative;        /* Para que el botón absoluto se posicione respecto a este */
+  padding-right: 60px;       /* Espacio a la derecha para el botón de animación */
 }
 
+/* Contenedor del botón play/pausa dentro del slider */
+#year_sel .slider-animate-container {
+  position: absolute !important;
+  top: 50%;                  /* Centra verticalmente */
+  right: 0;                  /* Lo pega a la derecha */
+  transform: translateY(-50%) scale(0.8);  /* Ajusta posición vertical y tamaño */
+  width: auto;
+  height: auto;
+  z-index: 1000;             /* Para que esté arriba de otros elementos */
+}
 
+/* Estilo del botón de animación */
 .slider-animate-button {
   position: relative;
   font-size: 14px;
@@ -193,12 +199,17 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
+  display: flex;
+  align-items: center;       /* Para alinear texto e ícono verticalmente */
 }
 
+/* Estilo del texto dinámico que aparece junto al botón */
 .slider-animate-button .btn-text {
-  margin-left: 5px;
+  margin-left: 8px;          /* Separación entre ícono y texto */
   font-size: 14px;
+  user-select: none;         /* Evita selección accidental del texto */
 }
+
 
 
 .bootstrap-select {
