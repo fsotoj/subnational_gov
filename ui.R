@@ -43,10 +43,28 @@ ui <- dashboardPage(
           document.getElementById('theme-css').setAttribute('href', themeFile);
         });
       ")),
-    
-  #   tags$style(HTML("
-  # 
-  # ")),
+    tags$script(HTML("
+    $(document).on('shiny:value', function(event) {
+      const btn = $('.slider-animate-button');
+      if (!btn.hasClass('customized')) {
+        btn.addClass('customized');
+        btn.append('<span class=\"btn-text\"> Play</span>');
+  
+        btn.on('click', function() {
+          const textSpan = btn.find('.btn-text');
+          const isPlaying = btn.hasClass('playing');
+  
+          if (isPlaying) {
+            textSpan.text(' Play');
+            btn.removeClass('playing');
+          } else {
+            textSpan.text(' Pause');
+            btn.addClass('playing');
+          }
+        });
+      }
+    });
+  ")),
     tabItems(
       tabItem(
         tabName = "map_tab", # QUE PASA ACAAAAAA
@@ -80,7 +98,7 @@ ui <- dashboardPage(
           
           # Custom year selector placed at the bottom of the tab
           div(
-            style = "position: absolute; bottom: 30px; left: 30%; right: 30%; z-index: 1000; overflow-y: hidden; max-height: 200px;",
+            style = "position: absolute; bottom: 30px; left: 30%; right: 30%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
             uiOutput("year_selector")
           )
           

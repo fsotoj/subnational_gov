@@ -4,37 +4,6 @@ body, .content-wrapper, .right-side {
   color: #f0f0f0 !important;
 }
 
-.skin-black .main-header .logo {
-  background-color: rgb(4, 29, 45) !important;
-  color: #f0f0f0 !important;
-  border-bottom: 1px solid #0a426e !important; /* borde azul más claro */
-}
-
-.skin-black .main-header .logo:hover {
-  background-color: #05354f !important; /* un poco más claro que azul base */
-}
-
-.skin-black .main-header .navbar {
-  background-color: rgb(4, 29, 45) !important;
-}
-
-.skin-black .main-sidebar {
-  background-color: rgb(4, 29, 45) !important;
-}
-
-.skin-black .sidebar-menu>li.active>a {
-  background-color: #00ccff !important; /* Azul cian para activo */
-  color: #000 !important;
-}
-
-.skin-black .sidebar-menu>li>a {
-  color: #f0f0f0 !important;
-}
-
-.skin-black .sidebar-menu>li>a:hover {
-  background-color: #05354f !important;
-  color: #00ccff !important;
-}
 
 /* BOXES */
 .box {
@@ -201,18 +170,36 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
-#year_sel {
-  max-height: 200px !important;
-  overflow-y: hidden !important;
+
+
+/* Reposiciona el botón de animación a la derecha */
+#year_sel + .slider-animate-container {
+  position: absolute !important;
+  top: 40px !important;   /* ajusta verticalmente */
+  right: 0px !important;
+  width: auto;
+  height: auto;
+  transform: scale(0.8);
 }
 
-.js-range-slider__play {
-  position: relative !important;
-  top: 25px !important;
-  right: 0 !important;
-  margin-left: 10px !important;
-  z-index: 1100 !important;
+
+.slider-animate-button {
+  position: relative;
+  font-size: 14px;
+  background-color: #007BFF !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
 }
+
+.slider-animate-button .btn-text {
+  margin-left: 5px;
+  font-size: 14px;
+}
+
 
 .bootstrap-select {
   background-color: transparent !important;
