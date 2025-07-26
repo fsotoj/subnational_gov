@@ -220,3 +220,53 @@ h1, h2, h3, h4, h5, h6 {
   border: none !important;
 }
 
+/* Estilos para modal oscuro */
+.modal-content {
+  background-color: #041d2d !important;
+  color: #f0f0f0 !important;
+  border: 1px solid #0a426e !important;
+  border-radius: 8px;
+}
+
+/* Estilo para título del modal */
+.modal-header {
+  background-color: #05354f !important;
+  color: #f0f0f0 !important;
+  border-bottom: 1px solid #0a426e !important;
+}
+
+/* Botón de cerrar (X) en la cabecera */
+.close {
+  color: #f0f0f0 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Botones en el footer del modal */
+.modal-footer .btn {
+  background-color: #0aa1f2 !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+
+.small-text-box .box-body {
+  font-size: 12px !important;  /* o 13px, según prefieras */
+  line-height: 1.4;
+}
+
+.small-text-box .box-title {
+  font-size: 14px !important;
+  line-height: 1.4;
+}
+
+.small-text-box .box-header {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+
+.small-text-box .btn-box-tool {
+  padding: 0px !important;  /* top/bottom = 2px, left/right = 6px */
+  font-size: 12px !important;   /* opcional, para hacer más pequeño el ícono */
+  height: auto !important;      /* por si hereda altura fija */
+}
