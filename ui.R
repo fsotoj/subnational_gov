@@ -30,10 +30,9 @@ ui <- dashboardPage(
         selectedTextFormat = "count > 3"
       )
     ))
+    # ,
+    # downloadButton("download_map", "Download Map PNG")
   ),
-  
-  
-  
   dashboardBody(
     tags$head(
       tags$link(id = "theme-css", rel = "stylesheet", type = "text/css", href = "styles.css")
