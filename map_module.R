@@ -260,51 +260,43 @@ format_leaflet_value <- function(value, type) {
 
 # --- Map Module UI ---
 
+# mapModuleUI function
 mapModuleUI <- function(id) {
   ns <- NS(id)
   map_id <- ns("map")
   
   bootstrapPage(
-    # NEW: Include html2canvas library and custom JavaScript handler
     tags$head(
       tags$script(src = "https://html2canvas.hertzen.com/dist/html2canvas.min.js"),
       tags$script(HTML(sprintf("
         Shiny.addCustomMessageHandler('captureMap%s', function(message) {
-          // Get the map container element by its ID
           var mapElement = document.getElementById('%s');
-
-          // Check if the map element exists
           if (!mapElement) {
             console.error('Map element with ID %s not found.');
             return;
           }
 
-          // Use html2canvas to render the map element
           html2canvas(mapElement, {
-            useCORS: true, // Important for tiles from external sources like CartoDB
-            allowTaint: true, // Allow tainting the canvas from cross-origin images
-            scale: 2 // Increase scale for higher resolution capture
+            useCORS: true,
+            allowTaint: true,
+            scale: 2
           }).then(function(canvas) {
-            // Create a temporary link element for download
             var link = document.createElement('a');
-            link.download = message.filename || 'leaflet_map.png'; // Use filename from message or default
-            link.href = canvas.toDataURL('image/png'); // Get data URL of the canvas content as PNG
-            document.body.appendChild(link); // Append to body (required for Firefox)
-            link.click(); // Programmatically click the link to trigger download
-            document.body.removeChild(link); // Clean up the temporary link
+            link.download = message.filename || 'leaflet_map.png';
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
           }).catch(function(error) {
             console.error('Error capturing map with html2canvas:', error);
             alert('Error capturing map for download. Please try again.');
           });
         });
-      ", id, map_id, map_id))) # Pass 'id' and 'map_id' for namespacing and targeting
+      ", id, map_id, map_id)))
     ),
     
-    # Contenedor del mapa (abajo del botón)
     div(
       class = "outer",
-      
-      # Estilo del contenedor del mapa
       tags$style(
         type = "text/css",
         ".outer {
@@ -317,34 +309,19 @@ mapModuleUI <- function(id) {
           padding: 0;
         }"
       ),
-      
-      # Estilo adicional para leyenda del mapa
       tags$style(
         HTML(sprintf("
-          #%s .leaflet-control {
-            max-width: 25vw !important;
-          }
-
-          #%s .leaflet-control .leaflet-control-legend {
-            max-width: 100%% !important;
-            white-space: normal !important;
-            word-wrap: break-word !important;
-            overflow-wrap: break-word !important;
-          }
-
-          #%s .leaflet-control .leaflet-control-legend div {
-            white-space: normal !important;
-            overflow-wrap: break-word !important;
-          }
+          #%s .leaflet-control { max-width: 25vw !important; }
+          #%s .leaflet-control .leaflet-control-legend { max-width: 100%% !important; white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; }
+          #%s .leaflet-control .leaflet-control-legend div { white-space: normal !important; overflow-wrap: break-word !important; }
         ", map_id, map_id, map_id))
       ),
-      
       leafletOutput(map_id, height = "100%"),
       
-      # Download button overlay
       absolutePanel(
         top = 10, right = 10,
-        downloadButton(ns("downloadMap"), "Download Map", class = "btn-primary")
+        # CAMBIO CLAVE AQUÍ: Usar actionButton en lugar de downloadButton
+        actionButton(ns("captureMapBtn"), "Download Map", class = "btn-primary")
       )
     )
   )
@@ -352,6 +329,7 @@ mapModuleUI <- function(id) {
 
 # --- Map Module Server ---
 
+# mapModuleServer function
 mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, input_country_sel = "ARGENTINA", active_tab) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
@@ -381,8 +359,6 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     
     prev_domain <- reactiveVal(NULL)
     prev_country <- reactiveVal(NULL)
-    
-    # No need for map_to_download reactiveVal anymore with client-side capture
     
     output$map <- renderLeaflet({
       req(active_tab() == "map_tab", input_country_sel() != "", input_var_sel())
@@ -452,7 +428,6 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           )
         )
       
-      # Update legend for display
       if (domain_changed || country_changed) {
         proxy %>%
           clearControls() %>%
@@ -464,33 +439,19 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
             opacity = 0.9,
             title = var_info()$pretty_name
           )
-      } else {
-        # If domain/country hasn't changed, ensure the legend is still there
-        # This is handled by leafletProxy's update mechanism, but explicitly adding
-        # it ensures it's always present if not cleared.
-        # No explicit action needed here unless you want to force a re-add.
       }
       
       prev_domain(current_domain)
       prev_country(input_country_sel())
     })
     
-    # NEW: Download handler sends a message to the client
-    output$downloadMap <- downloadHandler(
-      filename = function() {
-        # This filename is just a fallback/suggestion if the JS doesn't get it
-        paste0("map-", input_country_sel(), "-", input_var_sel(), ".png")
-      },
-      content = function(file) {
-        # Send a custom message to the client to trigger the JavaScript capture
-        session$sendCustomMessage(
-          type = paste0('captureMap', id), # Use the module ID to make message unique
-          message = list(filename = paste0("map-", input_country_sel(), "-", input_var_sel(), ".png"))
-        )
-        # No file is generated on the server side for this downloadHandler
-        # The actual download happens client-side via JavaScript
-      }
-    )
+    # CAMBIO CLAVE AQUÍ: Usar observeEvent para el actionButton
+    observeEvent(input$captureMapBtn, {
+      # Send a custom message to the client to trigger the JavaScript capture
+      session$sendCustomMessage(
+        type = paste0('captureMap', id), # Use the module ID to make message unique
+        message = list(filename = paste0("map-", input_country_sel(), "-", input_var_sel(), ".png"))
+      )
+    })
   })
 }
-
