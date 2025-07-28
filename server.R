@@ -19,7 +19,7 @@ server <- function(input, output, session) {
       footer = modalButton("Close")
     ))
   })
-  
+
   current_tab <- reactive({input$tabs})
   
   output$state_selector <- renderUI({
@@ -196,6 +196,7 @@ server <- function(input, output, session) {
     country_name <- stringr::str_to_title(input$country_sel)
     
     sex <- ifelse(leader_info$sex_head_national == 1, "female", "male")
+    article <- ifelse(leader_info$sex_head_national == 1, "She", "He")
     ideologies <- c("Left", "Center Left", "Center Right", "Right")
     ideology_text <- ifelse(
       leader_info$ideo_party_national %in% 1:4,
@@ -209,7 +210,7 @@ server <- function(input, output, session) {
     text <- glue::glue(
       "<div>",
       " In the year <strong>{leader_info$year}</strong> the national leader in <strong>{country_name}</strong> was <strong>{leader_info$head_name_national}</strong>, a {sex} politician affiliated with the <strong>{leader_info$head_party_national}</strong> party, which leans towards the <strong>{ideology_text}</strong> on the ideological spectrum. ",
-      "They served for <strong>{leader_info$years_nat_gov}</strong> years, {reelec}, and {early_exit}. </div>",
+      "{article} served for <strong>{leader_info$years_nat_gov}</strong> years, {reelec}, and {early_exit}. </div>",
       # "{election_year}",
       # "</div>"
     )
@@ -227,6 +228,24 @@ server <- function(input, output, session) {
     input_country_sel = reactive(input$country_sel),
     active_tab = current_tab 
   )
+  
+  # map_plot <- ggplotMapServer(
+  #   id = "ggmapmod",
+  #   data_map = data_map,
+  #   input_var_sel = var_normal_name,
+  #   dict = dict,
+  #   party_colors = party_colors
+  # )
+  # 
+  # output$download_map <- downloadHandler(
+  #   filename = function() {
+  #     paste0("mapa_", input$var_sel, "_", Sys.Date(), ".png")
+  #   },
+  #   content = function(file) {
+  #     ggsave(file, plot = map_plot(), width = 10, height = 8, dpi = 300)
+  #   }
+  # )
+
   
   linePlotModuleServer(
     id = "line_plot1",

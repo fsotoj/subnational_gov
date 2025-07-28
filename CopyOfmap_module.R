@@ -16,28 +16,25 @@ get_leaflet_palette <- function(type, palette_vector, values) {
     
   } else if (type == "categorical") {
     
-    # Extract unique parties appearing in 'values'
+   # Extract unique parties appearing in 'values'
     domain <- sort(unique(values))
     
-    # This part assumes 'party_colors' is defined globally or passed in.
-    # For a self-contained example, you might need to mock this or ensure it's loaded.
-    # For this example, I'll assume 'party_colors' is available in your global environment
-    # or within the app's scope where this module is used.
-    if (!exists("party_colors", envir = .GlobalEnv)) {
-      warning("`party_colors` not found. Categorical palette might not work as expected.")
-      # Provide a dummy palette if party_colors is missing for example purposes
-      palette_vector <- RColorBrewer::brewer.pal(length(domain), "Set1")[seq_along(domain)]
-    } else {
-      party_colors_subset <- party_colors %>%
-        filter(head_party_sub %in% domain)
-      
-      party_colors_ordered <- party_colors_subset %>%
-        slice(match(domain, head_party_sub))
-      
-      palette_vector <- party_colors_ordered$color
-    }
+    # Filter party_colors for parties present in 'domain'
+    # Make sure 'party_colors' corresponds to the current country context
+    party_colors_subset <- party_colors %>%
+      filter(head_party_sub %in% domain)
     
+    # Reorder colors to match the order of 'domain'
+    party_colors_ordered <- party_colors_subset %>%
+      slice(match(domain, head_party_sub))
+    
+    # Extract the color vector
+    palette_vector <- party_colors_ordered$color
+    
+    # Create color palette using colorFactor with the extracted colors
     pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
+    
+    # Labels for the legend
     legend_labels <- domain
     
   } else if (type == "ordinal") {
@@ -46,18 +43,19 @@ get_leaflet_palette <- function(type, palette_vector, values) {
     legend_labels <- c("Left", "Center Left", "Center Right", "Right")
     
   } else if (type %in% c("discrete", "continuous","percentage")) {
-    pal_list <- tryCatch({
-      ci <- classInt::classIntervals(values[!is.na(values)], n = length(palette_vector), style = "jenks")
+    pal <- tryCatch({
+      ci <- classInt::classIntervals(values, n = length(palette_vector), style = "jenks")
       breaks <- ci$brks
       
       if (anyDuplicated(breaks)) {
-        ci <- classInt::classIntervals(values[!is.na(values)], n = length(palette_vector), style = "pretty")
+        ci <- classInt::classIntervals(values, n = length(palette_vector), style = "pretty")
         breaks <- ci$brks
       }
       
       pal <- colorBin(palette = palette_vector, domain = values, bins = breaks, pretty = TRUE, na.color = na_color)
       
       if (type %in% c("discrete", "continuous")) {
+        
         n_round <- ifelse(type == "continuous", 2, 0)
         legend_labels <- paste0(
           format(round(breaks[-length(breaks)], n_round), nsmall = n_round, big.mark = ","),
@@ -72,32 +70,34 @@ get_leaflet_palette <- function(type, palette_vector, values) {
           format(round(breaks[-1] * 100, 2), nsmall = 2, big.mark = ","),
           "%"
         )
-      }
+        
+        
+        }
       
       list(pal = pal, legend = legend_labels, domain = values, colors = NULL)
       
+      
+      
     }, error = function(e) {
-      if (grepl("single unique value", e$message) && length(unique(values[!is.na(values)])) == 1) {
-        val <- unique(values[!is.na(values)])[1]
-        breaks <- c(val, val + 1e-6) # Small range to define a bin for single value
+      if (grepl("single unique value", e$message)) {
+        val <- unique(values)[1]
+        breaks <- c(val, val + 1e-6)
         pal <- colorBin(palette = tail(palette_vector, 1), domain = values, bins = breaks, pretty = FALSE, na.color = na_color)
-        legend_labels <- c(format_leaflet_value(val, type)) # Display the single value
-        return(list(pal = pal, legend = legend_labels, domain = values, colors = NULL))
+        legend_labels <- c("Not avaible", val)
+        list(pal = pal, legend = legend_labels, domain = values, colors = NULL)
       } else {
-        warning(paste("Error in get_leaflet_palette (discrete/continuous/percentage):", e$message))
-        return(list(pal = NULL, legend = NULL, domain = NULL, colors = NULL))
+        list(pal = NULL, legend = NULL, domain = NULL, colors = NULL)
       }
     })
-    return(pal_list) # Return the entire list
+    return(pal)
+    
   } else {
     return(list(pal = NULL, legend = NULL, domain = NULL, colors = NULL))
   }
   
-  # Add NA label for non-numeric types
-  if (!is.null(pal) && !(type %in% c("discrete", "continuous", "percentage"))) {
-    legend_labels <- c("Not available", legend_labels)
-    domain <- c(NA, domain)
-  }
+  # Add NA label
+  legend_labels <- c("Not available",legend_labels)
+  domain <- c(NA,domain)
   
   return(list(
     pal = pal,
@@ -108,10 +108,12 @@ get_leaflet_palette <- function(type, palette_vector, values) {
 }
 
 
+
+
 addLegend_decreasing <- function (map, position = c("topright", "bottomright", "bottomleft","topleft"),
-                                  pal, values, na.label = "NA", bins = 7, colors,
-                                  opacity = 0.5, labels = NULL, labFormat = labelFormat(),
-                                  title = NULL, className = "info legend", layerId = NULL,
+                                  pal, values, na.label = "NA", bins = 7, colors, 
+                                  opacity = 0.5, labels = NULL, labFormat = labelFormat(), 
+                                  title = NULL, className = "info legend", layerId = NULL, 
                                   group = NULL, data = getMapData(map), decreasing = TRUE) {
   
   position <- match.arg(position)
@@ -119,27 +121,27 @@ addLegend_decreasing <- function (map, position = c("topright", "bottomright", "
   na.color <- NULL
   extra <- NULL
   if (!missing(pal)) {
-    if (!missing(colors))
+    if (!missing(colors)) 
       stop("You must provide either 'pal' or 'colors' (not both)")
-    if (missing(title) && inherits(values, "formula"))
+    if (missing(title) && inherits(values, "formula")) 
       title <- deparse(values[[2]])
     values <- evalFormula(values, data)
     type <- attr(pal, "colorType", exact = TRUE)
     args <- attr(pal, "colorArgs", exact = TRUE)
     na.color <- args$na.color
-    if (!is.null(na.color) && col2rgb(na.color, alpha = TRUE)[[4]] ==
+    if (!is.null(na.color) && col2rgb(na.color, alpha = TRUE)[[4]] == 
         0) {
       na.color <- NULL
     }
-    if (type != "numeric" && !missing(bins))
+    if (type != "numeric" && !missing(bins)) 
       warning("'bins' is ignored because the palette type is not numeric")
     if (type == "numeric") {
-      cuts <- if (length(bins) == 1)
+      cuts <- if (length(bins) == 1) 
         pretty(values, bins)
-      else bins
-      if (length(bins) > 2)
-        if (!all(abs(diff(bins, differences = 2)) <=
-                 sqrt(.Machine$double.eps)))
+      else bins   
+      if (length(bins) > 2) 
+        if (!all(abs(diff(bins, differences = 2)) <= 
+                 sqrt(.Machine$double.eps))) 
           stop("The vector of breaks 'bins' must be equally spaced")
       n <- length(cuts)
       r <- range(values, na.rm = TRUE)
@@ -198,11 +200,11 @@ addLegend_decreasing <- function (map, position = c("topright", "bottomright", "
       }
     }
     else stop("Palette function not supported")
-    if (!any(is.na(values)))
+    if (!any(is.na(values))) 
       na.color <- NULL
   }
   else {
-    if (length(colors) != length(labels))
+    if (length(colors) != length(labels)) 
       stop("'colors' and 'labels' must be of the same length")
   }
   if (all(is.na(values))) {
@@ -210,9 +212,9 @@ addLegend_decreasing <- function (map, position = c("topright", "bottomright", "
     labels <- na.label
     na.color <- NULL  # evita mostrar color NA doble
   }
-  legend <- list(colors = I(unname(colors)), labels = I(unname(labels)),
-                 na_color = na.color, na_label = na.label, opacity = opacity,
-                 position = position, type = type, title = title, extra = extra,
+  legend <- list(colors = I(unname(colors)), labels = I(unname(labels)), 
+                 na_color = na.color, na_label = na.label, opacity = opacity, 
+                 position = position, type = type, title = title, extra = extra, 
                  layerId = layerId, className = className, group = group)
   invokeMethod(map, data, "addLegend", legend)
 }
@@ -250,7 +252,6 @@ format_leaflet_value <- function(value, type) {
   return(out)
 }
 
-# --- Map Module UI ---
 
 mapModuleUI <- function(id) {
   ns <- NS(id)
@@ -297,18 +298,13 @@ mapModuleUI <- function(id) {
         ", map_id, map_id, map_id))
       ),
       
-      leafletOutput(map_id, height = "100%"),
-      
-      # Download button overlay
-      absolutePanel(
-        top = 90, right = 300,
-        downloadButton(ns("downloadMap"), "Download Map", class = "btn-primary")
-      )
+      leafletOutput(map_id, height = "100%")
     )
   )
 }
 
-# --- Map Module Server ---
+
+
 
 mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, input_country_sel = "ARGENTINA", active_tab) {
   moduleServer(id, function(input, output, session) {
@@ -338,14 +334,12 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     })
     
     prev_domain <- reactiveVal(NULL)
-    prev_country <- reactiveVal(NULL)
-    
-    map_to_download <- reactiveVal(NULL)
+    prev_country <- reactiveVal(NULL)  # NUEVO: guarda el país anterior
     
     output$map <- renderLeaflet({
       req(active_tab() == "map_tab", input_country_sel() != "", input_var_sel())
       
-      base_map <- leaflet(options = leafletOptions(preferCanvas = TRUE, zoomControl = FALSE)) %>%
+      leaflet(options = leafletOptions(preferCanvas = TRUE, zoomControl = FALSE)) %>%
         fitBounds(
           lng1 = country_bboxes[[input_country_sel()]]$lng1,
           lat1 = country_bboxes[[input_country_sel()]]$lat1,
@@ -353,19 +347,14 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           lat2 = country_bboxes[[input_country_sel()]]$lat2
         ) %>%
         addProviderTiles("CartoDB.DarkMatterNoLabels")
-      
-      map_to_download(base_map)
-      base_map
     })
     
     observe({
       req(df_map(), input_var_sel(), input_country_sel(), active_tab() == "map_tab")
       
-      proxy <- leafletProxy(ns("map"), data = df_map())
-      
       if (nrow(df_map()) == 0 || all(is.na(df_map()[[".leaflet_value"]]))) {
-        proxy %>%
-          clearShapes() %>%
+        leafletProxy(ns("map")) %>%
+          clearShapes() %>% 
           clearControls() %>%
           addControl("⚠ No data available for this country, variable and year.",
                      position = "topright",
@@ -373,13 +362,14 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
         
         prev_domain(NULL)
         prev_country(NULL)
-        map_to_download(NULL)
         return()
       }
       
       current_domain <- pal()$domain
       domain_changed <- !identical(current_domain, prev_domain())
-      country_changed <- !identical(input_country_sel(), prev_country())
+      country_changed <- !identical(input_country_sel(), prev_country())  # NUEVO
+      
+      proxy <- leafletProxy(ns("map"), data = df_map())
       
       proxy %>%
         addPolygons(
@@ -392,7 +382,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           label = ~paste0(stringr::str_to_title(state_name), ": ", format_leaflet_value(.leaflet_value, var_info()$type)),
           popup = ~paste0(
             "<div style='background-color:#041d2d; color:#f4e842; padding:6px 6px;
-            border-radius:3px; font-weight:bold; font-size:15px; text-align:center;'>",
+           border-radius:3px; font-weight:bold; font-size:15px; text-align:center;'>",
             var_info()$pretty_name, ": ", format_leaflet_value(.leaflet_value, var_info()$type),
             "</div>",
             "<b>State:</b> ", stringr::str_to_title(state_name), "<br/>",
@@ -414,47 +404,10 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           )
         )
       
-      map_for_download <- leaflet(data = df_map(), options = leafletOptions(preferCanvas = TRUE, zoomControl = FALSE)) %>%
-        fitBounds(
-          lng1 = country_bboxes[[input_country_sel()]]$lng1,
-          lat1 = country_bboxes[[input_country_sel()]]$lat1,
-          lng2 = country_bboxes[[input_country_sel()]]$lng2,
-          lat2 = country_bboxes[[input_country_sel()]]$lat2
-        ) %>%
-        addProviderTiles("CartoDB.DarkMatterNoLabels") %>%
-        addPolygons(
-          fillColor = ~pal()$pal(.leaflet_value),
-          color = "black",
-          weight = 1,
-          fillOpacity = 0.9,
-          label = ~paste0(stringr::str_to_title(state_name), ": ", format_leaflet_value(.leaflet_value, var_info()$type)),
-          popup = ~paste0(
-            "<div style='background-color:#041d2d; color:#f4e842; padding:6px 6px;
-            border-radius:3px; font-weight:bold; font-size:15px; text-align:center;'>",
-            var_info()$pretty_name, ": ", format_leaflet_value(.leaflet_value, var_info()$type),
-            "</div>",
-            "<b>State:</b> ", stringr::str_to_title(state_name), "<br/>",
-            "<b>Governor:</b> ", head_name_sub, "<br/>",
-            "<b>Governor sex:</b> ", ifelse(sex_head_sub == 1, "Female", "Male"), "<br/>",
-            "<b>Party:</b> ", head_party_sub, "<br/>",
-            "<b>Ideology:</b> ", dplyr::case_when(
-              ideo_party_sub == 1 ~ "Left",
-              ideo_party_sub == 2 ~ "Center Left",
-              ideo_party_sub == 3 ~ "Center Right",
-              ideo_party_sub == 4 ~ "Right",
-              TRUE ~ as.character(ideo_party_sub)
-            ), "<br/>",
-            "<b>Alignment:</b> ", ifelse(alignment == 1, "Yes", "No"), "<br/>",
-            "<b>Years in office:</b> ", years_sub_gov, "<br/>",
-            "<b>Early exit:</b> ", ifelse(early_exit_sub == 1, "Yes", "No"), "<br/>",
-            "<b>Reelected:</b> ", ifelse(reelec_sub_gov == 1, "Yes", "No"), "<br/>",
-            "<b>Electoral sub. year:</b> ", ifelse(electoral_sub_year == 1, "Yes", "No")
-          )
-        )
-      
+      # ACTUALIZAR LEYENDA SI CAMBIÓ DOMINIO O PAÍS
       if (domain_changed || country_changed) {
-        proxy %>% clearControls()
-        map_for_download <- map_for_download %>%
+        proxy %>%
+          clearControls() %>%
           addLegend_decreasing(
             position = "bottomright",
             pal = pal()$pal,
@@ -463,47 +416,10 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
             opacity = 0.9,
             title = var_info()$pretty_name
           )
-      } else {
-        map_for_download <- map_for_download %>%
-          addLegend_decreasing(
-            position = "bottomright",
-            pal = pal()$pal,
-            values = pal()$domain,
-            labFormat = function(type, cuts, p) { pal()$legend },
-            opacity = 0.9,
-            title = var_info()$pretty_name
-          )
+        
+        prev_domain(current_domain)
+        prev_country(input_country_sel())  # Actualizar país anterior
       }
-      
-      map_to_download(map_for_download)
-      
-      prev_domain(current_domain)
-      prev_country(input_country_sel())
     })
-    
-    output$downloadMap <- downloadHandler(
-      filename = function() {
-        paste0("map-", input_country_sel(), "-", input_var_sel(), ".png")
-      },
-      content = function(file) {
-        req(map_to_download())
-        
-        # Corrected: Call webshot::install_phantomjs() (if needed) and then use mapview::mapshot()
-        # It's best practice to run webshot::install_phantomjs() once manually on the server
-        # rather than inside downloadHandler, but it's here for robustness.
-        # webshot::install_phantomjs() # Consider running this manually outside the app
-        
-        mapview::mapshot(
-          x = map_to_download(),
-          file = file,
-          vwidth = 1000,
-          vheight = 800,
-          zoom = 2,
-          # mapview::mapshot automatically looks for phantomjs if not explicitly provided
-          # The webshot package must be installed and phantomjs installed via webshot::install_phantomjs()
-          # No need for the 'phantomjs_path' argument if installed correctly globally.
-        )
-      }
-    )
   })
 }

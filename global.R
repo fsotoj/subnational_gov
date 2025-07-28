@@ -9,6 +9,9 @@ library(leaflet)
 library(classInt)
 library(shinyWidgets)
 library(shinyjs)
+library(ggplot2)
+library(mapview)
+library(webshot)
 #library(shinyWidgets)
 
 
@@ -16,6 +19,7 @@ library(shinyjs)
 
 source("map_module.R")
 source("line_module.R")
+# source("ggMapModule.R")
 #source("state_selector_module.R")
 
 data <- read.xlsx("data/complete_database_edit.xlsx")
