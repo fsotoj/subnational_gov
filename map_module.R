@@ -16,25 +16,27 @@ get_leaflet_palette <- function(type, palette_vector, values) {
     
   } else if (type == "categorical") {
     
-    # Extract unique parties appearing in 'values'
     domain <- sort(unique(values))
     
-    # This part assumes 'party_colors' is defined globally or passed in.
-    # For a self-contained example, you might need to mock this or ensure it's loaded.
-    # For this example, I'll assume 'party_colors' is available in your global environment
-    # or within the app's scope where this module is used.
-    if (!exists("party_colors", envir = .GlobalEnv)) {
-      warning("`party_colors` not found. Categorical palette might not work as expected.")
-      # Provide a dummy palette if party_colors is missing for example purposes
-      palette_vector <- RColorBrewer::brewer.pal(length(domain), "Set1")[seq_along(domain)]
+    # Handle 'party_colors' dependency more gracefully for self-contained example
+    if (!exists("party_colors", envir = .GlobalEnv) || !is.data.frame(get("party_colors", envir = .GlobalEnv))) {
+      warning("`party_colors` not found or not a data.frame. Using a default palette for 'categorical' type.")
+      # Fallback to a generic color palette if party_colors is not defined
+      palette_vector <- RColorBrewer::brewer.pal(max(3, length(domain)), "Set1")[seq_along(domain)]
     } else {
-      party_colors_subset <- party_colors %>%
+      # Assuming party_colors is a data.frame with 'head_party_sub' and 'color'
+      party_colors_df <- get("party_colors", envir = .GlobalEnv)
+      party_colors_subset <- party_colors_df %>%
         filter(head_party_sub %in% domain)
       
       party_colors_ordered <- party_colors_subset %>%
         slice(match(domain, head_party_sub))
       
       palette_vector <- party_colors_ordered$color
+      if (length(palette_vector) == 0 && length(domain) > 0) {
+        warning("No colors found in `party_colors` for the current domain. Using a default palette.")
+        palette_vector <- RColorBrewer::brewer.pal(max(3, length(domain)), "Set1")[seq_along(domain)]
+      }
     }
     
     pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
@@ -47,11 +49,17 @@ get_leaflet_palette <- function(type, palette_vector, values) {
     
   } else if (type %in% c("discrete", "continuous","percentage")) {
     pal_list <- tryCatch({
-      ci <- classInt::classIntervals(values[!is.na(values)], n = length(palette_vector), style = "jenks")
+      # Ensure values are not all NA for classInt
+      valid_values <- values[!is.na(values)]
+      if (length(valid_values) == 0) {
+        return(list(pal = NULL, legend = NULL, domain = NULL, colors = NULL))
+      }
+      
+      ci <- classInt::classIntervals(valid_values, n = length(palette_vector), style = "jenks")
       breaks <- ci$brks
       
       if (anyDuplicated(breaks)) {
-        ci <- classInt::classIntervals(values[!is.na(values)], n = length(palette_vector), style = "pretty")
+        ci <- classInt::classIntervals(valid_values, n = length(palette_vector), style = "pretty")
         breaks <- ci$brks
       }
       
@@ -77,8 +85,8 @@ get_leaflet_palette <- function(type, palette_vector, values) {
       list(pal = pal, legend = legend_labels, domain = values, colors = NULL)
       
     }, error = function(e) {
-      if (grepl("single unique value", e$message) && length(unique(values[!is.na(values)])) == 1) {
-        val <- unique(values[!is.na(values)])[1]
+      if (grepl("single unique value", e$message) && length(unique(valid_values)) == 1) {
+        val <- unique(valid_values)[1]
         breaks <- c(val, val + 1e-6) # Small range to define a bin for single value
         pal <- colorBin(palette = tail(palette_vector, 1), domain = values, bins = breaks, pretty = FALSE, na.color = na_color)
         legend_labels <- c(format_leaflet_value(val, type)) # Display the single value
@@ -257,6 +265,40 @@ mapModuleUI <- function(id) {
   map_id <- ns("map")
   
   bootstrapPage(
+    # NEW: Include html2canvas library and custom JavaScript handler
+    tags$head(
+      tags$script(src = "https://html2canvas.hertzen.com/dist/html2canvas.min.js"),
+      tags$script(HTML(sprintf("
+        Shiny.addCustomMessageHandler('captureMap%s', function(message) {
+          // Get the map container element by its ID
+          var mapElement = document.getElementById('%s');
+
+          // Check if the map element exists
+          if (!mapElement) {
+            console.error('Map element with ID %s not found.');
+            return;
+          }
+
+          // Use html2canvas to render the map element
+          html2canvas(mapElement, {
+            useCORS: true, // Important for tiles from external sources like CartoDB
+            allowTaint: true, // Allow tainting the canvas from cross-origin images
+            scale: 2 // Increase scale for higher resolution capture
+          }).then(function(canvas) {
+            // Create a temporary link element for download
+            var link = document.createElement('a');
+            link.download = message.filename || 'leaflet_map.png'; // Use filename from message or default
+            link.href = canvas.toDataURL('image/png'); // Get data URL of the canvas content as PNG
+            document.body.appendChild(link); // Append to body (required for Firefox)
+            link.click(); // Programmatically click the link to trigger download
+            document.body.removeChild(link); // Clean up the temporary link
+          }).catch(function(error) {
+            console.error('Error capturing map with html2canvas:', error);
+            alert('Error capturing map for download. Please try again.');
+          });
+        });
+      ", id, map_id, map_id))) # Pass 'id' and 'map_id' for namespacing and targeting
+    ),
     
     # Contenedor del mapa (abajo del botón)
     div(
@@ -301,7 +343,7 @@ mapModuleUI <- function(id) {
       
       # Download button overlay
       absolutePanel(
-        top = 90, right = 300,
+        top = 10, right = 10,
         downloadButton(ns("downloadMap"), "Download Map", class = "btn-primary")
       )
     )
@@ -340,12 +382,12 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     prev_domain <- reactiveVal(NULL)
     prev_country <- reactiveVal(NULL)
     
-    map_to_download <- reactiveVal(NULL)
+    # No need for map_to_download reactiveVal anymore with client-side capture
     
     output$map <- renderLeaflet({
       req(active_tab() == "map_tab", input_country_sel() != "", input_var_sel())
       
-      base_map <- leaflet(options = leafletOptions(preferCanvas = TRUE, zoomControl = FALSE)) %>%
+      leaflet(options = leafletOptions(preferCanvas = TRUE, zoomControl = FALSE)) %>%
         fitBounds(
           lng1 = country_bboxes[[input_country_sel()]]$lng1,
           lat1 = country_bboxes[[input_country_sel()]]$lat1,
@@ -353,9 +395,6 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           lat2 = country_bboxes[[input_country_sel()]]$lat2
         ) %>%
         addProviderTiles("CartoDB.DarkMatterNoLabels")
-      
-      map_to_download(base_map)
-      base_map
     })
     
     observe({
@@ -373,7 +412,6 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
         
         prev_domain(NULL)
         prev_country(NULL)
-        map_to_download(NULL)
         return()
       }
       
@@ -414,47 +452,10 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           )
         )
       
-      map_for_download <- leaflet(data = df_map(), options = leafletOptions(preferCanvas = TRUE, zoomControl = FALSE)) %>%
-        fitBounds(
-          lng1 = country_bboxes[[input_country_sel()]]$lng1,
-          lat1 = country_bboxes[[input_country_sel()]]$lat1,
-          lng2 = country_bboxes[[input_country_sel()]]$lng2,
-          lat2 = country_bboxes[[input_country_sel()]]$lat2
-        ) %>%
-        addProviderTiles("CartoDB.DarkMatterNoLabels") %>%
-        addPolygons(
-          fillColor = ~pal()$pal(.leaflet_value),
-          color = "black",
-          weight = 1,
-          fillOpacity = 0.9,
-          label = ~paste0(stringr::str_to_title(state_name), ": ", format_leaflet_value(.leaflet_value, var_info()$type)),
-          popup = ~paste0(
-            "<div style='background-color:#041d2d; color:#f4e842; padding:6px 6px;
-            border-radius:3px; font-weight:bold; font-size:15px; text-align:center;'>",
-            var_info()$pretty_name, ": ", format_leaflet_value(.leaflet_value, var_info()$type),
-            "</div>",
-            "<b>State:</b> ", stringr::str_to_title(state_name), "<br/>",
-            "<b>Governor:</b> ", head_name_sub, "<br/>",
-            "<b>Governor sex:</b> ", ifelse(sex_head_sub == 1, "Female", "Male"), "<br/>",
-            "<b>Party:</b> ", head_party_sub, "<br/>",
-            "<b>Ideology:</b> ", dplyr::case_when(
-              ideo_party_sub == 1 ~ "Left",
-              ideo_party_sub == 2 ~ "Center Left",
-              ideo_party_sub == 3 ~ "Center Right",
-              ideo_party_sub == 4 ~ "Right",
-              TRUE ~ as.character(ideo_party_sub)
-            ), "<br/>",
-            "<b>Alignment:</b> ", ifelse(alignment == 1, "Yes", "No"), "<br/>",
-            "<b>Years in office:</b> ", years_sub_gov, "<br/>",
-            "<b>Early exit:</b> ", ifelse(early_exit_sub == 1, "Yes", "No"), "<br/>",
-            "<b>Reelected:</b> ", ifelse(reelec_sub_gov == 1, "Yes", "No"), "<br/>",
-            "<b>Electoral sub. year:</b> ", ifelse(electoral_sub_year == 1, "Yes", "No")
-          )
-        )
-      
+      # Update legend for display
       if (domain_changed || country_changed) {
-        proxy %>% clearControls()
-        map_for_download <- map_for_download %>%
+        proxy %>%
+          clearControls() %>%
           addLegend_decreasing(
             position = "bottomright",
             pal = pal()$pal,
@@ -464,46 +465,32 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
             title = var_info()$pretty_name
           )
       } else {
-        map_for_download <- map_for_download %>%
-          addLegend_decreasing(
-            position = "bottomright",
-            pal = pal()$pal,
-            values = pal()$domain,
-            labFormat = function(type, cuts, p) { pal()$legend },
-            opacity = 0.9,
-            title = var_info()$pretty_name
-          )
+        # If domain/country hasn't changed, ensure the legend is still there
+        # This is handled by leafletProxy's update mechanism, but explicitly adding
+        # it ensures it's always present if not cleared.
+        # No explicit action needed here unless you want to force a re-add.
       }
-      
-      map_to_download(map_for_download)
       
       prev_domain(current_domain)
       prev_country(input_country_sel())
     })
     
+    # NEW: Download handler sends a message to the client
     output$downloadMap <- downloadHandler(
       filename = function() {
+        # This filename is just a fallback/suggestion if the JS doesn't get it
         paste0("map-", input_country_sel(), "-", input_var_sel(), ".png")
       },
       content = function(file) {
-        req(map_to_download())
-        
-        # Corrected: Call webshot::install_phantomjs() (if needed) and then use mapview::mapshot()
-        # It's best practice to run webshot::install_phantomjs() once manually on the server
-        # rather than inside downloadHandler, but it's here for robustness.
-        # webshot::install_phantomjs() # Consider running this manually outside the app
-        
-        mapview::mapshot(
-          x = map_to_download(),
-          file = file,
-          vwidth = 1000,
-          vheight = 800,
-          zoom = 2,
-          # mapview::mapshot automatically looks for phantomjs if not explicitly provided
-          # The webshot package must be installed and phantomjs installed via webshot::install_phantomjs()
-          # No need for the 'phantomjs_path' argument if installed correctly globally.
+        # Send a custom message to the client to trigger the JavaScript capture
+        session$sendCustomMessage(
+          type = paste0('captureMap', id), # Use the module ID to make message unique
+          message = list(filename = paste0("map-", input_country_sel(), "-", input_var_sel(), ".png"))
         )
+        # No file is generated on the server side for this downloadHandler
+        # The actual download happens client-side via JavaScript
       }
     )
   })
 }
+
