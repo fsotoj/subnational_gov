@@ -316,13 +316,7 @@ mapModuleUI <- function(id) {
           #%s .leaflet-control .leaflet-control-legend div { white-space: normal !important; overflow-wrap: break-word !important; }
         ", map_id, map_id, map_id))
       ),
-      leafletOutput(map_id, height = "100%"),
-      
-      absolutePanel(
-        top = 10, right = 10,
-        # CAMBIO CLAVE AQUÍ: Usar actionButton en lugar de downloadButton
-        actionButton(ns("captureMapBtn"), "Download Map", class = "btn-primary")
-      )
+      leafletOutput(map_id, height = "100%")
     )
   )
 }
@@ -445,13 +439,6 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
       prev_country(input_country_sel())
     })
     
-    # CAMBIO CLAVE AQUÍ: Usar observeEvent para el actionButton
-    observeEvent(input$captureMapBtn, {
-      # Send a custom message to the client to trigger the JavaScript capture
-      session$sendCustomMessage(
-        type = paste0('captureMap', id), # Use the module ID to make message unique
-        message = list(filename = paste0("map-", input_country_sel(), "-", input_var_sel(), ".png"))
-      )
-    })
+    
   })
 }

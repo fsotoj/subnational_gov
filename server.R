@@ -19,6 +19,17 @@ server <- function(input, output, session) {
       footer = modalButton("Close")
     ))
   })
+  
+  observeEvent(input$captureMapBtn, {
+    
+    session$sendCustomMessage(
+      type = paste0('captureMap', "map1"), # Use the hardcoded module ID here
+      message = list(
+        filename = paste0("map-", input$country_selector, "-", input$var_selector, ".png"),
+        scale = 2
+      )
+    )
+  })
 
   current_tab <- reactive({input$tabs})
   
