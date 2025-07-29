@@ -98,7 +98,8 @@ ui <- dashboardPage(
           # Custom year selector placed at the bottom of the tab
           div(
             style = "position: absolute; bottom: 30px; left: 30%; right: 30%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
-            uiOutput("year_selector")
+            uiOutput("year_selector"),
+            actionButton("captureMapBtn", "Download Map", class = "btn-primary")
           )
           
           
