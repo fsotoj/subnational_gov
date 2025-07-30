@@ -33,6 +33,7 @@ server <- function(input, output, session) {
 
   observe({
     if (current_tab() == "map_tab") {
+      Sys.sleep(1)
       show("captureMapBtn")
       }
     })
