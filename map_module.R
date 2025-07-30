@@ -269,6 +269,15 @@ mapModuleUI <- function(id) {
     tags$head(
       tags$script(src = "https://html2canvas.hertzen.com/dist/html2canvas.min.js"),
       tags$script(HTML(sprintf("
+        Shiny.addCustomMessageHandler('show_download_btn', function(message) {
+          if (message.ready) {
+            // ¡La ID del botón es 'captureMapBtn' porque está en el UI principal!
+            Shiny.showElement('captureMapBtn');
+            console.log('Download button is now visible!');
+          }
+        });
+      
+      
         Shiny.addCustomMessageHandler('captureMap%s', function(message) {
           var mapElement = document.getElementById('%s');
           if (!mapElement) {

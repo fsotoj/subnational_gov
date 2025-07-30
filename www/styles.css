@@ -208,7 +208,24 @@ h1, h2, h3, h4, h5, h6 {
   user-select: none;
 }
 
-
+.download_map_btn {   
+  font-size: 14px;
+  background-color: #007BFF !important;
+  color: white !important;
+  height: auto !important;  
+  border: none !important;
+  border-radius: 6px;
+  /*transform: scale(0.9);*/
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 110px;
+  padding: 0px 0px !important;
+  opacity: 0.5;
+  box-sizing: border-box;
+}
 
 .bootstrap-select {
   background-color: transparent !important;
