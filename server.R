@@ -25,11 +25,18 @@ server <- function(input, output, session) {
     session$sendCustomMessage(
       type = paste0('captureMap', "map1"), # Use the hardcoded module ID here
       message = list(
-        filename = paste0("map-", input$country_selector, "-", input$var_selector, ".png"),
+        filename = paste0("map_", input$country_sel,input$year_,"_", var_normal_name(), ".png"),
         scale = 2
       )
     )
   })
+
+  observe({
+    if (current_tab() == "map_tab") {
+      show("captureMapBtn")
+      }
+    })
+    
 
   current_tab <- reactive({input$tabs})
   
@@ -239,23 +246,6 @@ server <- function(input, output, session) {
     input_country_sel = reactive(input$country_sel),
     active_tab = current_tab 
   )
-  
-  # map_plot <- ggplotMapServer(
-  #   id = "ggmapmod",
-  #   data_map = data_map,
-  #   input_var_sel = var_normal_name,
-  #   dict = dict,
-  #   party_colors = party_colors
-  # )
-  # 
-  # output$download_map <- downloadHandler(
-  #   filename = function() {
-  #     paste0("mapa_", input$var_sel, "_", Sys.Date(), ".png")
-  #   },
-  #   content = function(file) {
-  #     ggsave(file, plot = map_plot(), width = 10, height = 8, dpi = 300)
-  #   }
-  # )
 
   
   linePlotModuleServer(

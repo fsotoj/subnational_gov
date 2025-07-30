@@ -64,6 +64,7 @@ ui <- dashboardPage(
       }
     });
   ")),
+    # ui.R (Add this script, or combine it with your existing JS script)
     tabItems(
       tabItem(
         tabName = "map_tab", # QUE PASA ACAAAAAA
@@ -98,8 +99,11 @@ ui <- dashboardPage(
           # Custom year selector placed at the bottom of the tab
           div(
             style = "position: absolute; bottom: 30px; left: 30%; right: 30%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
-            uiOutput("year_selector"),
-            actionButton("captureMapBtn", "Download Map", class = "btn-primary")
+            uiOutput("year_selector")
+          ),
+          div(
+            style = "position: absolute; bottom: 30px; left: 30%; margin-left: 71px; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
+            hidden(actionButton("captureMapBtn", "Download Map", class = "download_map_btn"))
           )
           
           
