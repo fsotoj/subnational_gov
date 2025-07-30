@@ -38,11 +38,6 @@ ui <- dashboardPage(
       tags$link(id = "theme-css", rel = "stylesheet", type = "text/css", href = "styles.css")
     ),
     tags$script(HTML("
-        Shiny.addCustomMessageHandler('update-theme', function(themeFile) {
-          document.getElementById('theme-css').setAttribute('href', themeFile);
-        });
-      ")),
-    tags$script(HTML("
     $(document).on('shiny:value', function(event) {
       const btn = $('.slider-animate-button');
       if (!btn.hasClass('customized')) {
