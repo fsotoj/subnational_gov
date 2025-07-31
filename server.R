@@ -145,7 +145,7 @@ server <- function(input, output, session) {
   output$country_selector <- renderUI({
     req(current_tab() == "map_tab")
     selectInput("country_sel", "Country", choices = c("Select a country", unique(data$country_name)), 
-                selected = "ARGENTINA")
+                selected = "MEXICO")
   })
   
   # Selector de año (solo en map_tab)
@@ -158,7 +158,8 @@ server <- function(input, output, session) {
       choices = as.character(seq(1983, 2024, 1)),
       grid = TRUE,
       width = "90%",
-      animate = TRUE
+      animate = TRUE,
+      selected = 2001
     )
   })
   
