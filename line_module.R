@@ -3,15 +3,18 @@ linePlotModuleUI <- function(id) {
   plotlyOutput(ns("line_plot"),height = "80vh")
 }
 
-linePlotModuleServer <- function(id, data, dict, input_variable, input_states, active_tab) {
+linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Ymin, active_tab) {
   moduleServer(id, function(input, output, session) {
     output$line_plot <- renderPlotly({
       req(data(), input_variable(), input_states(), active_tab() == "graph_tab")
+      
+      
       
       df <- data() %>%
         filter(state_name %in% input_states()) %>%
         select(country_name, state_name, year, value = all_of(input_variable()))
       
+
       pretty_name <- dict %>% 
         filter(variable == input_variable()) %>% 
         pull(pretty_name)
@@ -59,6 +62,24 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, a
           )
       }
       
+      # Control del eje Y mínimo desde fuera del módulo
+      y_min <- Ymin()
+      if (is.null(y_min)) {
+        y_range <- NULL  # deja que Plotly lo maneje
+      } else {
+        y_max <- max(df$value, na.rm = TRUE)
+        y_range <- c(y_min, y_max * 1.05)  # pequeño margen superior
+      }
+      
+      layout_yaxis <- list(
+        title = pretty_name,
+        gridcolor = "lightgray",
+        titlefont = list(size = 14),
+        tickfont = list(size = 10),
+        domain = c(0.025, 0.975),
+        range = y_range  
+      )
+
       
       fig %>%
         layout(
@@ -70,7 +91,7 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, a
           # ),
           xaxis = list(
             tickmode = "array",
-            tickvals = 1983:2024,
+            tickvals = seq(1983, 2024, by = 2),
             range = c(1983, 2024),
             ticks = "outside",
             title = "Year",
@@ -79,13 +100,7 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, a
             tickfont = list(size = 10),
             domain = c(0.05, 0.95)
           ),
-          yaxis = list(
-            title = pretty_name,
-            gridcolor = "lightgray",
-            titlefont = list(size = 14),
-            tickfont = list(size = 10),
-            domain = c(0.025, 0.975)
-          ),
+          yaxis = layout_yaxis,
           showlegend = TRUE,
           legend = list(
             orientation = "h",

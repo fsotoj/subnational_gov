@@ -4,34 +4,46 @@ ui <- dashboardPage(
   dashboardHeader(title = "Subnational Politics Project",titleWidth = 280),
   dashboardSidebar(
     useShinyjs(),
-    sidebarMenu(id = "tabs",
-                menuItem("Mapping tool", tabName = "map_tab", icon = icon("map")),
-                menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
-                menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
-                menuItem("Data", tabName = "data_tab", icon = icon("table")),
-                menuItem("About", tabName = "about", icon = icon("info-circle"))
-    ),
-    uiOutput("country_selector"),  # default: visible
-    hidden(selectInput("var_sel", "Variable", choices = NULL)),
-    hidden(uiOutput("state_selector")),
-    hidden(selectInput("var_sel2", "Variable", choices = NULL)),
-    hidden(selectInput("country_sel2", "Select a country:", choices = c(unique(data$country_name)), selected = "ARGENTINA")),
-    hidden(selectInput("state_sel2", "Select a state:", choices = NULL)),
-    hidden(pickerInput(
-      inputId = "columns_sel",
-      label = "Select columns to show:",
-      choices = colnames(data),
-      selected = colnames(data),
-      multiple = TRUE,
-      options = pickerOptions(
-        actionsBox = TRUE,
-        liveSearch = TRUE,
-        dropupAuto = FALSE,
-        selectedTextFormat = "count > 3"
+    tagList(
+      sidebarMenu(id = "tabs",
+                  menuItem("Mapping tool", tabName = "map_tab", icon = icon("map")),
+                  menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
+                  menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
+                  menuItem("Data", tabName = "data_tab", icon = icon("table")),
+                  menuItem("About", tabName = "about", icon = icon("info-circle"))
+      ),
+      uiOutput("country_selector"),  # default: visible
+      hidden(selectInput("var_sel", "Variable", choices = NULL)),
+      hidden(uiOutput("state_selector")),
+      hidden(selectInput("var_sel2", "Variable", choices = NULL)),
+      hidden(selectInput("country_sel2", "Select a country:", choices = c(unique(data$country_name)), selected = "ARGENTINA")),
+      hidden(selectInput("state_sel2", "Select a state:", choices = NULL)),
+      hidden(pickerInput(
+        inputId = "columns_sel",
+        label = "Select columns to show:",
+        choices = colnames(data),
+        selected = colnames(data),
+        multiple = TRUE,
+        options = pickerOptions(
+          actionsBox = TRUE,
+          liveSearch = TRUE,
+          dropupAuto = FALSE,
+          selectedTextFormat = "count > 3"
+        )
+      )),
+      
+      div(
+        style = "
+        position: absolute;
+        bottom: 10px;
+        left: 15px;
+        right: 15px;
+        font-size: 0.8em;
+        color: #aaa;
+      ",
+        HTML("This tool was developed by <strong>Felipe Soto Jorquera</strong> as part of the <em>Subnational Politics Project (Agustina Giraudy et al., 2025)</em>.")
       )
-    ))
-    # ,
-    # downloadButton("download_map", "Download Map PNG")
+    )
   ),
   dashboardBody(
     tags$head(
@@ -119,8 +131,9 @@ ui <- dashboardPage(
                    collapsed = FALSE,
                    width = NULL,
                    textOutput("var_description_graph")
+                 ),
+                 checkboxInput("force_y0", "Force Y-axis to start at 0", value = FALSE)
                  )
-          )
         )
       ),
       
@@ -148,21 +161,23 @@ ui <- dashboardPage(
       tabItem(
         tabName = "about",
         box(
-          title = "About This Application",
+          title = "About the Subnational Politics Project (SPP)",
           solidHeader = TRUE,
           status = "info",
           width = 12,
           collapsible = TRUE,
           collapsed = FALSE,
-          
-          p("This interactive dashboard provides a comprehensive overview of subnational political leadership across Argentina, Brazil and Mexico. 
-    It allows users to explore electoral outcomes, leadership profiles, ideological alignments, and regional trends using dynamic visualizations and maps."),
-          
-          p(HTML("The application integrates the Database of Subnational Federalism in Latin America <a href='https://www.agustinagiraudy.com' target='_blank'>(Giraudy, A. 2025)</a> with the geometries of the federal states and provinces from 
-         <a href='https://www.simplemaps.com' target='_blank'>www.simplemaps.com</a>. 
-         It presents them in an accessible format for researchers, journalists, policymakers, and the general public interested in political dynamics at the subnational level.")),
-          
-          p("Use the sidebar menu to navigate between countries, years and variables.")
+          HTML("
+        <p style='text-align:justify;'>
+        The Subnational Politics Project (SPP) is part of a broader research project designed to compile, generate, and disseminate systematic, transparent, and publicly accessible data on subnational political institutions, subnational political processes, and subnational electoral outcomes in Latin America.
+        </p>
+        <p style='text-align:justify;'>
+        The primary objective of the project is to create a centralized and standardized data infrastructure that facilitates both in-depth within-country analyses and cross-national comparative research on subnational political dynamics.
+        </p>
+        <p style='text-align:justify;'>
+        By providing longitudinal and spatially disaggregated data, the SPP seeks to support empirical scholarship on a wide range of topics, including federalism, decentralization, party competition, electoral accountability, and territorial governance.
+        </p>
+      ")
         )
       )
     ),

@@ -18,16 +18,19 @@ library(webshot)
 
 source("map_module.R")
 source("line_module.R")
-# source("ggMapModule.R")
-#source("state_selector_module.R")
 
-data <- read.xlsx("data/complete_database_edit.xlsx")
+
+# NED <- read.xlsx("data/NED (v.0.1).xlsx") %>% 
+#   mutate(ideo_party_nat_exe = as.double(ideo_party_nat_exe))
+# SEED <- read.xlsx("data/SEED (v.0.1).xlsx")
+# SED <- read.xlsx("data/SED (v.0.1).xlsx")
+
+data <- read.xlsx("data/data_without_SLED.xlsx")
 geom <- st_read("data/geom_simple_maps.geojson")
 
-data_info <- read.xlsx("data/dictionary.xlsx") %>% 
-  filter(category %in% c("Identification", "Electoral")) %>% 
+data_info <- read.xlsx("data/dict_new.xlsx") %>% 
   select(Category= category, Variable = variable, Description = description)
-dict <- read.xlsx("data/dictionary.xlsx") %>% filter(scope == "subnational")
+dict <- read.xlsx("data/dict_new.xlsx") %>% filter(scope == "subnational")
 party_colors <- read.xlsx("data/party_colors.xlsx")
 
 country_bboxes <- list(
