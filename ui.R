@@ -113,7 +113,7 @@ ui <- dashboardPage(
             hidden(
               actionButton(
                 "captureMapBtn",
-                label = tagList(icon("download"), "Download Map"),
+                label = tagList(icon("camera"), "Screenshot"),
                 class = "download_map_btn"
               )
             )
