@@ -110,7 +110,13 @@ ui <- dashboardPage(
           ),
           div(
             style = "position: absolute; bottom: 30px; left: 30%; margin-left: 71px; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
-            hidden(actionButton("captureMapBtn", "Download Map", class = "download_map_btn"))
+            hidden(
+              actionButton(
+                "captureMapBtn",
+                label = tagList(icon("download"), "Download Map"),
+                class = "download_map_btn"
+              )
+            )
           )
           
           
