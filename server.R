@@ -25,7 +25,7 @@ server <- function(input, output, session) {
     session$sendCustomMessage(
       type = paste0('captureMap', "map1"), # Use the hardcoded module ID here
       message = list(
-        filename = paste0("map_", input$country_sel,input$year_,"_", var_normal_name(), ".png"),
+        filename = paste0("map_", input$country_sel,input$year_sel,"_", var_normal_name(), ".png"),
         scale = 2
       )
     )
@@ -33,7 +33,7 @@ server <- function(input, output, session) {
 
   observe({
     if (current_tab() == "map_tab") {
-      Sys.sleep(1)
+      #Sys.sleep(2)
       show("captureMapBtn")
       }
     })
@@ -79,12 +79,12 @@ server <- function(input, output, session) {
     updateSelectInput(
       session, "var_sel",
       choices = dict$pretty_name[dict$viewable_map == 1],
-      selected = "Subnatl. Head of State Party Affiliation")
+      selected = "Governor Party Ideology")
     
     updateSelectInput(
       session, "var_sel2",
       choices = dict$pretty_name[dict$viewable_graph == 1],
-      selected = "Subnatl. Turnout Rate")
+      selected = "Voter Turnout Percentage")
     })
   
   
@@ -206,32 +206,34 @@ server <- function(input, output, session) {
     leader_info <- data_map() %>%
       sf::st_drop_geometry() %>%
       select(
-        head_name_national, sex_head_national, head_party_national,
-        ideo_party_national, years_nat_gov, reelec_nat_gov,
-        early_exit_nat, electoral_national_year, year
+        name_head_nat_exe, sex_head_nat_exe, head_party_nat_exe,
+        ideo_party_nat_exe, 
+        #years_nat_exe, 
+        reelec_nat_exe,
+        early_exit_nat_exe, year_election_nat_exe, year
       ) %>%
       slice(1)
     
     country_name <- stringr::str_to_title(input$country_sel)
     
-    sex <- ifelse(leader_info$sex_head_national == 1, "female", "male")
-    article <- ifelse(leader_info$sex_head_national == 1, "She", "He")
+    sex <- ifelse(leader_info$sex_head_nat_exe == 1, "female", "male")
+    article <- ifelse(leader_info$sex_head_nat_exe == 1, "She", "He")
     ideologies <- c("Left", "Center Left", "Center Right", "Right")
     ideology_text <- ifelse(
-      leader_info$ideo_party_national %in% 1:4,
-      ideologies[leader_info$ideo_party_national],
+      leader_info$ideo_party_nat_exe %in% 1:4,
+      ideologies[leader_info$ideo_party_nat_exe],
       "Unknown"
     )
-    reelec <- ifelse(leader_info$reelec_nat_gov == 1, "was reelected", "was not reelected")
-    early_exit <- ifelse(leader_info$early_exit_nat == 1, "left office early", "completed the full term")
+    reelec <- ifelse(leader_info$reelec_nat_exe == 1, "was reelected", "was not reelected")
+    early_exit <- ifelse(leader_info$early_exit_nat_exe == 1, "left office early", "completed the full term")
     #election_year <- ifelse(leader_info$electoral_national_year == 1, "There was a national election that year.", "No national election was held that year.")
     
     text <- glue::glue(
       "<div>",
-      " In the year <strong>{leader_info$year}</strong> the national leader in <strong>{country_name}</strong> was <strong>{leader_info$head_name_national}</strong>, a {sex} politician affiliated with the <strong>{leader_info$head_party_national}</strong> party, which leans towards the <strong>{ideology_text}</strong> on the ideological spectrum. ",
-      "{article} served for <strong>{leader_info$years_nat_gov}</strong> years, {reelec}, and {early_exit}. </div>",
+      " In the year <strong>{leader_info$year}</strong> the national leader in <strong>{country_name}</strong> was <strong>{leader_info$name_head_nat_exe}</strong>, a {sex} politician affiliated with the <strong>{leader_info$head_party_nat_exe}</strong> party, which leans towards the <strong>{ideology_text}</strong> on the ideological spectrum. ",
+      #"{article} served for <strong>{leader_info$years_nat_exe}</strong> years, {reelec}, and {early_exit}. </div>",
       # "{election_year}",
-      # "</div>"
+       "</div>"
     )
     
     HTML(text)
@@ -255,6 +257,7 @@ server <- function(input, output, session) {
     dict = dict,
     input_variable = var_normal_name2,
     input_states = reactive(input$state_sel),
+    Ymin = reactive(if (input$force_y0) 0 else NULL),
     active_tab = current_tab
   )
   

@@ -10,9 +10,9 @@ get_leaflet_palette <- function(type, palette_vector, values) {
     legend_labels <- c("No", "Yes")
     
   } else if (type == "gender") {
-    domain <- c(0, 1, 2)
+    domain <- c(0, 1,2)
     pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
-    legend_labels <- c("Male", "Female", "Other")
+    legend_labels <- c("Male", "Female","Other")
     
   } else if (type == "categorical") {
     
@@ -27,10 +27,10 @@ get_leaflet_palette <- function(type, palette_vector, values) {
       # Assuming party_colors is a data.frame with 'head_party_sub' and 'color'
       party_colors_df <- get("party_colors", envir = .GlobalEnv)
       party_colors_subset <- party_colors_df %>%
-        filter(head_party_sub %in% domain)
+        filter(head_party_sub_exe %in% domain)
       
       party_colors_ordered <- party_colors_subset %>%
-        slice(match(domain, head_party_sub))
+        slice(match(domain, head_party_sub_exe))
       
       palette_vector <- party_colors_ordered$color
       if (length(palette_vector) == 0 && length(domain) > 0) {
@@ -50,7 +50,7 @@ get_leaflet_palette <- function(type, palette_vector, values) {
   } else if (type %in% c("discrete", "continuous","percentage")) {
     pal_list <- tryCatch({
       # Ensure values are not all NA for classInt
-      valid_values <- values[!is.na(values)]
+      valid_values <- values[!is.na(values)] %>% as.double()
       if (length(valid_values) == 0) {
         return(list(pal = NULL, legend = NULL, domain = NULL, colors = NULL))
       }
@@ -75,9 +75,9 @@ get_leaflet_palette <- function(type, palette_vector, values) {
         
       } else {
         legend_labels <- paste0(
-          format(round(breaks[-length(breaks)] * 100, 2), nsmall = 2, big.mark = ","),
+          format(round(breaks[-length(breaks)], 2), nsmall = 2, big.mark = ","),
           "% - ",
-          format(round(breaks[-1] * 100, 2), nsmall = 2, big.mark = ","),
+          format(round(breaks[-1], 2), nsmall = 2, big.mark = ","),
           "%"
         )
       }
@@ -239,7 +239,12 @@ format_leaflet_value <- function(value, type) {
     } else {
       out[i] <- switch(type[i],
                        "binary" = ifelse(value[i] == 1, "Yes", "No"),
-                       "gender" = ifelse(value[i] == 1, "Female", "Male"),
+                       "gender" = case_when(
+                         value[i] == "0" ~ "Male",
+                         value[i] == "1" ~ "Female",
+                         value[i] == "2" ~ "Other",
+                         TRUE ~ as.character(value[i])
+                       ),
                        "ordinal" = dplyr::case_when(
                          value[i] == 1 ~ "Left",
                          value[i] == 2 ~ "Center Left",
@@ -247,9 +252,9 @@ format_leaflet_value <- function(value, type) {
                          value[i] == 4 ~ "Right",
                          TRUE ~ as.character(value[i])
                        ),
-                       "discrete" = format(value[i], big.mark = ",", scientific = FALSE),
-                       "continuous" = format(round(value[i], 2), nsmall = 2, big.mark = ","),
-                       "percentage" = paste0(format(round(value[i]*100, 2), nsmall = 2, big.mark = ","),"%"),
+                       "discrete" = format(value[i] %>% as.double(), big.mark = ",", scientific = FALSE),
+                       "continuous" = format(round(value[i]%>% as.double(), 2), nsmall = 2, big.mark = ","),
+                       "percentage" = paste0(format(round(as.double(value[i]), 2), nsmall = 2, big.mark = ","),"%"),
                        as.character(value[i]) # fallback
       )
     }
@@ -329,10 +334,19 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
+    
+    var_info <- reactive({
+      dict %>% filter(variable == input_var_sel()) %>% slice(1)
+    })
+    
+    
     df_map <- reactive({
       req(data_map(), input_var_sel(), active_tab() == "map_tab")
       data <- data_map()
       data[[".leaflet_value"]] <- data[[input_var_sel()]]
+      if (var_info()$type %in% c("discrete", "continuous","percentage")) {
+        data[[".leaflet_value"]] <- as.double(data[[".leaflet_value"]])
+        }
       data
     })
     
@@ -340,9 +354,8 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
       df_map()[[".leaflet_value"]]
     })
     
-    var_info <- reactive({
-      dict %>% filter(variable == input_var_sel()) %>% slice(1)
-    })
+    
+
     
     palette_vector <- reactive({
       unlist(strsplit(var_info()$palette, ","))
@@ -354,6 +367,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     
     prev_domain <- reactiveVal(NULL)
     prev_country <- reactiveVal(NULL)
+    prev_var <- reactiveVal(NULL)
     
     output$map <- renderLeaflet({
       req(active_tab() == "map_tab", input_country_sel() != "", input_var_sel())
@@ -383,12 +397,14 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
         
         prev_domain(NULL)
         prev_country(NULL)
+        prev_var(NULL)
         return()
       }
       
       current_domain <- pal()$domain
       domain_changed <- !identical(current_domain, prev_domain())
       country_changed <- !identical(input_country_sel(), prev_country())
+      var_changed <- !identical(input_var_sel(), prev_var())
       
       proxy %>%
         addPolygons(
@@ -405,25 +421,25 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
             var_info()$pretty_name, ": ", format_leaflet_value(.leaflet_value, var_info()$type),
             "</div>",
             "<b>State:</b> ", stringr::str_to_title(state_name), "<br/>",
-            "<b>Governor:</b> ", head_name_sub, "<br/>",
-            "<b>Governor sex:</b> ", ifelse(sex_head_sub == 1, "Female", "Male"), "<br/>",
-            "<b>Party:</b> ", head_party_sub, "<br/>",
+            "<b>Governor:</b> ", winner_candidate_sub_exe, "<br/>",
+            "<b>Governor sex:</b> ", ifelse(sex_head_sub_exe == 1, "Female", "Male"), "<br/>",
+            "<b>Party:</b> ", head_party_sub_exe, "<br/>",
             "<b>Ideology:</b> ", dplyr::case_when(
-              ideo_party_sub == 1 ~ "Left",
-              ideo_party_sub == 2 ~ "Center Left",
-              ideo_party_sub == 3 ~ "Center Right",
-              ideo_party_sub == 4 ~ "Right",
-              TRUE ~ as.character(ideo_party_sub)
+              ideo_party_sub_exe == 1 ~ "Left",
+              ideo_party_sub_exe == 2 ~ "Center Left",
+              ideo_party_sub_exe == 3 ~ "Center Right",
+              ideo_party_sub_exe == 4 ~ "Right",
+              TRUE ~ as.character(ideo_party_sub_exe)
             ), "<br/>",
-            "<b>Alignment:</b> ", ifelse(alignment == 1, "Yes", "No"), "<br/>",
-            "<b>Years in office:</b> ", years_sub_gov, "<br/>",
-            "<b>Early exit:</b> ", ifelse(early_exit_sub == 1, "Yes", "No"), "<br/>",
-            "<b>Reelected:</b> ", ifelse(reelec_sub_gov == 1, "Yes", "No"), "<br/>",
-            "<b>Electoral sub. year:</b> ", ifelse(electoral_sub_year == 1, "Yes", "No")
+            "<b>Alignment:</b> ", ifelse(alignment_with_nat_sub_exe == 1, "Yes", "No"), "<br/>",
+            #"<b>Years in office:</b> ", years_sub_exe, "<br/>",
+            "<b>Early exit:</b> ", ifelse(early_exit_sub_exe == 1, "Yes", "No"), "<br/>",
+            "<b>Reelected:</b> ", ifelse(reelec_sub_exe == 1, "Yes", "No"), "<br/>",
+            "<b>Electoral sub. year:</b> ", ifelse(electoral_year_sub_exe == 1, "Yes", "No")
           )
         )
       
-      if (domain_changed || country_changed) {
+      if (domain_changed || country_changed || var_changed) {
         proxy %>%
           clearControls() %>%
           addLegend_decreasing(
@@ -438,6 +454,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
       
       prev_domain(current_domain)
       prev_country(input_country_sel())
+      prev_var(input_var_sel())
     })
     
     
