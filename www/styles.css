@@ -221,7 +221,8 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 110px;
+  width: 130px;
+  margin-right: 6px;
   padding: 0px 0px !important;
   opacity: 0.5;
   box-sizing: border-box;
