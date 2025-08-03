@@ -105,6 +105,10 @@ ui <- dashboardPage(
           
           # Custom year selector placed at the bottom of the tab
           div(
+            style = "position: absolute; bottom: 50%; left: 40%; z-index: 1000;",
+            hidden(textOutput("no_data_message"))
+          ),
+          div(
             style = "position: absolute; bottom: 30px; left: 30%; right: 30%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
             uiOutput("year_selector")
           ),
@@ -133,12 +137,14 @@ ui <- dashboardPage(
                  box(
                    title = "Variable description", 
                    solidHeader = TRUE,
-                   collapsible = TRUE, 
+                   collapsible = FALSE, 
                    collapsed = FALSE,
                    width = NULL,
                    textOutput("var_description_graph")
                  ),
-                 checkboxInput("force_y0", "Force Y-axis to start at 0", value = FALSE)
+                 box(width = NULL,
+                     height = NULL,
+                   checkboxInput("force_y0", "Click for Y-axis start at 0", value = FALSE, ))
                  )
         )
       ),

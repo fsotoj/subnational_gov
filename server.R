@@ -79,12 +79,23 @@ server <- function(input, output, session) {
     updateSelectInput(
       session, "var_sel",
       choices = dict$pretty_name[dict$viewable_map == 1],
-      selected = "Governor Party Ideology")
+      #selected = "Governor Party Ideology")
+      selected = "Governor Gender")
     
     updateSelectInput(
       session, "var_sel2",
       choices = dict$pretty_name[dict$viewable_graph == 1],
       selected = "Voter Turnout Percentage")
+    })
+  
+  
+  observe({ 
+    req(current_tab() == "map_tab",data_map())
+    
+    if (nrow(data_map()) == 0 || all(is.na(data_map()[[var_normal_name()]]))) {
+    show("no_data_message")
+    
+  } else {hide("no_data_message")}
     })
   
   
@@ -133,6 +144,9 @@ server <- function(input, output, session) {
     paste0(var_info$pretty_name[1], ": ", var_info$description[1])
   })
   
+  
+  output$no_data_message <- renderText("⚠ No data available for this country, variable and year.")
+  
   # Render texto descripción variable para graph_tab
   output$var_description_graph <- renderText({
     req(current_tab() == "graph_tab")
@@ -159,7 +173,7 @@ server <- function(input, output, session) {
       grid = TRUE,
       width = "90%",
       animate = TRUE,
-      selected = 2001
+      selected = 2019
     )
   })
   
