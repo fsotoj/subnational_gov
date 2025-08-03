@@ -82,7 +82,7 @@ get_leaflet_palette <- function(type, palette_vector, values) {
         )
       }
       
-      list(pal = pal, legend = legend_labels, domain = values, colors = NULL)
+      list(pal = pal, legend = c("Not avaible", legend_labels), domain = c(NA,values), colors = NULL)
       
     }, error = function(e) {
       if (grepl("single unique value", e$message) && length(unique(valid_values)) == 1) {
@@ -90,7 +90,7 @@ get_leaflet_palette <- function(type, palette_vector, values) {
         breaks <- c(val, val + 1e-6) # Small range to define a bin for single value
         pal <- colorBin(palette = tail(palette_vector, 1), domain = values, bins = breaks, pretty = FALSE, na.color = na_color)
         legend_labels <- c(format_leaflet_value(val, type)) # Display the single value
-        return(list(pal = pal, legend = legend_labels, domain = values, colors = NULL))
+        return(list(pal = pal, legend = c("Not avaible", legend_labels), domain = c(NA,values), colors = NULL))
       } else {
         warning(paste("Error in get_leaflet_palette (discrete/continuous/percentage):", e$message))
         return(list(pal = NULL, legend = NULL, domain = NULL, colors = NULL))
@@ -102,7 +102,10 @@ get_leaflet_palette <- function(type, palette_vector, values) {
   }
   
   # Add NA label for non-numeric types
-  if (!is.null(pal) && !(type %in% c("discrete", "continuous", "percentage"))) {
+  if (type == "gender") {
+    legend_labels <- c(legend_labels,"Not available")
+    domain <- c(domain, NA)
+  } else if (!is.null(pal) && !(type %in% c("discrete", "continuous", "percentage"))) {
     legend_labels <- c("Not available", legend_labels)
     domain <- c(NA, domain)
   }
@@ -194,7 +197,7 @@ addLegend_decreasing <- function (map, position = c("topright", "bottomright", "
       v <- sort(unique(na.omit(values)))
       colors <- pal(v)
       labels <- labFormat(type = "factor", v)
-      full_levels <- if(length(unique(values)) == 1 && all(unique(values) %in% c(0,1))) c(0,1) else sort(unique(na.omit(values)))
+      full_levels <- sort(unique(na.omit(values)))
       
       # Use full levels to get colors and labels
       if (decreasing == TRUE) {
@@ -390,10 +393,11 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
       if (nrow(df_map()) == 0 || all(is.na(df_map()[[".leaflet_value"]]))) {
         proxy %>%
           clearShapes() %>%
-          clearControls() %>%
-          addControl("⚠ No data available for this country, variable and year.",
-                     position = "topright",
-                     className = "leaflet-control-warning")
+          clearControls()
+        # %>%
+        #   addControl("⚠ No data available for this country, variable and year.",
+        #              position = "topright",
+        #              className = "leaflet-control-warning")
         
         prev_domain(NULL)
         prev_country(NULL)
@@ -448,7 +452,8 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
             values = pal()$domain,
             labFormat = function(type, cuts, p) { pal()$legend },
             opacity = 0.9,
-            title = var_info()$pretty_name
+            title = var_info()$pretty_name,
+            decreasing = if (var_info()$type=="gender") FALSE else TRUE
           )
       }
       
