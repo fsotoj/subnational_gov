@@ -1,5 +1,6 @@
 server <- function(input, output, session) {
   
+  ### ABOUT
   observe({
     showModal(modalDialog(
       title = "About the Subnational Politics Project (SPP)",
@@ -13,6 +14,11 @@ server <- function(input, output, session) {
         <p style='text-align:justify;'>
         By providing longitudinal and spatially disaggregated data, the SPP seeks to support empirical scholarship on a wide range of topics, including federalism, decentralization, party competition, electoral accountability, and territorial governance.
         </p>
+        <hr style='border-color:#17a2b8;'/>
+        <p style='font-size: 0.9em; color: #bbb;'>
+          <strong>Suggested citation for data retrieved from this app:</strong><br/>
+            Giraudy, Agustina, <em>et al.</em> (2025). <em>Subnational Politics Project Databases</em> (v0.1). Data accessed via the Subnational Politics Project web app developed by Felipe Soto. [DOI to be assigned]
+        </p>
       "),
       easyClose = TRUE,
       size = "xl",
@@ -20,6 +26,7 @@ server <- function(input, output, session) {
     ))
   })
   
+  #### capture button
   observeEvent(input$captureMapBtn, {
     
     session$sendCustomMessage(
@@ -31,6 +38,7 @@ server <- function(input, output, session) {
     )
   })
 
+  ### show capture button
   observe({
     if (current_tab() == "map_tab") {
       #Sys.sleep(2)
@@ -89,6 +97,11 @@ server <- function(input, output, session) {
     })
   
   
+  output$db_selector <- renderUI({
+    selectInput("db_sel",label = "Select a database to view:", choices = c("NED","SED","SEED","SLED"))
+  })
+  
+  # SHOW NO DATA MESSAGE
   observe({ 
     req(current_tab() == "map_tab",data_map())
     
@@ -98,7 +111,7 @@ server <- function(input, output, session) {
   } else {hide("no_data_message")}
     })
   
-  
+  # SHOW HIDE SELECTORS
   observe({
     if (current_tab() == "map_tab") {
       show("var_sel")
@@ -124,13 +137,16 @@ server <- function(input, output, session) {
   
   observe({
     if (current_tab() == "data_tab") {
-      shinyjs::show("country_sel2")
-      shinyjs::show("state_sel2")
-      shinyjs::show("columns_sel")
+      show("country_sel2")
+      show("state_sel2")
+      show("columns_sel")
+      show("columns_sel")
+      show("db_selector")
     } else {
-      shinyjs::hide("country_sel2")
-      shinyjs::hide("state_sel2")
-      shinyjs::hide("columns_sel")
+      hide("country_sel2")
+      hide("state_sel2")
+      hide("columns_sel")
+      hide("db_selector")
     }
   })
   
@@ -177,19 +193,7 @@ server <- function(input, output, session) {
     )
   })
   
-  # Actualizar ticks del slider solo en map_tab
-  observe({
-    req(current_tab() == "map_tab")
-    
-    desired_years <- c(1990, 2000, 2010, 2020)
-    all_years <- 1983:2024
-    indices <- which(all_years %in% desired_years) - 1  # JS base 0
-    
-    session$sendCustomMessage("custom_ticks", list(
-      labels = as.character(desired_years),
-      indices = indices
-    ))
-  })
+
   
   # Reactives para variable normalizada
   var_normal_name <- reactive({
@@ -278,20 +282,25 @@ server <- function(input, output, session) {
   
   # Renderizar tabla en data_tab
   output$table_info <- DT::renderDT({
-    req(input$country_sel2, input$state_sel2, current_tab() == "data_tab")
+    req(input$country_sel2, input$state_sel2, current_tab() == "data_tab", input$db_sel)
     
-    filtered_data <- data %>%
+    db_name <- input$db_sel
+    
+    data_sel <- if (db_name == "SED") SED else if (db_name == "SEED") SEED else if (db_name == "NED") NED else if (db_name == "SLED") SLED else NULL
+    
+    filtered_data <- data_sel %>%
       filter(
         country_name == input$country_sel2,
-        state_name == input$state_sel2
-      ) %>%
-      select(all_of(input$columns_sel))
+        if (db_name!="NED") state_name == input$state_sel2 else TRUE
+      ) 
+    # %>%
+    #   select(all_of(input$columns_sel))
     
     DT::datatable(
       filtered_data,
       options = list(
         scrollX = TRUE,
-        scrollY = "50vh",
+        scrollY = "80vh",
         paging = FALSE,
         scrollCollapse = TRUE,
         dom = 't'
@@ -300,6 +309,23 @@ server <- function(input, output, session) {
       rownames = FALSE
     )
   })
+  
+  
+  
+  output$texto_db <- renderUI({
+    req(input$db_sel)  
+    
+    texto <- switch(input$db_sel,
+                    "NED" = "<b>National Executive Databse:</b> Data on national executive branches per country.",
+                    "SED" = "<b>Subnational Executive Database:</b> Data on subnational executive branches per state/province, per country.",
+                    "SEED" = "<b>Subnational Executive Elections Database:</b> Data on electoral results for executive branch.",
+                    "SLED" = "<b>Subnational Legislative Elections Database:</b> Data on subnational executive elections by state/province and country. It also includes institutional and electoral information on state- or provincial-level legislatures.",
+                    "No data"
+    )
+    HTML(texto)
+  })
+  
+  
   
   # Actualizar estados para data_tab según país seleccionado
   observeEvent(input$country_sel2, {
@@ -315,17 +341,43 @@ server <- function(input, output, session) {
                       selected = states_available[1])
   })
   
+  observeEvent(input$db_sel,{
+    req(input$db_sel)
+    if (input$db_sel == "NED") {
+      disable("state_sel2")
+    } else {enable("state_sel2")}
+    
+  })
+  
+  
+  
   
   # Descarga datos (excel)
   output$download_data <- downloadHandler(
     filename = function() {
-      paste("data_", Sys.Date(), ".xlsx", sep = "")
+      ext <- if (input$file_format == "csv") "csv" else "xlsx"
+      paste0(input$db_sel, "_", Sys.Date(), ".", ext)
     },
     content = function(file) {
-      write.xlsx(data, file)
-    },
-    contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      req(input$db_sel, input$file_format)  # Asegura que ambos inputs existan
+      
+      # Asegúrate de que el objeto existe
+      if (!exists(input$db_sel, envir = .GlobalEnv)) {
+        stop("Selected dataset does not exist in the global environment.")
+      }
+      
+      data_to_download <- get(input$db_sel, envir = .GlobalEnv)
+      
+      if (input$file_format == "csv") {
+        write.csv(data_to_download, file, row.names = FALSE, fileEncoding = "UTF-8")
+      } else {
+        openxlsx::write.xlsx(data_to_download, file)
+      }
+    }
   )
+  
+
+  
   
   # Descarga geometría (geojson)
   output$download_geom <- downloadHandler(

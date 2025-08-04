@@ -1,4 +1,3 @@
-
 get_leaflet_palette <- function(type, palette_vector, values) {
   if (length(values) == 0) return(list(pal = NULL, legend = NULL, domain = NULL, colors = NULL))
   
@@ -349,7 +348,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
       data[[".leaflet_value"]] <- data[[input_var_sel()]]
       if (var_info()$type %in% c("discrete", "continuous","percentage")) {
         data[[".leaflet_value"]] <- as.double(data[[".leaflet_value"]])
-        }
+      }
       data
     })
     
@@ -358,7 +357,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     })
     
     
-
+    
     
     palette_vector <- reactive({
       unlist(strsplit(var_info()$palette, ","))
@@ -371,6 +370,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     prev_domain <- reactiveVal(NULL)
     prev_country <- reactiveVal(NULL)
     prev_var <- reactiveVal(NULL)
+    prev_tab <- reactiveVal(NULL)  # Nueva variable reactiva para trackear el tab anterior
     
     output$map <- renderLeaflet({
       req(active_tab() == "map_tab", input_country_sel() != "", input_var_sel())
@@ -386,7 +386,15 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     })
     
     observe({
-      req(df_map(), input_var_sel(), input_country_sel(), active_tab() == "map_tab")
+      # Detecta cambio de tab primero, sin req que bloquee
+      tab_changed <- !identical(active_tab(), prev_tab())
+      prev_tab(active_tab())  # Actualiza inmediatamente el tab anterior
+      
+      # Solo procede si estamos en map_tab
+      if (active_tab() != "map_tab") return()
+      
+      # Ahora sí requerimos los datos
+      req(df_map(), input_var_sel(), input_country_sel())
       
       proxy <- leafletProxy(ns("map"), data = df_map())
       
@@ -443,7 +451,8 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           )
         )
       
-      if (domain_changed || country_changed || var_changed) {
+      # Incluye tab_changed en la condición para re-renderizar la leyenda
+      if (domain_changed || country_changed || var_changed || tab_changed) {
         proxy %>%
           clearControls() %>%
           addLegend_decreasing(
