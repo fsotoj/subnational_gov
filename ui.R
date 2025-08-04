@@ -6,10 +6,8 @@ ui <- dashboardPage(
     useShinyjs(),
     tagList(
       sidebarMenu(id = "tabs",
-                  menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
                   menuItem("Mapping tool", tabName = "map_tab", icon = icon("map")),
-                  
-                  
+                  menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
                   menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
                   menuItem("Data", tabName = "data_tab", icon = icon("table")),
                   menuItem("About", tabName = "about", icon = icon("info-circle"))
