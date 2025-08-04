@@ -20,12 +20,17 @@ source("map_module.R")
 source("line_module.R")
 
 
-# NED <- read.xlsx("data/NED (v.0.1).xlsx") %>% 
-#   mutate(ideo_party_nat_exe = as.double(ideo_party_nat_exe))
-# SEED <- read.xlsx("data/SEED (v.0.1).xlsx")
-# SED <- read.xlsx("data/SED (v.0.1).xlsx")
+NED <- read.xlsx("data/NED (v.0.1).xlsx") %>%
+  mutate(ideo_party_nat_exe = as.double(ideo_party_nat_exe))
+SEED <- read.xlsx("data/SEED (v.0.1).xlsx")
+SED <- read.xlsx("data/SED (v.0.1).xlsx")
+SLED <- read.xlsx("data/SLED (v.0.1).xlsx")
 
-data <- read.xlsx("data/data_without_SLED.xlsx")
+data <- left_join(NED,SED,c("country_name","country_code","year")) %>% 
+  left_join(.,SEED,c("country_state_code","year"))  %>%
+  select(-matches("\\.y$")) %>%
+  rename_with(~ gsub("\\.x$", "", .x), ends_with(".x"))
+
 geom <- st_read("data/geom_simple_maps.geojson")
 
 data_info <- read.xlsx("data/dict_new.xlsx") %>% 

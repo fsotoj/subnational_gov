@@ -12,40 +12,30 @@ ui <- dashboardPage(
                   menuItem("Data", tabName = "data_tab", icon = icon("table")),
                   menuItem("About", tabName = "about", icon = icon("info-circle"))
       ),
+      hidden(uiOutput("db_selector")),
       uiOutput("country_selector"),  # default: visible
       hidden(selectInput("var_sel", "Variable", choices = NULL)),
       hidden(uiOutput("state_selector")),
       hidden(selectInput("var_sel2", "Variable", choices = NULL)),
       hidden(selectInput("country_sel2", "Select a country:", choices = c(unique(data$country_name)), selected = "ARGENTINA")),
-      hidden(selectInput("state_sel2", "Select a state:", choices = NULL)),
-      hidden(pickerInput(
-        inputId = "columns_sel",
-        label = "Select columns to show:",
-        choices = colnames(data),
-        selected = colnames(data),
-        multiple = TRUE,
-        options = pickerOptions(
-          actionsBox = TRUE,
-          liveSearch = TRUE,
-          dropupAuto = FALSE,
-          selectedTextFormat = "count > 3"
-        )
-      )),
-      
-      div(
-        style = "
-        position: absolute;
-        bottom: 10px;
-        left: 15px;
-        right: 15px;
-        font-size: 0.8em;
-        color: #aaa;
-      ",
-        HTML("This tool was developed by <strong>Felipe Soto Jorquera</strong> as part of the <em>Subnational Politics Project (Agustina Giraudy et al., 2025)</em>.")
-      )
-    )
+      hidden(selectInput("state_sel2", "Select a state:", choices = NULL)))
   ),
   dashboardBody(
+    tags$footer(
+      style = "
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      padding: 5px 15px;
+      font-size: 11px;
+      text-align: left;
+      width: max-content;
+      background: linear-gradient(to right, rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0));
+      color: #ccc;
+      z-index: 1050;
+    ",
+      HTML("Tool developed by <strong>Felipe Soto Jorquera</strong> for the <em>Subnational Politics Project</em> (Giraudy et al., 2025).")
+    ),
     tags$head(
       tags$link(id = "theme-css", rel = "stylesheet", type = "text/css", href = "styles.css")
     ),
@@ -161,14 +151,24 @@ ui <- dashboardPage(
               uiOutput("pdf_visor")),
       
       tabItem(tabName = "data_tab",   
-              fluidRow(DT::DTOutput("table_info")),
-              br(),
-              fluidRow(downloadButton("download_data", "Download complete data"),
-                           downloadButton("download_geom", "Download complete geometries")
-                
-                
+              fluidRow(column(9,DTOutput("table_info")),
+                       column(3,
+                              
+                              #fluidRow(downloadButton("download_geom", "Download complete geometries")),
+                              box(
+                                title = "Current database", 
+                                solidHeader = TRUE,
+                                collapsible = FALSE, 
+                                collapsed = FALSE,
+                                width = NULL,
+                                uiOutput("texto_db")
+                              )
+                              ,
+                              selectInput("file_format", "Select download format:", choices = c("CSV" = "csv", "Excel" = "xlsx")),
+                              
+                              
+                              downloadButton("download_data", "Download this database"))
               )),
-      
       
       tabItem(
         tabName = "about",
@@ -180,17 +180,23 @@ ui <- dashboardPage(
           collapsible = TRUE,
           collapsed = FALSE,
           HTML("
-        <p style='text-align:justify;'>
-        The Subnational Politics Project (SPP) is part of a broader research project designed to compile, generate, and disseminate systematic, transparent, and publicly accessible data on subnational political institutions, subnational political processes, and subnational electoral outcomes in Latin America.
-        </p>
-        <p style='text-align:justify;'>
-        The primary objective of the project is to create a centralized and standardized data infrastructure that facilitates both in-depth within-country analyses and cross-national comparative research on subnational political dynamics.
-        </p>
-        <p style='text-align:justify;'>
-        By providing longitudinal and spatially disaggregated data, the SPP seeks to support empirical scholarship on a wide range of topics, including federalism, decentralization, party competition, electoral accountability, and territorial governance.
-        </p>
-      ")
+    <p style='text-align:justify;'>
+      The Subnational Politics Project (SPP) is part of a broader research project designed to compile, generate, and disseminate systematic, transparent, and publicly accessible data on subnational political institutions, subnational political processes, and subnational electoral outcomes in Latin America.
+    </p>
+    <p style='text-align:justify;'>
+      The primary objective of the project is to create a centralized and standardized data infrastructure that facilitates both in-depth within-country analyses and cross-national comparative research on subnational political dynamics.
+    </p>
+    <p style='text-align:justify;'>
+      By providing longitudinal and spatially disaggregated data, the SPP seeks to support empirical scholarship on a wide range of topics, including federalism, decentralization, party competition, electoral accountability, and territorial governance.
+    </p>
+    <hr style='border-color:#17a2b8;'/>
+    <p style='font-size: 0.9em; color: #bbb;'>
+      <strong>Suggested citation for data retrieved from this app:</strong><br/>
+      Giraudy, Agustina, <em>et al.</em> (2025). <em>Subnational Politics Project Databases</em> (v0.1). Data accessed via the Subnational Politics Project web app developed by Felipe Soto. [DOI to be assigned]
+    </p>
+  ")
         )
+        
       )
     ),
     skin = "blue"
