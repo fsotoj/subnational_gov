@@ -5,6 +5,7 @@ body, .content-wrapper, .right-side {
 }
 
 
+
 /* BOXES */
 .box {
   background-color: #05354f ; /* azul oscuro algo más claro para contraste */
@@ -286,4 +287,65 @@ button.download_map_btn i.fas.fa-camera {
   padding: 0px !important;  /* top/bottom = 2px, left/right = 6px */
   font-size: 12px !important;   /* opcional, para hacer más pequeño el ícono */
   height: auto !important;      /* por si hereda altura fija */
+}
+
+
+
+/* Estilos de la tarjeta para el contenedor del árbol */
+#jstree_demo {  
+  background: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  border: none;
+  
+  /* CLAVE: Asegura que el contenedor del árbol tenga su propio scroll si es necesario */
+  overflow-y: auto; 
+  overflow-x: hidden; /* Evita el scroll horizontal */
+  /* CLAVE: Define una altura máxima para evitar que el contenedor crezca infinitamente */
+  max-height: 200px; /* Puedes ajustar este valor según tus necesidades */
+}
+
+
+/* --- Estilos para el propio jstree (para tema oscuro) --- */
+
+/* Contenedor principal del árbol */
+.jstree-default .jstree-container-ul {
+  background: transparent; /* Fondo transparente para que se vea el fondo de la tarjeta */
+  color: #000000;          /* Color de texto claro para los nodos */
+}
+
+/* Nodos individuales y su espaciado */
+.jstree-default .jstree-anchor {
+  color: #000000 !important;
+  /* CLAVE: Aumenta el padding para que sea más fácil hacer clic */
+  padding: 5px 4px !important;
+  border-radius: 2px;
+}
+
+/* Opcional: Ajusta el tamaño de la casilla de verificación */
+.jstree-default .jstree-checkbox {
+  font-size: 0.8em;
+}
+
+
+/* Estilos de las líneas de conexión */
+.jstree-default .jstree-themeicon-dot {
+  /* Cambia el estilo a una línea continua */
+  border-style: solid !important;
+  /* Establece un color para la línea */
+  border-color: #a0a0a0 !important;
+
+  /* Esto es clave para que las líneas se vean más cortas */
+  /* Reducimos la altura del borde para que no ocupe todo el espacio vertical */
+  height: 50% !important; /* Ajusta la altura de la línea (50% es un buen punto de partida) */
+  margin-top: 1px !important; /* Ajusta la posición de la línea */
+}
+
+
+
+/* Ajusta el padding de los nodos para que se alineen bien */
+.jstree-default .jstree-anchor {
+  /* Reduce el padding para un aspecto más compacto si es necesario */
+  padding: 2px 4px !important;
 }

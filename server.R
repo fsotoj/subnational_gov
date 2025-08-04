@@ -1,4 +1,60 @@
 server <- function(input, output, session) {
+  default_states <- c("ARGENTINA-CAPITAL FEDERAL", "BRAZIL-DISTRITO FEDERAL", "MEXICO-CDMX")
+  
+  observeEvent(session, {
+    # 2. Enviamos los datos del árbol Y la lista de nodos a seleccionar
+    session$sendCustomMessage(
+      "jstree_data",
+      list(
+        data = jstree_json_data,
+        default_selected = default_states # Nuevo parámetro
+      )
+    )
+  })
+  
+  # Esta es la parte clave para obtener el vector de estados
+  # Creamos una variable reactiva para procesar los nodos seleccionados
+  selected_states_vector <- reactive({
+    if (is.null(input$selected_nodes) || input$selected_nodes == "[]") {
+      return(c())
+    }
+    nodes <- fromJSON(input$selected_nodes)
+    states_selected_ids <- nodes[grepl("-", nodes)]
+    
+    # *** MODIFICADO ***
+    # Extraemos el nombre del estado de cada ID y lo mantenemos en mayúsculas para el filtrado
+    states_to_filter <- sapply(strsplit(states_selected_ids, "-"), function(x) x[2])
+    
+    return(states_to_filter)
+  })
+  
+  observeEvent(session, {
+    session$sendCustomMessage(
+      "jstree_data",
+      list(
+        data = jstree_json_data
+      )
+    )
+  })
+  
+  # Esta es la parte clave para obtener el vector de estados
+  # Creamos una variable reactiva para procesar los nodos seleccionados
+  selected_states_vector <- reactive({
+    if (is.null(input$selected_nodes) || input$selected_nodes == "[]") {
+      return(c()) # Devolvemos un vector vacío si no hay selección
+    }
+    
+    nodes <- fromJSON(input$selected_nodes)
+    
+    # Filtramos solo los nodos que son estados (los que contienen "-")
+    states_selected_ids <- nodes[grepl("-", nodes)]
+    
+    # Extraemos el nombre del estado de cada ID
+    states_to_filter <- sapply(strsplit(states_selected_ids, "-"), function(x) x[2])
+    
+    return(states_to_filter)
+  })
+  
   
   ### ABOUT
   observe({
@@ -118,6 +174,7 @@ server <- function(input, output, session) {
       hide("var_sel2")
       show("var_description_map")
       hide("var_description_graph")
+      hide("jstree_container")
     } 
     
     if (current_tab() == "graph_tab") {
@@ -126,11 +183,13 @@ server <- function(input, output, session) {
       hide("var_description_map")
       show("var_description_graph")
       show("state_selector")
+      show("jstree_container")
     }
     
     if (!(current_tab() %in% c("graph_tab", "map_tab"))){
       shinyjs::hide("var_sel")
       shinyjs::hide("var_sel2")
+      hide("jstree_container")
     }
   })
   
@@ -275,7 +334,7 @@ server <- function(input, output, session) {
     data = reactive(data),
     dict = dict,
     input_variable = var_normal_name2,
-    input_states = reactive(input$state_sel),
+    input_states = selected_states_vector,
     Ymin = reactive(if (input$force_y0) 0 else NULL),
     active_tab = current_tab
   )

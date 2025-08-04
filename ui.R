@@ -6,8 +6,10 @@ ui <- dashboardPage(
     useShinyjs(),
     tagList(
       sidebarMenu(id = "tabs",
-                  menuItem("Mapping tool", tabName = "map_tab", icon = icon("map")),
                   menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
+                  menuItem("Mapping tool", tabName = "map_tab", icon = icon("map")),
+                  
+                  
                   menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
                   menuItem("Data", tabName = "data_tab", icon = icon("table")),
                   menuItem("About", tabName = "about", icon = icon("info-circle"))
@@ -15,7 +17,14 @@ ui <- dashboardPage(
       hidden(uiOutput("db_selector")),
       uiOutput("country_selector"),  # default: visible
       hidden(selectInput("var_sel", "Variable", choices = NULL)),
-      hidden(uiOutput("state_selector")),
+      shinyjs::hidden(
+        div(
+          id = "jstree_container", # Agregamos un ID para poder referenciarlo
+          style = "padding: 15px;",
+          tags$label("Selecciona estados", `for` = "jstree_demo"),
+          div(id = "jstree_demo")
+        )),
+      #hidden(uiOutput("state_selector")),
       hidden(selectInput("var_sel2", "Variable", choices = NULL)),
       hidden(selectInput("country_sel2", "Select a country:", choices = c(unique(data$country_name)), selected = "ARGENTINA")),
       hidden(selectInput("state_sel2", "Select a state:", choices = NULL)))
@@ -37,7 +46,11 @@ ui <- dashboardPage(
       HTML("Tool developed by <strong>Felipe Soto Jorquera</strong> for the <em>Subnational Politics Project</em> (Giraudy et al., 2025).")
     ),
     tags$head(
-      tags$link(id = "theme-css", rel = "stylesheet", type = "text/css", href = "styles.css")
+      tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/jstree.min.js"),
+      tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/themes/default/style.min.css"),
+      tags$link(id = "theme-css", rel = "stylesheet", type = "text/css", href = "styles.css"),
+      tags$script(src = "custom.js")
+      
     ),
     tags$script(HTML("
     $(document).on('shiny:value', function(event) {

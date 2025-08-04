@@ -11,6 +11,7 @@ library(shinyWidgets)
 library(shinyjs)
 library(mapview)
 library(webshot)
+library(jsonlite)
 #library(shinyWidgets)
 
 
@@ -18,6 +19,7 @@ library(webshot)
 
 source("map_module.R")
 source("line_module.R")
+source("get_jstree_data.R")
 
 
 NED <- read.xlsx("data/NED (v.0.1).xlsx") %>%
@@ -37,6 +39,9 @@ data_info <- read.xlsx("data/dict_new.xlsx") %>%
   select(Category= category, Variable = variable, Description = description)
 dict <- read.xlsx("data/dict_new.xlsx") %>% filter(scope == "subnational")
 party_colors <- read.xlsx("data/party_colors.xlsx")
+jstree_json_data <- get_jstree_data(data)
+
+
 
 country_bboxes <- list(
   ARGENTINA = list(lng1 = -73.5, lat1 = -59, lng2 = -56, lat2 = -21.8),
