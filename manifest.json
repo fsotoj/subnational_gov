@@ -626,26 +626,26 @@
         "Package": "curl",
         "Type": "Package",
         "Title": "A Modern and Flexible Web Client for R",
-        "Version": "5.2.1",
-        "Authors@R": "c(\n    person(\"Jeroen\", \"Ooms\", role = c(\"aut\", \"cre\"), email = \"jeroen@berkeley.edu\",\n      comment = c(ORCID = \"0000-0002-4035-0289\")),\n    person(\"Hadley\", \"Wickham\", , \"hadley@rstudio.com\", role = \"ctb\"),\n    person(\"RStudio\", role = \"cph\")\n    )",
-        "Description": "The curl() and curl_download() functions provide highly\n    configurable drop-in replacements for base url() and download.file() with\n    better performance, support for encryption (https, ftps), gzip compression,\n    authentication, and other 'libcurl' goodies. The core of the package implements a\n    framework for performing fully customized requests where data can be processed\n    either in memory, on disk, or streaming via the callback or connection\n    interfaces. Some knowledge of 'libcurl' is recommended; for a more-user-friendly\n    web client see the 'httr' package which builds on this package with http\n    specific tools and logic.",
+        "Version": "6.2.2",
+        "Authors@R": "c(\n    person(\"Jeroen\", \"Ooms\", role = c(\"aut\", \"cre\"), email = \"jeroenooms@gmail.com\",\n      comment = c(ORCID = \"0000-0002-4035-0289\")),\n    person(\"Hadley\", \"Wickham\", role = \"ctb\"),\n    person(\"Posit Software, PBC\", role = \"cph\"))",
+        "Description": "Bindings to 'libcurl' <https://curl.se/libcurl/> for performing fully\n    configurable HTTP/FTP requests where responses can be processed in memory, on\n    disk, or streaming via the callback or connection interfaces. Some knowledge\n    of 'libcurl' is recommended; for a more-user-friendly web client see the \n    'httr2' package which builds on this package with http specific tools and logic.",
         "License": "MIT + file LICENSE",
-        "SystemRequirements": "libcurl: libcurl-devel (rpm) or\nlibcurl4-openssl-dev (deb).",
-        "URL": "https://jeroen.r-universe.dev/curl https://curl.se/libcurl/",
+        "SystemRequirements": "libcurl (>= 7.62): libcurl-devel (rpm) or\nlibcurl4-openssl-dev (deb)",
+        "URL": "https://jeroen.r-universe.dev/curl",
         "BugReports": "https://github.com/jeroen/curl/issues",
         "Suggests": "spelling, testthat (>= 1.0.0), knitr, jsonlite, later,\nrmarkdown, httpuv (>= 1.4.4), webutils",
         "VignetteBuilder": "knitr",
         "Depends": "R (>= 3.0.0)",
-        "RoxygenNote": "7.3.0",
+        "RoxygenNote": "7.3.2.9000",
         "Encoding": "UTF-8",
         "Language": "en-US",
         "NeedsCompilation": "yes",
-        "Packaged": "2024-02-26 21:12:31 UTC; jeroen",
-        "Author": "Jeroen Ooms [aut, cre] (<https://orcid.org/0000-0002-4035-0289>),\n  Hadley Wickham [ctb],\n  RStudio [cph]",
-        "Maintainer": "Jeroen Ooms <jeroen@berkeley.edu>",
+        "Packaged": "2025-03-23 13:24:53 UTC; jeroen",
+        "Author": "Jeroen Ooms [aut, cre] (<https://orcid.org/0000-0002-4035-0289>),\n  Hadley Wickham [ctb],\n  Posit Software, PBC [cph]",
+        "Maintainer": "Jeroen Ooms <jeroenooms@gmail.com>",
         "Repository": "CRAN",
-        "Date/Publication": "2024-03-01 23:22:46 UTC",
-        "Built": "R 4.3.3; x86_64-w64-mingw32; 2024-08-04 00:31:46 UTC; windows",
+        "Date/Publication": "2025-03-24 07:00:02 UTC",
+        "Built": "R 4.3.3; x86_64-w64-mingw32; 2025-04-07 00:22:37 UTC; windows",
         "Archs": "x64"
       }
     },
@@ -3426,14 +3426,14 @@
     "app.R": {
       "checksum": "e0a5a1bbd1b9c45d658a01a3ac9eba9a"
     },
-    "CopyOfmap_module.R": {
-      "checksum": "5c6e04be1aa282221a5bfe2cc96636fa"
-    },
     "data/complete_database_edit.xlsx": {
       "checksum": "33084cb979c1cd392cb142acfca8b73f"
     },
-    "data/dictionary.xlsx": {
-      "checksum": "76cf506f7068c64695377b70fbbd8cfc"
+    "data/data_without_SLED.xlsx": {
+      "checksum": "6cb555d76879026705bfabe8781cc490"
+    },
+    "data/dict_new.xlsx": {
+      "checksum": "c56f0a6ce76d8c55dc3b1126c7144432"
     },
     "data/geom_paises_simplified.gpkg": {
       "checksum": "c1bbc231c8ef8fe3c14fc2a3271096cb"
@@ -3441,41 +3441,53 @@
     "data/geom_simple_maps.geojson": {
       "checksum": "b35187620d9fc87333896605214d8d00"
     },
-    "data/parties_colors.xlsx": {
-      "checksum": "5f3a47ea4f8b895327f11b37915d7f5c"
+    "data/NED (v.0.1).xlsx": {
+      "checksum": "9851ea93a8f450abf18c35325723ca2e"
     },
     "data/party_colors.xlsx": {
-      "checksum": "5de45ed0c91fb8166f89a765292f4618"
+      "checksum": "cc3dc25c950926f91e470e89b01d7317"
     },
-    "ggMapModule.R": {
-      "checksum": "bf18ba0456ff1f5f4ba2daf714e83acb"
+    "data/SED (v.0.1).xlsx": {
+      "checksum": "5d8aa084c5e28c1163f7a30b3b4f1bf1"
+    },
+    "data/SEED (v.0.1).xlsx": {
+      "checksum": "e6cc80dffe4e7d3d40e6743ba239ef97"
+    },
+    "data/SLED (v.0.1).xlsx": {
+      "checksum": "6fbb33fbc993659d4e7e668f187bd482"
+    },
+    "get_jstree_data.R": {
+      "checksum": "73bdb8380d3aa35fedec55d1c481d875"
     },
     "global.R": {
-      "checksum": "bc4beef83776949d145f0e962d77de6f"
+      "checksum": "28ce829564bb7bdc60200e7f6961bd23"
     },
     "line_module.R": {
-      "checksum": "f3218268e79e4116c089fd85ce6c206c"
+      "checksum": "f6b90a5f2d071a37ede0cd19b476c6e8"
     },
     "map_module.R": {
-      "checksum": "e0764a44fd7f0f0a89023755d7b45a7a"
+      "checksum": "5d0111125bf7170965f56c29be7905e0"
     },
     "server.R": {
-      "checksum": "b22afcccd689b816483e815012caaaa0"
-    },
-    "state_selector_module.R": {
-      "checksum": "32da231a58d66d9c0a28d1371b1f5b87"
+      "checksum": "ece106a43731e4b612c5ecf0eb2d89bc"
     },
     "ui.R": {
-      "checksum": "5cf0fdb37377e4a93f4b76db2442746c"
-    },
-    "www/Codebook subnational democracy .docx": {
-      "checksum": "c4b59933d10fb3a33c442bb474b6cc10"
+      "checksum": "eeb9e613a4b8a0c43542931d67836d57"
     },
     "www/codebook.pdf": {
-      "checksum": "747213b75eb5420dd833cc5ec246b894"
+      "checksum": "2c083c022faa583a7df1e275b3f84f5f"
+    },
+    "www/custom.js": {
+      "checksum": "3ee28e8cc248be97b638071380f59f2a"
     },
     "www/styles.css": {
-      "checksum": "da6c4d08cc9fc23e3be53dd829607104"
+      "checksum": "4ba519e2e6dfe0a2abe3f78901dc789e"
+    },
+    "www/Subnational Politics Database in Latin America cmts AG 7.22 (1).docx": {
+      "checksum": "7e72b68688e3068e933eb2f12ea64592"
+    },
+    "www/Subnational Politics Database in Latin America cmts AG 7.22 (1).pdf": {
+      "checksum": "f7734d87543d631c10c20322e230302f"
     },
     "www/tec_logo_white.svg": {
       "checksum": "390575e260b59e50169ab3926ab7e7ea"
