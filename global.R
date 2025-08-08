@@ -23,7 +23,10 @@ source("get_jstree_data.R")
 
 
 NED <- read.xlsx("data/NED (v.0.1).xlsx") %>%
-  mutate(ideo_party_nat_exe = as.double(ideo_party_nat_exe))
+  mutate(ideo_party_nat_exe = as.double(ideo_party_nat_exe),
+         start_date_head_nat_exe = as.Date(start_date_head_nat_exe - 2, origin = "1900-01-01"),
+         end_date_head_nat_exe   = as.Date(end_date_head_nat_exe - 2, origin = "1900-01-01"))
+
 SEED <- read.xlsx("data/SEED (v.0.1).xlsx")
 SED <- read.xlsx("data/SED (v.0.1).xlsx")
 SLED <- read.xlsx("data/SLED (v.0.1).xlsx")
