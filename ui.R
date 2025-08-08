@@ -19,7 +19,7 @@ ui <- dashboardPage(
         div(
           id = "jstree_container", # Agregamos un ID para poder referenciarlo
           style = "padding: 15px;",
-          tags$label("Selecciona estados", `for` = "jstree_demo"),
+          tags$label("Select a state:", `for` = "jstree_demo"),
           div(id = "jstree_demo")
         )),
       #hidden(uiOutput("state_selector")),
