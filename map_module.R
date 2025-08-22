@@ -446,8 +446,9 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
             "<b>Alignment:</b> ", ifelse(alignment_with_nat_sub_exe == 1, "Yes", "No"), "<br/>",
             #"<b>Years in office:</b> ", years_sub_exe, "<br/>",
             "<b>Early exit:</b> ", ifelse(early_exit_sub_exe == 1, "Yes", "No"), "<br/>",
-            "<b>Reelected:</b> ", ifelse(reelec_sub_exe == 1, "Yes", "No"), "<br/>",
-            "<b>Electoral sub. year:</b> ", ifelse(electoral_year_sub_exe == 1, "Yes", "No")
+            "<b>Reelected:</b> ", ifelse(reelec_sub_exe == 1, "Yes", "No"), "<br/>"
+            # ,
+            # "<b>Electoral sub. year:</b> ", ifelse(electoral_year_sub_exe == 1, "Yes", "No")
           )
         )
       
