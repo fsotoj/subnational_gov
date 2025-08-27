@@ -154,7 +154,9 @@ server <- function(input, output, session) {
   
   
   output$db_selector <- renderUI({
-    selectInput("db_sel",label = "Select a database to view:", choices = c("NED","SED","SEED","SLED"))
+    selectInput("db_sel",label = "Select a database to view:", choices = c("NED","SED","SEED","SLED"
+                                                                           #,"CFTDFLD"
+                                                                           ))
   })
   
   # SHOW NO DATA MESSAGE
@@ -348,7 +350,10 @@ server <- function(input, output, session) {
     
     db_name <- input$db_sel
     
-    data_sel <- if (db_name == "SED") SED else if (db_name == "SEED") SEED else if (db_name == "NED") NED else if (db_name == "SLED") SLED else NULL
+    data_sel <- if (db_name == "SED") SED else if (db_name == "SEED") SEED else if (db_name == "NED") NED else if (db_name == "SLED") SLED else if (db_name == "CFTDFLD") CFTDFLD else NULL
+    
+    
+    
     
     filtered_data <- data_sel %>%
       filter(
@@ -383,6 +388,7 @@ server <- function(input, output, session) {
                     "SED" = "<b>Subnational Executive Database:</b> Data on subnational executive branches per state/province, per country.",
                     "SEED" = "<b>Subnational Executive Elections Database:</b> Data on electoral results for executive branch.",
                     "SLED" = "<b>Subnational Legislative Elections Database:</b> Data on subnational executive elections by state/province and country. It also includes institutional and electoral information on state- or provincial-level legislatures.",
+                    "CFTDFLD" = "<b>Capital Federal & Tierra del Fuego Legislatures Database:</b> Data on the Capital Federal and Tierra del Fuego provinces, including detailed information on their legislatures.",
                     "No data"
     )
     HTML(texto)

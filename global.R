@@ -30,6 +30,9 @@ NED <- read.xlsx("data/NED (v.0.1).xlsx") %>%
 SEED <- read.xlsx("data/SEED (v.0.1).xlsx")
 SED <- read.xlsx("data/SED (v.0.1).xlsx")
 SLED <- read.xlsx("data/SLED (v.0.1).xlsx")
+CFTDFLD <- read.xlsx("data/CFTDFLD (v.0.1).xlsx")
+
+
 
 data <- left_join(NED,SED,c("country_name","country_code","year")) %>% 
   left_join(.,SEED,c("country_state_code","year"))  %>%
