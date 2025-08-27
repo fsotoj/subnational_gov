@@ -25,6 +25,22 @@ ui <- dashboardPage(
       #hidden(uiOutput("state_selector")),
       hidden(selectInput("var_sel2", "Variable", choices = NULL)),
       hidden(selectInput("country_sel2", "Select a country:", choices = c(unique(data$country_name)), selected = "ARGENTINA")),
+      hidden( pickerInput(
+        inputId = "years",
+        label = "Select year(s):",
+        choices = 1983:2024,
+        selected = 1983:2024,          # todos seleccionados al inicio
+        multiple = TRUE,
+        options = pickerOptions(
+          actionsBox = TRUE,
+          #liveSearch = TRUE,
+          selectedTextFormat = "count",      # o "count > 0" si quieres que SIEMPRE muestre conteo
+          countSelectedText = "{0} years selected",
+          noneSelectedText = "Choose a year",
+          size = 5,
+          virtualScroll = 2
+        )
+      )),
       hidden(selectInput("state_sel2", "Select a state:", choices = NULL)))
   ),
   dashboardBody(

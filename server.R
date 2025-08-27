@@ -175,6 +175,7 @@ server <- function(input, output, session) {
       show("var_description_map")
       hide("var_description_graph")
       hide("jstree_container")
+      hide("years")
     } 
     
     if (current_tab() == "graph_tab") {
@@ -184,6 +185,7 @@ server <- function(input, output, session) {
       show("var_description_graph")
       show("state_selector")
       show("jstree_container")
+      hide("years")
     }
     
     if (!(current_tab() %in% c("graph_tab", "map_tab"))){
@@ -201,6 +203,7 @@ server <- function(input, output, session) {
       show("columns_sel")
       show("columns_sel")
       show("db_selector")
+      show("years")
     } else {
       hide("country_sel2")
       hide("state_sel2")
@@ -350,7 +353,8 @@ server <- function(input, output, session) {
     filtered_data <- data_sel %>%
       filter(
         country_name == input$country_sel2,
-        if (db_name!="NED") state_name == input$state_sel2 else TRUE
+        if (db_name!="NED") state_name == input$state_sel2 else TRUE,
+        year %in% input$years
       ) 
     # %>%
     #   select(all_of(input$columns_sel))
