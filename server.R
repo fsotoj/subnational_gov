@@ -144,7 +144,7 @@ server <- function(input, output, session) {
       session, "var_sel",
       choices = dict$pretty_name[dict$viewable_map == 1],
       #selected = "Governor Party Ideology")
-      selected = "Governor Gender")
+      selected = "Total Voters")
     
     updateSelectInput(
       session, "var_sel2",
