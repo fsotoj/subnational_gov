@@ -5,6 +5,7 @@ library(openxlsx)
 library(sf)
 library(dplyr)
 library(DT)
+library(reactable)
 library(leaflet)
 library(classInt)
 library(shinyWidgets)
@@ -20,6 +21,7 @@ library(jsonlite)
 source("map_module.R")
 source("line_module.R")
 source("get_jstree_data.R")
+source("tableModule.R")
 
 
 NED <- read.xlsx("data/NED (v.0.1).xlsx") %>%
@@ -27,7 +29,7 @@ NED <- read.xlsx("data/NED (v.0.1).xlsx") %>%
          start_date_head_nat_exe = as.Date(start_date_head_nat_exe - 2, origin = "1900-01-01"),
          end_date_head_nat_exe   = as.Date(end_date_head_nat_exe - 2, origin = "1900-01-01"))
 
-SEED <- read.xlsx("data/SEED (v.0.1).xlsx")
+SEED <- read.xlsx("data/SEED SHINY (v.0.1).xlsx")
 SED <- read.xlsx("data/SED (v.0.1).xlsx")
 SLED <- read.xlsx("data/SLED (v.0.1).xlsx")
 CFTDFLD <- read.xlsx("data/CFTDFLD (v.0.1).xlsx")
