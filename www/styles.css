@@ -1,139 +1,32 @@
-/* GENERAL BACKGROUND AND TEXT */
+/* =========================================================
+   1) FUNDAMENTOS / LAYOUT GLOBAL
+   ========================================================= */
 body, .content-wrapper, .right-side {
   background-color: rgb(4, 29, 45) !important; /* azul oscuro */
   color: #f0f0f0 !important;
 }
 
-
-
-/* BOXES */
-.box {
-  background-color: #05354f ; /* azul oscuro algo más claro para contraste */
-  color: #f0f0f0 ;
-  border-radius: 5px !important;
-  border: 1px solid #0a426e !important; /* borde azul */
-}
-
-/* PRIMARY = Azul Cian Brillante */
-/*.box.box-primary {
-/*  border-top-color: #00ccff !important;
-/*}
-/*
-/* SUCCESS = Verde Neón */
-/*.box.box-success {
-/*  border-top-color: #00ff99 !important;
-/*}
-/*
-/* INFO = Azul claro / cyan */
-/*.box.box-info {
-/*  border-top-color: #00ffff !important;
-/*}
-/*
-/* WARNING = Amarillo Brillante */
-/*.box.box-warning {
-/*  border-top-color: #ffff00 !important;
-/*}
-
-/* DANGER = Rojo Brillante */
-.box.box-danger {
-  border-top-color: #ff3300 !important;
-}
-
-/* BUTTONS */
-.btn {
-  /*border-radius: 4px !important;*/
-  color: #ffffff !important;
-  border: none !important;
-}
-
-.btn-default {
-  background-color: #0aa1f2 !important;
-  color: #fff !important;
-}
-
-/*.btn-primary {
-/*  background-color: #00ccff !important;
-/*  color: #000 !important;
-/*}
-/*
-/*.btn-success {
-/*  background-color: #00ff99 !important;
-/*  color: #000 !important;
-/*}
-/*
-/*.btn-info {
-/*  background-color: #00ffff !important;
-/*  color: #000 !important;
-/*}
-/*
-/*.btn-warning {
-/*  background-color: #ffff00 !important;
-/*  color: #000 !important;
-/*}
-/*
-/*.btn-danger {
-/*  background-color: #ff3300 !important;
-/*  color: #000 !important;
-/*}
-
-/* TABLES */
-table {
-  background-color: #064060 !important; /* azul oscuro un poco más claro */
-  color: #f0f0f0 !important;
-}
-
-table th {
-  background-color: #0a426e !important; /* azul borde */
-  color: #ffffff !important;
-}
-
-table td {
-  background-color: #0a8dadda !important;
-  color: #dddddd !important;
-}
-
-/* HEADINGS */
+/* Encabezados globales */
 h1, h2, h3, h4, h5, h6 {
   color: #ffffff !important;
 }
 
-/* TABS */
-/*.nav-tabs-custom > .nav-tabs > li.active > a {
-/*  background-color: rgb(4, 29, 45) !important;
-/*  border-color: #00ccff rgb(4, 29, 45) transparent !important;
-/*  color: #00ccff !important;
-/*}
-/*
-/*.nav-tabs-custom > .nav-tabs > li > a {
-/*  background-color: rgb(4, 29, 45) !important;
-/*  color: #ccc !important;
-/*}
-/*
-/*.nav-tabs-custom > .nav-tabs > li > a:hover {
-/*  color: #00ccff !important;
-/*}
-/*
-/* SIDEBAR USER PANEL */
-/*.user-panel {
-/*  background-color: rgb(4, 29, 45) !important;
-/*  border-bottom: 1px solid #0a426e !important;
-/*}
-
-/* FOOTER */
+/* Footer */
 .main-footer {
   background-color: rgb(4, 29, 45) !important;
   color: #aaa !important;
   border-top: 1px solid #0a426e !important;
 }
 
-/* Navbar (main-header) background and text color */
+/* =========================================================
+   2) NAVBAR / MAIN-HEADER (Skin Blue)
+   ========================================================= */
 .skin-blue .main-header,
 .skin-blue .main-header .logo {
-  background-color: #05354f !important;  /* Fondo azul oscuro */
-  color: #fff !important;             /* Texto blanco */
+  background-color: #05354f !important;
+  color: #fff !important;
 }
 
-/* Hover y color de enlaces en la barra */
 .skin-blue .main-header .navbar {
   background-color: #05354f !important;
 }
@@ -148,13 +41,22 @@ h1, h2, h3, h4, h5, h6 {
   color: #fff !important;
 }
 
-/* Logo hover */
 .skin-blue .main-header .logo:hover {
   background-color: #0a426e !important;
   color: #fff !important;
 }
 
+/* =========================================================
+   3) BOXES / PANELS
+   ========================================================= */
+.box {
+  background-color: #05354f;            /* azul oscuro algo más claro para contraste */
+  color: #f0f0f0;
+  border-radius: 5px !important;
+  border: 1px solid #0a426e !important; /* borde azul */
+}
 
+/* Variante de box con cuerpo claro */
 .box.light-body-box > .box-body {
   background-color: #f9f9f9 !important;
   color: #111 !important;
@@ -163,6 +65,51 @@ h1, h2, h3, h4, h5, h6 {
   border-bottom-right-radius: 5px;
 }
 
+/* Box danger (mantener si lo usas) */
+.box.box-danger {
+  border-top-color: #ff3300 !important;
+}
+
+/* Boxes compactos (texto y header más chicos) */
+.small-text-box .box-body {
+  font-size: 12px !important;
+  line-height: 1.4;
+}
+.small-text-box .box-title {
+  font-size: 14px !important;
+  line-height: 1.4;
+}
+.small-text-box .box-header {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+.small-text-box .btn-box-tool {
+  padding: 0px !important;
+  font-size: 12px !important;
+  height: auto !important;
+}
+
+/* =========================================================
+   4) BOTONES & CONTROLES
+   ========================================================= */
+.btn {
+  color: #ffffff !important;
+  border: none !important;
+}
+
+.btn-default {
+  background-color: #0aa1f2 !important;
+  color: #fff !important;
+}
+
+/* Bootstrap-select transparente (si lo usas) */
+.bootstrap-select {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Botones personalizados */
 .btn.dropdown-toggle .filter-option {
   white-space: normal !important;
   overflow-wrap: break-word !important;
@@ -170,13 +117,9 @@ h1, h2, h3, h4, h5, h6 {
   height: auto !important;
 }
 
+/* Botón animación del slider */
+#year_sel { position: relative; }
 
-
-#year_sel {
-  position: relative;
-}
-
-/* Contenedor del botón, sin modificar posición */
 #year_sel .slider-animate-container {
   position: relative !important;
   width: auto !important;
@@ -185,10 +128,9 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 1000;
 }
 
-/* Movemos el botón hacia abajo usando top y position relative */
 .slider-animate-button {
-  position: relative;    /* necesario para usar top */
-  top: 15px;             /* mueve el botón 15px hacia abajo */
+  position: relative;
+  top: 15px;
   font-size: 14px;
   background-color: #007BFF !important;
   color: white !important;
@@ -209,14 +151,14 @@ h1, h2, h3, h4, h5, h6 {
   user-select: none;
 }
 
-.download_map_btn {   
+/* Botón descargar mapa */
+.download_map_btn {
   font-size: 14px;
   background-color: #007BFF !important;
   color: white !important;
-  height: auto !important;  
+  height: auto !important;
   border: none !important;
   border-radius: 6px;
-  /*transform: scale(0.9);*/
   font-weight: bold;
   cursor: pointer;
   display: flex;
@@ -227,125 +169,81 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0.5;
   box-sizing: border-box;
 }
-
 button.download_map_btn i.fas.fa-camera {
   margin-right: 8px !important;
 }
 
-.bootstrap-select {
-  background-color: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-}
-
-/* Estilos para modal oscuro */
+/* =========================================================
+   5) MODALES
+   ========================================================= */
 .modal-content {
   background-color: #041d2d !important;
   color: #f0f0f0 !important;
   border: 1px solid #0a426e !important;
   border-radius: 8px;
 }
-
-/* Estilo para título del modal */
 .modal-header {
   background-color: #05354f !important;
   color: #f0f0f0 !important;
   border-bottom: 1px solid #0a426e !important;
 }
-
-/* Botón de cerrar (X) en la cabecera */
 .close {
   color: #f0f0f0 !important;
   text-shadow: none !important;
   opacity: 1 !important;
 }
-
-/* Botones en el footer del modal */
 .modal-footer .btn {
   background-color: #0aa1f2 !important;
   color: #fff !important;
   border: none !important;
 }
 
-
-.small-text-box .box-body {
-  font-size: 12px !important;  /* o 13px, según prefieras */
-  line-height: 1.4;
-}
-
-.small-text-box .box-title {
-  font-size: 14px !important;
-  line-height: 1.4;
-}
-
-.small-text-box .box-header {
-  padding-top: 4px !important;
-  padding-bottom: 4px !important;
-}
-
-.small-text-box .btn-box-tool {
-  padding: 0px !important;  /* top/bottom = 2px, left/right = 6px */
-  font-size: 12px !important;   /* opcional, para hacer más pequeño el ícono */
-  height: auto !important;      /* por si hereda altura fija */
-}
-
-
-
-/* Estilos de la tarjeta para el contenedor del árbol */
-#jstree_demo {  
+/* =========================================================
+   6) WIDGETS (jstree)
+   ========================================================= */
+/* Contenedor tarjeta del árbol */
+#jstree_demo {
   background: #ffffff;
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 5px;
   border: none;
-  
-  /* CLAVE: Asegura que el contenedor del árbol tenga su propio scroll si es necesario */
-  overflow-y: auto; 
-  overflow-x: hidden; /* Evita el scroll horizontal */
-  /* CLAVE: Define una altura máxima para evitar que el contenedor crezca infinitamente */
-  max-height: 200px; /* Puedes ajustar este valor según tus necesidades */
+  overflow-y: auto;     /* scroll propio */
+  overflow-x: hidden;   /* sin scroll horizontal */
+  max-height: 200px;    /* evita crecimiento infinito */
 }
 
-
-/* --- Estilos para el propio jstree (para tema oscuro) --- */
-
-/* Contenedor principal del árbol */
+/* jstree tema/base */
 .jstree-default .jstree-container-ul {
-  background: transparent; /* Fondo transparente para que se vea el fondo de la tarjeta */
-  color: #000000;          /* Color de texto claro para los nodos */
+  background: transparent;
+  color: #000000;
 }
 
-/* Nodos individuales y su espaciado */
+/* Nodos: unificación de padding y estilo */
 .jstree-default .jstree-anchor {
   color: #000000 !important;
-  /* CLAVE: Aumenta el padding para que sea más fácil hacer clic */
-  padding: 5px 4px !important;
+  padding: 4px 4px !important;  /* compacto y clickeable */
   border-radius: 2px;
 }
 
-/* Opcional: Ajusta el tamaño de la casilla de verificación */
+/* Tamaño de checkbox opcional */
 .jstree-default .jstree-checkbox {
   font-size: 0.8em;
 }
 
-
-/* Estilos de las líneas de conexión */
+/* Estilo de líneas de conexión (si aplica) */
 .jstree-default .jstree-themeicon-dot {
-  /* Cambia el estilo a una línea continua */
   border-style: solid !important;
-  /* Establece un color para la línea */
   border-color: #a0a0a0 !important;
-
-  /* Esto es clave para que las líneas se vean más cortas */
-  /* Reducimos la altura del borde para que no ocupe todo el espacio vertical */
-  height: 50% !important; /* Ajusta la altura de la línea (50% es un buen punto de partida) */
-  margin-top: 1px !important; /* Ajusta la posición de la línea */
+  height: 50% !important;
+  margin-top: 1px !important;
 }
 
 
 
-/* Ajusta el padding de los nodos para que se alineen bien */
-.jstree-default .jstree-anchor {
-  /* Reduce el padding para un aspecto más compacto si es necesario */
-  padding: 2px 4px !important;
-}
+
+
+/* =========================================================
+   9) UTILIDADES / AJUSTES VARIOS
+   ========================================================= */
+/* (Reservado para utilidades futuras) */

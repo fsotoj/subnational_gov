@@ -12,7 +12,7 @@ get_jstree_data <- function(df) {
       text = country,
       children = list()
     )
-    states <- unique(df$state_name[df$country_name == country])
+    states <- unique(df$state_name[df$country_name == country &  !is.na(data$state_name)]) %>% sort()
     for (state in states) {
       # Muestra el nombre en formato de nombre propio en el árbol
       state_display_name <- to_title_case(state)

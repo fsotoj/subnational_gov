@@ -178,7 +178,7 @@ ui <- dashboardPage(
               uiOutput("pdf_visor")),
       
       tabItem(tabName = "data_tab",   
-              fluidRow(column(9,DTOutput("table_info")),
+              fluidRow(column(9,tableModuleUI("sub_table", height = "75vh")),
                        column(3,
                               
                               #fluidRow(downloadButton("download_geom", "Download complete geometries")),
