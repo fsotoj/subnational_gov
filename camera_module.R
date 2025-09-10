@@ -114,10 +114,12 @@ camaraServer <- function(id,
   
   moduleServer(id, function(input, output, session) {
     
+    
     # wrap static as reactive if needed
     data_r <- if (inherits(data, "reactive")) data else reactive(data)
     
     output$chart <- renderEcharts4r({
+      req(state_r(), chamber_r(),year_r())
       df <- data_r()
       if (!inherits(df, c("data.frame","tbl","tbl_df"))) {
         # draw empty chart with message
