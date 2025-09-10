@@ -132,6 +132,11 @@ server <- function(input, output, session) {
                 choices = c("NED", "SED", "SEED", "SLED", "CFTDFLD"))
   })
   
+  output$camera_selector <- renderUI({
+    selectInput("camera_sel", label = "Select a camera:",
+                choices = c(1, 2))
+  })
+  
   # Selectores de país/año (map_tab)
   output$country_selector <- renderUI({
     req(current_tab() == "map_tab")
@@ -143,6 +148,15 @@ server <- function(input, output, session) {
     req(current_tab() == "map_tab")
     shinyWidgets::sliderTextInput(
       inputId  = "year_sel", label = "Year",
+      choices  = as.character(seq(1983, 2024, 1)),
+      grid     = TRUE, width = "90%", animate = TRUE, selected = 2019
+    )
+  })
+  
+  output$year_selector_camera <- renderUI({
+    req(current_tab() == "camera")
+    shinyWidgets::sliderTextInput(
+      inputId  = "year_sel_camera", label = "Year",
       choices  = as.character(seq(1983, 2024, 1)),
       grid     = TRUE, width = "90%", animate = TRUE, selected = 2019
     )
@@ -183,14 +197,23 @@ server <- function(input, output, session) {
     if (current_tab() == "data_tab") {
       shinyjs::show("country_sel2")
       shinyjs::show("state_sel2")
-      shinyjs::show("columns_sel")
       shinyjs::show("db_selector")
       shinyjs::show("years")
+      hide("camera_selector")
+    } else if (current_tab() == "camera") {
+      show("country_sel2")
+      show("state_sel2")
+      show("camera_selector")
+      show("year_sel_camera")
+      hide("years")
+      hide("db_selector")
+      
     } else {
-      shinyjs::hide("country_sel2")
-      shinyjs::hide("state_sel2")
-      shinyjs::hide("columns_sel")
-      shinyjs::hide("db_selector")
+      hide("camera_selector")
+      hide("years")
+      hide("country_sel2")
+      hide("state_sel2")
+      hide("db_selector")
     }
   })
   
@@ -337,6 +360,22 @@ server <- function(input, output, session) {
     active_tab  = current_tab,
     force_styles = TRUE
   )
+  
+  
+  camaraServer(
+    id = "camara",
+    data = SLED, # static SLED
+    state_r = reactive(input$state_sel2), # <-- use state_sel2 on the camera tab
+    chamber_r = reactive(input$camera_sel), # 1/2 as in your UI
+    year_r = reactive(input$year_sel_camera), # camera-year slider
+    party_col = "party_name_sub_leg",
+    seats_col = "total_seats_party_sub_leg",
+    state_col = "state_name",
+    chamber_filter_col = "chamber_election_sub_leg",
+    year_col = "year",
+    title_text = "Chamber composition" # optional
+  )
+  
   
   # =========================
   # 10) DESCARGAS
