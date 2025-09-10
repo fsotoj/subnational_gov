@@ -8,6 +8,7 @@ ui <- dashboardPage(
       sidebarMenu(id = "tabs",
                   menuItem("Mapping tool", tabName = "map_tab", icon = icon("map")),
                   menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
+                  menuItem("Camera Viz tool", tabName = "camera", icon = icon("book-open")),
                   menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
                   menuItem("Data", tabName = "data_tab", icon = icon("table")),
                   menuItem("About", tabName = "about", icon = icon("info-circle"))
@@ -41,7 +42,8 @@ ui <- dashboardPage(
           virtualScroll = 2
         )
       )),
-      hidden(selectInput("state_sel2", "Select a state:", choices = NULL)))
+      hidden(selectInput("state_sel2", "Select a state:", choices = NULL)),
+      hidden(uiOutput("camera_selector")))
   ),
   dashboardBody(
     tags$footer(
@@ -165,6 +167,24 @@ ui <- dashboardPage(
                  )
         )
       ),
+      
+      tabItem(tabName = "camera",
+
+              tagList(
+                fluidRow(
+                  column(9,
+                         camaraUI("camara")
+                  )
+
+                ),
+                div(
+                  style = "position: absolute; bottom: 30px; left: 30%; right: 30%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
+                  uiOutput("year_selector_camera")
+                )
+              )
+
+      ),
+      
       
         
         
