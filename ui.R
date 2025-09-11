@@ -8,7 +8,7 @@ ui <- dashboardPage(
       sidebarMenu(id = "tabs",
                   menuItem("Mapping tool", tabName = "map_tab", icon = icon("map")),
                   menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
-                  menuItem("Camera Viz tool", tabName = "camera", icon = icon("book-open")),
+                  menuItem("Camera Viz tool", tabName = "camera", icon = icon("landmark")),
                   menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
                   menuItem("Data", tabName = "data_tab", icon = icon("table")),
                   menuItem("About", tabName = "about", icon = icon("info-circle"))
@@ -177,7 +177,16 @@ ui <- dashboardPage(
                 fluidRow(
                   column(9,
                          camaraUI("camara")
-                  )
+                  ),
+                  column(3,
+                         box(
+                           title = "Variable description", 
+                           solidHeader = TRUE,
+                           collapsible = FALSE, 
+                           collapsed = FALSE,
+                           width = NULL,
+                           uiOutput("text_camera")
+                         ))
 
                 ),
                 div(

@@ -10,7 +10,7 @@ library(echarts4r)
 #-------------------------------
 # Hemicycle layout (clean wedges)
 #-------------------------------
-hemicycle_layout <- function(N, layers = NULL, r_min = 0.2, r_max = 1) {
+hemicycle_layout <- function(N, layers = NULL, r_min = 0.4, r_max = 1) {
   if (N <= 0) return(tibble(theta = numeric(), r = numeric(), x = numeric(), y = numeric(), layer = integer(), pos = integer()))
   if (is.null(layers)) {
     layers <- dplyr::case_when(
@@ -229,7 +229,7 @@ camaraServer <- function(id,
             fontWeight = "bold"
           )
         ) %>%
-        e_grid(left = '2%', right = '2%', top = '10%', bottom = '10%') %>%
+        e_grid(left = '2%', right = '2%', top = '20%', bottom = '10%') %>%
         e_animation(duration = 100)
     })
   })
