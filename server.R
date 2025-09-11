@@ -422,71 +422,44 @@ server <- function(input, output, session) {
     }
   })
   
-  # --- helpers (top-level in server) ---
-  .combine_selector <- function(ids) {
-    if (!length(ids)) return(NULL)
-    paste0("#", ids, collapse = ", ")
-  }
-  .safe_show <- function(ids) {
-    sel <- .combine_selector(ids); if (is.null(sel)) return(invisible())
-    shinyjs::show(selector = sel)
-  }
-  .safe_hide <- function(ids) {
-    sel <- .combine_selector(ids); if (is.null(sel)) return(invisible())
-    shinyjs::hide(selector = sel)
-  }
+  # ---- put near top of server() ----
+  .combine_selector <- function(ids) if (length(ids)) paste0("#", ids, collapse = ", ") else NULL
+  .batch_show <- function(ids) { sel <- .combine_selector(ids); if (!is.null(sel)) shinyjs::show(selector = sel) }
+  .batch_hide <- function(ids) { sel <- .combine_selector(ids); if (!is.null(sel)) shinyjs::hide(selector = sel) }
   
-  # All toggle-able controls
+  # Everything we may toggle anywhere in the app
   ALL_TOGGLES <- c(
-    "var_sel","var_sel2","var_description_map","var_description_graph",
-    "jstree_container","years","state_selector",        # <- added state_selector
-    "country_sel2","state_sel2","db_selector","camera_selector",
+    # map/graph controls
+    "var_sel","var_sel2","var_description_map","var_description_graph","jstree_container","state_selector",
+    # data-tab selectors
+    "country_sel2","state_sel2","db_selector","years",
+    # legacy camera selector (if any)
+    "camera_selector",
+    # camera-tab selectors (SLED driven)
     "country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera"
   )
   
-  # Per-tab visibility rules
-  TAB_RULES <- list(
-    map_tab = list(
-      show = c("var_sel","var_description_map"),
-      hide = c("var_sel2","var_description_graph","jstree_container","years",
-               "country_sel2","state_sel2","db_selector","camera_selector",
-               "state_selector",
-               "country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera")
-    ),
-    graph_tab = list(
-      show = c("var_sel2","var_description_graph","state_selector","jstree_container"),
-      hide = c("var_sel","var_description_map","years",
-               "country_sel2","state_sel2","db_selector","camera_selector",
-               "country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera")
-    ),
-    data_tab = list(
-      show = c("country_sel2","state_sel2","db_selector","years"),
-      hide = c("camera_selector",
-               "var_sel","var_sel2","var_description_map","var_description_graph","jstree_container","state_selector",
-               "country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera")
-    ),
-    camera = list(
-      show = c("country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera"),
-      hide = c("years","db_selector","country_sel2","state_sel2",
-               "var_sel","var_sel2","var_description_map","var_description_graph","jstree_container","state_selector","camera_selector")
+  # Given a tab, return vector of IDs to show
+  .ids_to_show_for_tab <- function(tab) {
+    switch(tab,
+           "map_tab"   = c("var_sel","var_description_map"),
+           "graph_tab" = c("var_sel2","var_description_graph","state_selector","jstree_container"),
+           "data_tab"  = c("country_sel2","state_sel2","db_selector","years"),
+           "camera"    = c("country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera"),
+           character(0)
     )
-  )
+  }
   
-  # Main visibility controller: trigger on tab changes only
+  # ---- main visibility controller ----
   observeEvent(current_tab(), {
-    tab <- current_tab()
-    rules <- TAB_RULES[[tab]]
+    to_show <- .ids_to_show_for_tab(current_tab())
+    to_hide <- setdiff(ALL_TOGGLES, to_show)
     
-    # Default: hide everything we manage
-    .safe_hide(ALL_TOGGLES)
-    
-    # Apply per-tab rules
-    if (!is.null(rules)) {
-      .safe_show(rules$show)
-      # (optional) ensure explicit hides run too
-      .safe_hide(setdiff(rules$hide, rules$show))
-    }
+    # Hide first to avoid leftovers/flicker, then show what's needed
+    .batch_hide(to_hide)
+    .batch_show(to_show)
   }, ignoreInit = FALSE)
+  
   
   # =========================
   # 7) TEXTO DE DESCRIPCIÓN / VARS
@@ -529,6 +502,71 @@ server <- function(input, output, session) {
                     "SLED" = "<b>Subnational Legislative Elections Database:</b> Data on subnational executive elections by state/province and country. It also includes institutional and electoral information on state- or provincial-level legislatures.", 
                     "No data" ) 
     HTML(texto) 
+  })
+  
+  
+  output$text_camera <- renderUI({
+    req(current_tab() == "camera", sled_cam_filtered())
+    df <- sled_cam_filtered()
+    
+    # helpers --------------------------------------------------------
+    first_or_summary <- function(x) {
+      vals <- unique(na.omit(x))
+      if (length(vals) == 0) return("—")
+      if (length(vals) == 1) return(as.character(vals))
+      paste0("varies (", paste(sort(vals), collapse = ", "), ")")
+    }
+    
+    map_renewal <- function(x) {
+      labs <- c(
+        `1` = "Staggered every 2 years",
+        `2` = "Full renewal"
+      )
+      u <- unique(na.omit(as.integer(x)))
+      if (!length(u)) return("—")
+      out <- ifelse(as.character(u) %in% names(labs), labs[as.character(u)], as.character(u))
+      if (length(out) == 1) out else paste0("varies (", paste(out, collapse = ", "), ")")
+    }
+    
+    map_system <- function(x) {
+      labs <- c(
+        `1` = "Proportional Representation",
+        `2` = "Simple Majority",
+        `3` = "Mixed (PR + Simple Majority)",
+        `4` = "Mixed (PR with predefined districts)"
+      )
+      u <- unique(na.omit(as.integer(x)))
+      if (!length(u)) return("—")
+      out <- ifelse(as.character(u) %in% names(labs), labs[as.character(u)], as.character(u))
+      if (length(out) == 1) out else paste0("varies (", paste(out, collapse = ", "), ")")
+    }
+    
+    # compute --------------------------------------------------------
+    total_chamber  <- first_or_summary(df$total_chamber_seats_sub_leg)
+    seats_contest  <- first_or_summary(df$total_seats_in_contest_sub_leg)
+    renewal_type   <- map_renewal(df$renewal_type_sub_leg)
+    elec_system    <- map_system(df$electoral_system_sub_leg)
+    n_parties_cont <- first_or_summary(df$num_parties_election_contest_sub_leg)
+    
+    # ENP: if identical across rows, show value; else show range
+    enp_vals <- sort(unique(na.omit(as.numeric(df$enp_leg_sub))))
+    enp_txt <- if (!length(enp_vals)) {
+      "—"
+    } else if (length(enp_vals) == 1) {
+      sprintf("%.2f", enp_vals)
+    } else {
+      sprintf("varies (%.2f–%.2f)", min(enp_vals), max(enp_vals))
+    }
+    
+    # assemble -------------------------------------------------------
+    HTML(paste0(
+      "<b>Chamber seats (total):</b> ", total_chamber, "<br/>",
+      "<b>Seats in contest:</b> ", seats_contest, "<br/>",
+      "<b>Renewal type:</b> ", renewal_type, "<br/>",
+      "<b>Electoral system:</b> ", elec_system, "<br/>",
+      "<b>Parties contesting:</b> ", n_parties_cont, "<br/>",
+      "<b>Effective number of legislative parties (ENPL):</b> ", enp_txt
+    ))
   })
   
   
