@@ -47,9 +47,255 @@ server <- function(input, output, session) {
   })
   
   # =========================
+  # 1.1) DATA TAB SELECTORS BASADOS EN DATASET ACTIVO (GENÉRICO)
+  # =========================
+  active_df <- reactive({
+    req(input$db_sel)
+    switch(input$db_sel,
+           SED = SED, SEED = SEED, SLED = SLED, NED = NED, CFTDFLD = CFTDFLD)
+  })
+  has_col <- function(df, nm) nm %in% names(df)
+  uniq_sorted <- function(x) sort(unique(stats::na.omit(x)))
+  
+  available_countries <- reactive({
+    df <- active_df()
+    if (!has_col(df, "country_name")) character(0) else uniq_sorted(df$country_name)
+  })
+  available_states <- reactive({
+    df <- active_df()
+    if (!has_col(df, "state_name")) character(0) else {
+      if (!length(input$country_sel2)) uniq_sorted(df$state_name)
+      else uniq_sorted(df$state_name[df$country_name == input$country_sel2])
+    }
+  })
+  available_years_scoped <- reactive({
+    df <- active_df()
+    if (!has_col(df, "year")) return(integer(0))
+    if (has_col(df, "country_name") && !is.null(input$country_sel2) && nzchar(input$country_sel2)) {
+      df <- df[df$country_name == input$country_sel2, , drop = FALSE]
+    }
+    if (has_col(df, "state_name") && !is.null(input$state_sel2) && nzchar(input$state_sel2)) {
+      df <- df[df$state_name == input$state_sel2, , drop = FALSE]
+    }
+    uniq_sorted(df$year)
+  })
+  
+  # Actualiza selectores del Data Tab cuando cambia el dataset activo
+  observeEvent(active_df(), {
+    req(current_tab() == "data_tab")
+    shinyjs::disable("country_sel2"); shinyjs::disable("state_sel2"); shinyjs::disable("years")
+    
+    # Países
+    countries <- available_countries()
+    new_country <- if (length(input$country_sel2) && input$country_sel2 %in% countries) input$country_sel2 else countries[1]
+    updateSelectInput(session, "country_sel2", choices = countries, selected = new_country)
+    
+    # Estados
+    states <- isolate(available_states())
+    if (length(states)) {
+      new_state <- if (length(input$state_sel2) && input$state_sel2 %in% states) input$state_sel2 else states[1]
+      updateSelectInput(session, "state_sel2", choices = states, selected = new_state)
+      shinyjs::enable("state_sel2")
+    } else {
+      updateSelectInput(session, "state_sel2", choices = character(0), selected = character(0))
+      shinyjs::disable("state_sel2")
+    }
+    
+    # Años (pickerInput)
+    yrs <- available_years_scoped()
+    old_sel <- isolate(input$years)
+    new_sel <- if (length(old_sel) && all(old_sel %in% yrs)) old_sel else yrs
+    shinyWidgets::updatePickerInput(session, "years", choices = yrs, selected = new_sel)
+    
+    shinyjs::enable("country_sel2"); shinyjs::enable("years")
+  })
+  
+  # Cuando cambia el país en Data Tab: refresca estados
+  observeEvent(input$country_sel2, {
+    req(current_tab() == "data_tab")
+    shinyjs::disable("state_sel2")
+    states <- available_states()
+    if (length(states)) {
+      new_state <- if (length(input$state_sel2) && input$state_sel2 %in% states) input$state_sel2 else states[1]
+      updateSelectInput(session, "state_sel2", choices = states, selected = new_state)
+      shinyjs::enable("state_sel2")
+    } else {
+      updateSelectInput(session, "state_sel2", choices = character(0), selected = character(0))
+    }
+  }, ignoreInit = TRUE)
+  
+  # Refresca picker de años (Data Tab) al cambiar dataset/país/estado
+  observeEvent(list(active_df(), input$country_sel2, input$state_sel2), {
+    req(current_tab() == "data_tab")
+    yrs <- available_years_scoped()
+    old_sel <- isolate(input$years)
+    new_sel <- if (length(old_sel) && all(old_sel %in% yrs)) old_sel else yrs
+    shinyjs::disable("years")
+    shinyWidgets::updatePickerInput(session, "years", choices = yrs, selected = new_sel)
+    shinyjs::enable("years")
+  }, ignoreInit = TRUE)
+  
+  # =========================
+  # 1.2) FILTRADO DE DATA PARA EL MÓDULO DE TABLA (FUERA DEL MÓDULO)
+  # =========================
+  data_filtered <- reactive({
+    df <- active_df()
+    if (has_col(df, "country_name") && length(input$country_sel2)) {
+      df <- df[df$country_name == input$country_sel2, , drop = FALSE]
+    }
+    if (has_col(df, "state_name") && length(input$state_sel2)) {
+      df <- df[df$state_name == input$state_sel2, , drop = FALSE]
+    }
+    if (has_col(df, "year") && length(input$years)) {
+      df <- df[df$year %in% input$years, , drop = FALSE]  # pickerInput → membership
+    }
+    df
+  })
+  
+  # =========================
+  # 1.3) SELECTORES PROPIOS DE LA PESTAÑA CAMERA (SLED-driven)
+  # =========================
+  # UI renderers for camera-only selectors
+  output$country_selector_camera <- renderUI({
+    req(current_tab() == "camera")
+    selectInput(
+      "country_sel_camera", "Country",
+      choices  = sort(unique(SLED$country_name)),
+      selected = "ARGENTINA"
+    )
+  })
+  
+  output$state_selector_camera <- renderUI({
+    req(current_tab() == "camera", input$country_sel_camera)
+    choices <- SLED |>
+      dplyr::filter(country_name == input$country_sel_camera) |>
+      dplyr::pull(state_name) |>
+      unique() |>
+      sort()
+    selectInput(
+      "state_sel_camera", "State",
+      choices  = choices,
+      selected = if (length(choices)) choices[1] else NULL
+    )
+  })
+  
+  output$chamber_selector_camera <- renderUI({
+    req(current_tab() == "camera")
+    selectInput(
+      "chamber_sel_camera", "Chamber",
+      choices = c("Lower chamber" = 1, "Upper chamber" = 2),
+      selected = 1
+    )
+  })
+  
+  # Mantén tu year_selector_camera como ya lo tienes (sliderTextInput)
+  # Solo lo actualizamos con SLED (país/estado) abajo.
+  
+  sled_years_scoped_camera <- reactive({
+    df <- SLED
+    if (!is.null(input$country_sel_camera) && nzchar(input$country_sel_camera)) {
+      df <- df[df$country_name == input$country_sel_camera, , drop = FALSE]
+    }
+    if (!is.null(input$state_sel_camera) && nzchar(input$state_sel_camera)) {
+      df <- df[df$state_name == input$state_sel_camera, , drop = FALSE]
+    }
+    sort(unique(df$year))
+  })
+  
+  observeEvent(list(current_tab(), input$country_sel_camera, input$state_sel_camera), {
+    req(current_tab() == "camera")
+    yrs <- sled_years_scoped_camera()
+    shinyWidgets::updateSliderTextInput(
+      session, "year_sel_camera",
+      choices  = as.character(yrs),
+      selected = if (!is.null(input$year_sel_camera) &&
+                     input$year_sel_camera %in% as.character(yrs)) {
+        input$year_sel_camera
+      } else {
+        as.character(tail(yrs, 1))
+      }
+    )
+  }, ignoreInit = FALSE)
+  
+  
+  # --- AVAILABLE CHAMBERS (scoped by Country/State and optionally Year) ---
+  available_chambers_camera <- reactive({
+    df <- SLED
+    if (!is.null(input$country_sel_camera) && nzchar(input$country_sel_camera)) {
+      df <- df[df$country_name == input$country_sel_camera, , drop = FALSE]
+    }
+    if (!is.null(input$state_sel_camera) && nzchar(input$state_sel_camera)) {
+      df <- df[df$state_name == input$state_sel_camera, , drop = FALSE]
+    }
+    # Optional: also scope by the currently selected year (keeps the UI tight)
+    if (!is.null(input$year_sel_camera) && nzchar(input$year_sel_camera)) {
+      df <- df[df$year == as.integer(input$year_sel_camera), , drop = FALSE]
+    }
+    
+    ch <- sort(unique(suppressWarnings(as.integer(df$chamber_election_sub_leg))))
+    ch <- ch[!is.na(ch) & ch %in% c(1L, 2L)]
+    ch
+  })
+  
+  .label_chambers <- function(v) {
+    labs <- ifelse(v == 1L, "Lower chamber", ifelse(v == 2L, "Upper chamber", as.character(v)))
+    stats::setNames(v, labs)
+  }
+  
+  # --- KEEP CHAMBER SELECTOR IN SYNC ---
+  observeEvent(
+    list(current_tab(), input$country_sel_camera, input$state_sel_camera, input$year_sel_camera),
+    {
+      req(current_tab() == "camera")
+      ch <- available_chambers_camera()
+      
+      if (!length(ch)) {
+        shinyjs::disable("chamber_sel_camera")
+        updateSelectInput(session, "chamber_sel_camera",
+                          choices = setNames(numeric(0), character(0)),
+                          selected = character(0))
+        return(invisible(NULL))
+      }
+      
+      shinyjs::enable("chamber_sel_camera")
+      choices_named <- .label_chambers(ch)
+      
+      # preserve selection if still valid; else pick first available
+      old_sel <- suppressWarnings(as.integer(isolate(input$chamber_sel_camera)))
+      new_sel <- if (length(old_sel) && !is.na(old_sel) && old_sel %in% ch) old_sel else ch[1]
+      
+      updateSelectInput(session, "chamber_sel_camera",
+                        choices = choices_named,
+                        selected = new_sel)
+    },
+    ignoreInit = FALSE
+  )
+  
+  
+  
+  # =========================
+  # 1.4) DATA FILTRADA PARA CAMERA (para resúmenes y/o pasar al módulo si lo refactoras)
+  # =========================
+  sled_cam_filtered <- reactive({
+    df <- SLED
+    if (!is.null(input$country_sel_camera) && nzchar(input$country_sel_camera)) {
+      df <- df[df$country_name == input$country_sel_camera, , drop = FALSE]
+    }
+    if (!is.null(input$state_sel_camera) && nzchar(input$state_sel_camera)) {
+      df <- df[df$state_name == input$state_sel_camera, , drop = FALSE]
+    }
+    if (!is.null(input$chamber_sel_camera)) {
+      df <- df[df$chamber_election_sub_leg == as.integer(input$chamber_sel_camera), , drop = FALSE]
+    }
+    if (!is.null(input$year_sel_camera) && nzchar(input$year_sel_camera)) {
+      df <- df[df$year == as.integer(input$year_sel_camera), , drop = FALSE]
+    }
+    df
+  })
+  
+  # =========================
   # 2) MODALES / MENSAJES
   # =========================
-  # About al cargar
   observe({
     showModal(modalDialog(
       title = "About the Subnational Politics Project (SPP)",
@@ -132,9 +378,9 @@ server <- function(input, output, session) {
                 choices = c("NED", "SED", "SEED", "SLED", "CFTDFLD"))
   })
   
+  # (legacy) cámara original — ya no se usa, mantenido por compatibilidad
   output$camera_selector <- renderUI({
-    selectInput("camera_sel", label = "Select a camera:",
-                choices = c(1, 2))
+    selectInput("camera_sel", label = "Select a camera:", choices = c(1, 2))
   })
   
   # Selectores de país/año (map_tab)
@@ -153,6 +399,7 @@ server <- function(input, output, session) {
     )
   })
   
+  # Mantén tu year_selector_camera UI existente (se actualiza arriba)
   output$year_selector_camera <- renderUI({
     req(current_tab() == "camera")
     shinyWidgets::sliderTextInput(
@@ -175,95 +422,71 @@ server <- function(input, output, session) {
     }
   })
   
-  # Mostrar/ocultar controles principales según pestaña activa
-  observe({
-    if (current_tab() == "map_tab") {
-      shinyjs::show("var_sel");       shinyjs::hide("var_sel2")
-      shinyjs::show("var_description_map"); shinyjs::hide("var_description_graph")
-      shinyjs::hide("jstree_container"); shinyjs::hide("years")
-    } else if (current_tab() == "graph_tab") {
-      shinyjs::hide("var_sel");       shinyjs::show("var_sel2")
-      shinyjs::hide("var_description_map"); shinyjs::show("var_description_graph")
-      shinyjs::show("state_selector"); shinyjs::show("jstree_container")
-      shinyjs::hide("years")
-    } else {
-      shinyjs::hide("var_sel"); shinyjs::hide("var_sel2")
-      shinyjs::hide("jstree_container")
-    }
-  })
+  # --- helpers (top-level in server) ---
+  .combine_selector <- function(ids) {
+    if (!length(ids)) return(NULL)
+    paste0("#", ids, collapse = ", ")
+  }
+  .safe_show <- function(ids) {
+    sel <- .combine_selector(ids); if (is.null(sel)) return(invisible())
+    shinyjs::show(selector = sel)
+  }
+  .safe_hide <- function(ids) {
+    sel <- .combine_selector(ids); if (is.null(sel)) return(invisible())
+    shinyjs::hide(selector = sel)
+  }
   
-  # Mostrar/ocultar controles de la pestaña de datos
-  observe({
-    if (current_tab() == "data_tab") {
-      shinyjs::show("country_sel2")
-      shinyjs::show("state_sel2")
-      shinyjs::show("db_selector")
-      shinyjs::show("years")
-      hide("camera_selector")
-    } else if (current_tab() == "camera") {
-      show("country_sel2")
-      show("state_sel2")
-      show("camera_selector")
-      show("year_sel_camera")
-      hide("years")
-      hide("db_selector")
-      
-    } else {
-      hide("camera_selector")
-      hide("years")
-      hide("country_sel2")
-      hide("state_sel2")
-      hide("db_selector")
-    }
-  })
+  # All toggle-able controls
+  ALL_TOGGLES <- c(
+    "var_sel","var_sel2","var_description_map","var_description_graph",
+    "jstree_container","years","state_selector",        # <- added state_selector
+    "country_sel2","state_sel2","db_selector","camera_selector",
+    "country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera"
+  )
   
-  # =========================
-  # 6) SINCRONIZACIÓN DE SELECTORES PARA DATA_TAB
-  # =========================
-  # a) Ajustes especiales al cambiar de base (CFTDFLD / NED)
-  observeEvent(input$db_sel, {
-    req(input$db_sel)
-    if (input$db_sel == "CFTDFLD") {
-      # País y estados disponibles en CFTDFLD
-      if (!identical(input$country_sel2, "ARGENTINA")) {
-        updateSelectInput(session, "country_sel2", selected = "ARGENTINA")
-      }
-      cft_states <- c("CAPITAL FEDERAL", "TIERRA DEL FUEGO")
-      updateSelectInput(session, "state_sel2", choices = cft_states, selected = cft_states[1])
-      shinyjs::disable("country_sel2"); shinyjs::enable("state_sel2")
-      
-    } else {
-      shinyjs::enable("country_sel2")
-      if (input$db_sel == "NED") {
-        shinyjs::disable("state_sel2")
-      } else {
-        shinyjs::enable("state_sel2")
-      }
-    }
-  })
+  # Per-tab visibility rules
+  TAB_RULES <- list(
+    map_tab = list(
+      show = c("var_sel","var_description_map"),
+      hide = c("var_sel2","var_description_graph","jstree_container","years",
+               "country_sel2","state_sel2","db_selector","camera_selector",
+               "state_selector",
+               "country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera")
+    ),
+    graph_tab = list(
+      show = c("var_sel2","var_description_graph","state_selector","jstree_container"),
+      hide = c("var_sel","var_description_map","years",
+               "country_sel2","state_sel2","db_selector","camera_selector",
+               "country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera")
+    ),
+    data_tab = list(
+      show = c("country_sel2","state_sel2","db_selector","years"),
+      hide = c("camera_selector",
+               "var_sel","var_sel2","var_description_map","var_description_graph","jstree_container","state_selector",
+               "country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera")
+    ),
+    camera = list(
+      show = c("country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera"),
+      hide = c("years","db_selector","country_sel2","state_sel2",
+               "var_sel","var_sel2","var_description_map","var_description_graph","jstree_container","state_selector","camera_selector")
+    )
+  )
   
-  # b) Estados disponibles según país seleccionado (excepto CFTDFLD)
-  observeEvent(input$country_sel2, {
-    req(input$country_sel2)
-    if (identical(input$db_sel, "CFTDFLD")) {
-      updateSelectInput(
-        session, "state_sel2",
-        choices  = c("CAPITAL FEDERAL", "TIERRA DEL FUEGO"),
-        selected = if (is.null(isolate(input$state_sel2))) "CAPITAL FEDERAL" else isolate(input$state_sel2)
-      )
-      return()
-    }
+  # Main visibility controller: trigger on tab changes only
+  observeEvent(current_tab(), {
+    tab <- current_tab()
+    rules <- TAB_RULES[[tab]]
     
-    states_available <- data %>%
-      dplyr::filter(country_name == input$country_sel2) %>%
-      dplyr::pull(state_name) %>%
-      unique() %>%
-      sort()
+    # Default: hide everything we manage
+    .safe_hide(ALL_TOGGLES)
     
-    updateSelectInput(session, "state_sel2",
-                      choices  = states_available,
-                      selected = states_available[1])
-  })
+    # Apply per-tab rules
+    if (!is.null(rules)) {
+      .safe_show(rules$show)
+      # (optional) ensure explicit hides run too
+      .safe_hide(setdiff(rules$hide, rules$show))
+    }
+  }, ignoreInit = FALSE)
   
   # =========================
   # 7) TEXTO DE DESCRIPCIÓN / VARS
@@ -296,6 +519,21 @@ server <- function(input, output, session) {
     )
   })
   
+  
+  output$texto_db <- renderUI({ 
+    req(input$db_sel) 
+    texto <- switch(input$db_sel, 
+                    "NED" = "<b>National Executive Databse:</b> Data on national executive branches per country.", 
+                    "SED" = "<b>Subnational Executive Database:</b> Data on subnational executive branches per state/province, per country.",
+                    "SEED" = "<b>Subnational Executive Elections Database:</b> Data on electoral results for executive branch.", 
+                    "SLED" = "<b>Subnational Legislative Elections Database:</b> Data on subnational executive elections by state/province and country. It also includes institutional and electoral information on state- or provincial-level legislatures.", 
+                    "No data" ) 
+    HTML(texto) 
+  })
+  
+  
+  
+  
   # =========================
   # 8) RESUMEN LÍDER NACIONAL (MAPA)
   # =========================
@@ -305,7 +543,9 @@ server <- function(input, output, session) {
       sf::st_drop_geometry() %>%
       dplyr::select(
         name_head_nat_exe, sex_head_nat_exe, head_party_nat_exe,
-        ideo_party_nat_exe, reelec_nat_exe, early_exit_nat_exe,
+        ideo_party_nat_exe, 
+        #reelec_nat_exe, 
+        early_exit_nat_exe,
         year_election_nat_exe, year
       ) %>%
       dplyr::slice(1)
@@ -327,8 +567,13 @@ server <- function(input, output, session) {
     HTML(text)
   })
   
+  
+  
+  
+  
+  
   # =========================
-  # 9) MÓDULOS (MAPA / LÍNEAS / TABLA)
+  # 9) MÓDULOS (MAPA / LÍNEAS / TABLA / CÁMARA)
   # =========================
   mapModuleServer(
     id = "map1",
@@ -351,36 +596,31 @@ server <- function(input, output, session) {
   )
   
   tableModuleServer(
-    id         = "sub_table",
-    datasets   = list(SED = SED, SEED = SEED, NED = NED, SLED = SLED, CFTDFLD = CFTDFLD),
-    db_selector = reactive(input$db_sel),
-    country     = reactive(input$country_sel2),
-    state       = reactive(input$state_sel2),
-    years       = reactive(input$years),
+    id          = "sub_table",
+    data_r      = data_filtered,
     active_tab  = current_tab,
     force_styles = TRUE
   )
   
-  
+  # Hemiciclo: seguimos usando el módulo original (con inputs),
+  # pero ahora apuntando a los nuevos selectores camera-only.
   camaraServer(
     id = "camara",
-    data = SLED, # static SLED
-    state_r = reactive(input$state_sel2), # <-- use state_sel2 on the camera tab
-    chamber_r = reactive(input$camera_sel), # 1/2 as in your UI
-    year_r = reactive(input$year_sel_camera), # camera-year slider
+    data = SLED, # si luego refactoras el módulo, cambia a data_r = sled_cam_filtered
+    state_r   = reactive(input$state_sel_camera),
+    chamber_r = reactive(input$chamber_sel_camera),
+    year_r    = reactive(input$year_sel_camera),
     party_col = "party_name_sub_leg",
     seats_col = "total_seats_party_sub_leg",
     state_col = "state_name",
     chamber_filter_col = "chamber_election_sub_leg",
     year_col = "year",
-    title_text = "Chamber composition" # optional
+    title_text = "Chamber composition"
   )
-  
   
   # =========================
   # 10) DESCARGAS
   # =========================
-  # a) Datos (CSV/XLSX)
   output$download_data <- downloadHandler(
     filename = function() {
       ext <- if (identical(input$file_format, "csv")) "csv" else "xlsx"
@@ -400,7 +640,6 @@ server <- function(input, output, session) {
     }
   )
   
-  # b) Geometría (GeoJSON)
   output$download_geom <- downloadHandler(
     filename = function() paste0("countries_geom_", Sys.Date(), ".geojson"),
     content = function(file) sf::st_write(geom, file, append = FALSE),

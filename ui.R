@@ -43,7 +43,10 @@ ui <- dashboardPage(
         )
       )),
       hidden(selectInput("state_sel2", "Select a state:", choices = NULL)),
-      hidden(uiOutput("camera_selector")))
+      hidden(uiOutput("country_selector_camera")),
+      hidden(uiOutput("state_selector_camera")),
+      hidden(uiOutput("chamber_selector_camera"))
+      )
   ),
   dashboardBody(
     tags$footer(
