@@ -176,11 +176,11 @@ ui <- dashboardPage(
               tagList(
                 fluidRow(
                   column(9,
-                         camaraUI("camara")
+                         camaraUI("camara"),
                   ),
                   column(3,
                          box(
-                           title = "Variable description", 
+                           title = "Election Description", 
                            solidHeader = TRUE,
                            collapsible = FALSE, 
                            collapsed = FALSE,

@@ -565,7 +565,7 @@ server <- function(input, output, session) {
       "<b>Renewal type:</b> ", renewal_type, "<br/>",
       "<b>Electoral system:</b> ", elec_system, "<br/>",
       "<b>Parties contesting:</b> ", n_parties_cont, "<br/>",
-      "<b>Effective number of legislative parties (ENPL):</b> ", enp_txt
+      "<b>ENPL:</b> ", enp_txt
     ))
   })
   

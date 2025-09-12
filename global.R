@@ -13,16 +13,17 @@ library(shinyjs)
 library(mapview)
 library(webshot)
 library(jsonlite)
-#library(shinyWidgets)
-
-
-
+library(tibble)
+library(purrr)
+library(echarts4r)
 
 source("map_module.R")
 source("line_module.R")
 source("get_jstree_data.R")
 source("tableModule.R")
 source("camera_module.R")
+
+
 
 NED <- read.xlsx("data/NED (v.0.1).xlsx") %>%
   mutate(ideo_party_nat_exe = as.double(ideo_party_nat_exe),
