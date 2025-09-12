@@ -405,7 +405,13 @@ server <- function(input, output, session) {
     shinyWidgets::sliderTextInput(
       inputId  = "year_sel_camera", label = "Year",
       choices  = as.character(seq(1983, 2024, 1)),
-      grid     = TRUE, width = "90%", animate = TRUE, selected = 2019
+      grid     = TRUE, width = "90%", 
+      #animate = TRUE, 
+      selected = 2019,
+      animate  = shiny::animationOptions(
+        interval = 1000,  # 2 seconds between steps
+        loop = F
+      )
     )
   })
   
@@ -506,7 +512,7 @@ server <- function(input, output, session) {
   
   
   output$text_camera <- renderUI({
-    req(current_tab() == "camera", sled_cam_filtered())
+    req(current_tab() == "camera", sled_cam_filtered(), input$state_sel_camera)
     df <- sled_cam_filtered()
     
     # helpers --------------------------------------------------------
