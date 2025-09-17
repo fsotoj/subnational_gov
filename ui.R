@@ -62,7 +62,7 @@ ui <- dashboardPage(
       color: #ccc;
       z-index: 1050;
     ",
-      HTML("Tool developed by <strong>Felipe Soto Jorquera</strong> for the <em>Subnational Politics Project</em> (Giraudy et al., 2025).")
+      HTML("Tool developed by <strong><a href='https://www.linkedin.com/in/felipesotojorquera/' target='_blank'>Felipe Soto Jorquera.</a></strong>")
     ),
     tags$head(
       tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/jstree.min.js"),
@@ -229,34 +229,9 @@ ui <- dashboardPage(
                               downloadButton("download_data", "Download this database"))
               )),
       
-      tabItem(
-        tabName = "about",
-        box(
-          title = "About the Subnational Politics Project (SPP)",
-          solidHeader = TRUE,
-          status = "info",
-          width = 12,
-          collapsible = TRUE,
-          collapsed = FALSE,
-          HTML("
-    <p style='text-align:justify;'>
-      The Subnational Politics Project (SPP) is part of a broader research project designed to compile, generate, and disseminate systematic, transparent, and publicly accessible data on subnational political institutions, subnational political processes, and subnational electoral outcomes in Latin America.
-    </p>
-    <p style='text-align:justify;'>
-      The primary objective of the project is to create a centralized and standardized data infrastructure that facilitates both in-depth within-country analyses and cross-national comparative research on subnational political dynamics.
-    </p>
-    <p style='text-align:justify;'>
-      By providing longitudinal and spatially disaggregated data, the SPP seeks to support empirical scholarship on a wide range of topics, including federalism, decentralization, party competition, electoral accountability, and territorial governance.
-    </p>
-    <hr style='border-color:#17a2b8;'/>
-    <p style='font-size: 0.9em; color: #bbb;'>
-      <strong>Suggested citation for data retrieved from this app:</strong><br/>
-      Giraudy, Agustina, <em>et al.</em> (2025). <em>Subnational Politics Project Databases</em> (v0.1). Data accessed via the Subnational Politics Project web app developed by Felipe Soto. [DOI to be assigned]
-    </p>
-  ")
-        )
-        
-      )
+      tabItem(tabName = "about", aboutSPPUI("about"))
+      
+      
     ),
     skin = "blue"
     
