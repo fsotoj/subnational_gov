@@ -157,7 +157,7 @@ server <- function(input, output, session) {
   # =========================
   # UI renderers for camera-only selectors
   output$country_selector_camera <- renderUI({
-    req(current_tab() == "camera")
+    #req(current_tab() == "camera")
     selectInput(
       "country_sel_camera", "Country",
       choices  = sort(unique(SLED$country_name)),
@@ -166,7 +166,8 @@ server <- function(input, output, session) {
   })
   
   output$state_selector_camera <- renderUI({
-    req(current_tab() == "camera", input$country_sel_camera)
+    #req(current_tab() == "camera", input$country_sel_camera)
+    req(input$country_sel_camera)
     choices <- SLED |>
       dplyr::filter(country_name == input$country_sel_camera) |>
       dplyr::pull(state_name) |>
@@ -180,7 +181,7 @@ server <- function(input, output, session) {
   })
   
   output$chamber_selector_camera <- renderUI({
-    req(current_tab() == "camera")
+    #req(current_tab() == "camera")
     selectInput(
       "chamber_sel_camera", "Chamber",
       choices = c("Lower chamber" = 1, "Upper chamber" = 2),
@@ -385,23 +386,23 @@ server <- function(input, output, session) {
   
   # Selectores de país/año (map_tab)
   output$country_selector <- renderUI({
-    req(current_tab() == "map_tab")
+    #req(current_tab() == "map_tab")
     selectInput("country_sel", "Country",
                 choices = c("Select a country", unique(data$country_name)),
                 selected = "MEXICO")
   })
   output$year_selector <- renderUI({
-    req(current_tab() == "map_tab")
+    #req(current_tab() == "map_tab")
     shinyWidgets::sliderTextInput(
       inputId  = "year_sel", label = "Year",
       choices  = as.character(seq(1983, 2024, 1)),
-      grid     = TRUE, width = "90%", animate = TRUE, selected = 2019
+      grid     = TRUE, width = "90%", animate = TRUE, selected = 1999
     )
   })
   
   # Mantén tu year_selector_camera UI existente (se actualiza arriba)
   output$year_selector_camera <- renderUI({
-    req(current_tab() == "camera")
+    #req(current_tab() == "camera")
     shinyWidgets::sliderTextInput(
       inputId  = "year_sel_camera", label = "Year",
       choices  = as.character(seq(1983, 2024, 1)),
@@ -436,7 +437,7 @@ server <- function(input, output, session) {
   # Everything we may toggle anywhere in the app
   ALL_TOGGLES <- c(
     # map/graph controls
-    "var_sel","var_sel2","var_description_map","var_description_graph","jstree_container","state_selector",
+    "country_selector","var_sel","var_sel2","var_description_map","var_description_graph","jstree_container","state_selector",
     # data-tab selectors
     "country_sel2","state_sel2","db_selector","years",
     # legacy camera selector (if any)
@@ -448,7 +449,7 @@ server <- function(input, output, session) {
   # Given a tab, return vector of IDs to show
   .ids_to_show_for_tab <- function(tab) {
     switch(tab,
-           "map_tab"   = c("var_sel","var_description_map"),
+           "map_tab"   = c("country_selector","var_sel","var_description_map"),
            "graph_tab" = c("var_sel2","var_description_graph","state_selector","jstree_container"),
            "data_tab"  = c("country_sel2","state_sel2","db_selector","years"),
            "camera"    = c("country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera"),
@@ -489,7 +490,7 @@ server <- function(input, output, session) {
     updateSelectInput(
       session, "var_sel",
       choices  = dict$pretty_name[dict$viewable_map == 1],
-      selected = "Total Voters"
+      selected = "Valid Votes"
     )
     updateSelectInput(
       session, "var_sel2",

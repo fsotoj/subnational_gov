@@ -14,7 +14,7 @@ ui <- dashboardPage(
                   menuItem("About", tabName = "about", icon = icon("info-circle"))
       ),
       hidden(uiOutput("db_selector")),
-      uiOutput("country_selector"),  # default: visible
+      hidden(uiOutput("country_selector")),  # default: visible
       hidden(selectInput("var_sel", "Variable", choices = NULL)),
       shinyjs::hidden(
         div(
