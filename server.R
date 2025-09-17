@@ -301,26 +301,31 @@ server <- function(input, output, session) {
     showModal(modalDialog(
       title = "About the Subnational Politics Project (SPP)",
       HTML("
-        <p style='text-align:justify;'>
+      <p style='text-align:justify;'>
         The Subnational Politics Project (SPP) is part of a broader research project designed to compile, generate, and disseminate systematic, transparent, and publicly accessible data on subnational political institutions, subnational political processes, and subnational electoral outcomes in Latin America.
-        </p>
-        <p style='text-align:justify;'>
+      </p>
+      <p style='text-align:justify;'>
         The primary objective of the project is to create a centralized and standardized data infrastructure that facilitates both in-depth within-country analyses and cross-national comparative research on subnational political dynamics.
-        </p>
-        <p style='text-align:justify;'>
+      </p>
+      <p style='text-align:justify;'>
         By providing longitudinal and spatially disaggregated data, the SPP seeks to support empirical scholarship on a wide range of topics, including federalism, decentralization, party competition, electoral accountability, and territorial governance.
-        </p>
-        <hr style='border-color:#17a2b8;'/>
-        <p style='font-size: 0.9em; color: #bbb;'>
-          <strong>Suggested citation for data retrieved from this app:</strong><br/>
-            Giraudy, Agustina, <em>et al.</em> (2025). <em>Subnational Politics Project Databases</em> (v0.1). Data accessed via the Subnational Politics Project web app developed by Felipe Soto. [DOI to be assigned]
-        </p>
-      "),
+      </p>
+      <p style='text-align:justify;'>
+        This application provides direct access to the SPP databases and interactive tools for exploring subnational political dynamics. As of September 2025, the project includes comprehensive databases for three federal countries in Latin America—Argentina, Brazil, and Mexico—covering the period from the 1980s through 2024.
+      </p>
+      <hr style='border-color:#17a2b8;'/>
+      <h4 style='color:#17a2b8;'>References</h4>
+      <p style='font-size: 0.9em; color: #bbb;'>
+        Giraudy, Agustina. 2025. “Codebook Subnational Politics Project (SPP) (v. 1).” <em>Subnational Politics Project</em>. 
+        <a href='https://doi.org/doi:10.7910/DVN/IBSJO2' target='_blank'>https://doi.org/doi:10.7910/DVN/IBSJO2</a>.
+      </p>
+    "),
       easyClose = TRUE,
       size = "xl",
       footer = modalButton("Close")
     ))
   })
+  
   
   # Mensaje de “no data” en mapa
   output$no_data_message <- renderText("⚠ No data available for this country, variable and year.")
@@ -612,6 +617,7 @@ server <- function(input, output, session) {
     HTML(text)
   })
   
+  aboutSPPServer("about")
   
   
   
@@ -690,6 +696,8 @@ server <- function(input, output, session) {
     content = function(file) sf::st_write(geom, file, append = FALSE),
     contentType = "application/geo+json"
   )
+  
+  
   
   # =========================
   # 11) VISOR PDF
