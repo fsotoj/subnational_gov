@@ -10,7 +10,7 @@ aboutSPPUI <- function(id) {
     #", root_id, " .spp-panel { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:18px; margin-bottom:28px; }
 
     /* Section kickers + compact titles */
-    #", root_id, " .kicker { color:#8fd2df; text-transform:uppercase; letter-spacing:0.12em; font-size:12px; margin:0 0 6px 0; opacity:0.9; }
+    #", root_id, " .kicker { color:#8fd2df; text-transform:uppercase; letter-spacing:0.12em; font-size:20px; margin:0 0 6px 0; opacity:0.9; }
     #", root_id, " .spp-title { color:#dfe7ee; font-size:20px; font-weight:600; margin:0 0 12px 0; }
 
     #", root_id, " .spp-text { color:#dbe2ea; line-height:1.6; text-align:justify; }
@@ -76,10 +76,9 @@ aboutSPPUI <- function(id) {
                                       "in Latin America—Argentina, Brazil, and Mexico—covering the period from the 1980s through 2024."
                                ),
                                tags$hr(class="spp-hr"),
-                               tags$p(class="kicker", "References"),
+                               tags$p(class="kicker", "Reference"),
                                tags$p(class="spp-meta",
-                                      HTML("Giraudy, Agustina. 2025. “Codebook Subnational Politics Project (SPP) (v. 1).” "),
-                                      tags$em("Subnational Politics Project"), ". ",
+                                      HTML("Giraudy, Agustina; Gonzalez, Guadalupe Andrea; Urdinez, Francisco, 2025, \"Codebook: Subnational Politics Project (SPP) (v. 1)\","),
                                       tags$a(href="https://doi.org/doi:10.7910/DVN/IBSJO2", target="_blank", class="spp-link",
                                              "https://doi.org/doi:10.7910/DVN/IBSJO2"), "."
                                )
@@ -99,10 +98,10 @@ aboutSPPUI <- function(id) {
                                         tags$a(href="https://www.linkedin.com/in/agustina-giraudy-72a3b81a9/",
                                                target="_blank", class="lnk-btn", "in")
                                  ),
-                                 tags$p(class="pi-affil", "American University / Tecnológico de Monterrey"),
-                                 tags$p(class="pi-bio",
-                                        "Political scientist focused on governance, subnational regimes, and federalism. PhD (UNC Chapel Hill), postdoc (Harvard). Widely published; extensive fieldwork across Latin America."
-                                 )
+                                 tags$p(class="pi-bio", "Professor American University / Visiting Distinguished Professor Tecnologico de Monterrey"),
+                                 # tags$p(class="pi-bio",
+                                 #        "Professor (American University / Visiting Distinguished Professor Tecnologico de Monterrey)."
+                                 # )
                                )
                       ),
                       
@@ -113,7 +112,7 @@ aboutSPPUI <- function(id) {
                                          tags$span(class="collab-name", "Francisco Urdinez"),
                                          tags$span(class="badge badge-collab", "Collaborator"),
                                          tags$a(href="https://www.linkedin.com/in/francisco-urdinez-a8061813/", target="_blank", class="lnk-btn", "in"),
-                                         HTML("&nbsp;— Universidad Católica de Chile / Tecnológico de Monterrey")
+                                         HTML("&nbsp;— Universidad Católica de Chile")
                                        ),
                                        tags$li(
                                          tags$span(class="collab-name", "Sergio Huertas Hernández"),
