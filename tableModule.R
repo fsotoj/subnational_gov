@@ -1,7 +1,7 @@
 # modules/table_module.R
-tableModuleUI <- function(id, height = "75vh") {
+tableModuleUI <- function(id) {
   ns <- shiny::NS(id)
-  reactable::reactableOutput(ns("table"), height = height)
+  reactable::reactableOutput(ns("table"))
 }
 
 
@@ -114,7 +114,7 @@ tableModuleServer <- function(
       use_virtualized <- has_virtualized && (nrow(df) > rows_vrt)
       args <- list(
         data       = df,
-        height     = "75vh",
+        height     = "85vh",
         striped    = TRUE,
         highlight  = TRUE,
         compact    = TRUE,

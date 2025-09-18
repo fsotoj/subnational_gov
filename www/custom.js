@@ -1,42 +1,60 @@
-// custom.js (versión final)
+$(document).ready(function () {
 
-$(document).ready(function() {
-
-    // Maneja el mensaje enviado desde Shiny (con los datos del árbol)
-    Shiny.addCustomMessageHandler('jstree_data', function(message) {
-        
-        // Inicializa jstree en el contenedor con ID "jstree_demo"
-        $('#jstree_demo').jstree({
-            'core': {
-                'data': message.data, 
-                "themes" : {
-                    "icons" : false
-                },
-                // Mantenemos esta propiedad, aunque no es suficiente por sí sola
-                "open_all": false
-            },
-            "plugins": ["checkbox"]
-        });
-        
-        // Adjuntamos el evento 'ready.jstree' después de la inicialización
-        $('#jstree_demo').on('ready.jstree', function () {
-            // Verifica si hay nodos para seleccionar por defecto
-            if (message.default_selected && message.default_selected.length > 0) {
-                // 1. Selecciona los nodos con los IDs proporcionados
-                $(this).jstree(true).select_node(message.default_selected);
-            }
-            // 2. Colapsa todos los nodos del árbol, asegurando que los de nivel superior se cierren
-            $(this).jstree(true).close_all();
-        });
+  Shiny.addCustomMessageHandler('jstree_data', function (message) {
+    $('#jstree_demo').jstree({
+      core: {
+        data: message.data,
+        themes: { icons: false },
+        multiple: true
+      },
+      checkbox: {
+        three_state: false,       // no auto cascade up/down
+        cascade: 'undetermined',  // don't check/uncheck descendants automatically
+        tie_selection: false,
+        whole_node: false
+      },
+      plugins: ["checkbox"]
     });
 
-    // Escucha el evento de "selección de nodos" de jstree
-    $('#jstree_demo').on("changed.jstree", function (e, data) {
-        
-        // Obtiene los IDs de los nodos seleccionados
-        var selected_nodes = data.selected;
-        
-        // Envía los IDs seleccionados a Shiny
-        Shiny.setInputValue("selected_nodes", JSON.stringify(selected_nodes));
-    });
+    $('#jstree_demo')
+      .on('ready.jstree', function () {
+        const tree = $(this).jstree(true);
+        if (message.default_selected && message.default_selected.length > 0) {
+          tree.check_node(message.default_selected); // check (states) by id
+        }
+        tree.close_all();
+        // Push initial checked ids
+        Shiny.setInputValue("selected_nodes", JSON.stringify(tree.get_checked()));
+      })
+
+      // Country checkbox acts as "deselect all states" within that country
+      .on('check_node.jstree', function (e, data) {
+        const tree = $(this).jstree(true);
+        const node = data.node;
+
+        const isCountry = node.parent === '#'; // top-level nodes = countries
+        if (isCountry) {
+          // Uncheck all descendants (states) and uncheck the country itself
+          if (node.children_d && node.children_d.length) {
+            tree.uncheck_node(node.children_d);
+          }
+          tree.uncheck_node(node); // keep country unchecked after the action
+        }
+
+        // Send current checked IDs (states only, since countries end up unchecked)
+        Shiny.setInputValue("selected_nodes", JSON.stringify(tree.get_checked()));
+      })
+
+      // Keep Shiny in sync when states are (un)checked individually
+      .on('uncheck_node.jstree', function () {
+        const tree = $(this).jstree(true);
+        Shiny.setInputValue("selected_nodes", JSON.stringify(tree.get_checked()));
+      })
+      .on('changed.jstree', function () {
+        // Optional: if other interactions change checks, keep Shiny updated
+        const tree = $(this).jstree(true);
+        Shiny.setInputValue("selected_nodes", JSON.stringify(tree.get_checked()));
+      });
+  });
+
 });

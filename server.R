@@ -1,12 +1,10 @@
 server <- function(input, output, session) {
   
-  # =========================
-  # 0) CONSTANTES / INICIALIZACIÓN
-  # =========================
+  # ==== 0) CONSTANTS / INITIALIZATION =======================================
   default_states <- c("ARGENTINA-CAPITAL FEDERAL", "BRAZIL-DISTRITO FEDERAL", "MEXICO-CDMX")
   current_tab   <- reactive({ input$tabs })
   
-  # Inicializa JSTree con selección por defecto
+  # Initialize JSTree with default selection
   observeEvent(session, {
     session$sendCustomMessage(
       "jstree_data",
@@ -17,10 +15,9 @@ server <- function(input, output, session) {
     )
   })
   
-  # =========================
-  # 1) REACTIVES GLOBALES
-  # =========================
-  # Estados seleccionados desde JSTree (para el gráfico)
+  
+  # ==== 1) GLOBAL REACTIVES ==================================================
+  # -- 1.0) Selected states from JSTree (for the graph) ----------------------
   selected_states_vector <- reactive({
     if (is.null(input$selected_nodes) || input$selected_nodes == "[]") return(character(0))
     nodes <- jsonlite::fromJSON(input$selected_nodes)
@@ -28,7 +25,7 @@ server <- function(input, output, session) {
     sapply(strsplit(states_selected_ids, "-"), function(x) x[2])
   })
   
-  # Nombres de variable normalizados (mapa y gráfico)
+  # -- 1.0) Normalized variable names (map & graph) ---------------------------
   var_normal_name <- reactive({
     req(input$var_sel)
     dict %>% dplyr::filter(pretty_name == input$var_sel) %>% dplyr::pull(variable)
@@ -38,7 +35,7 @@ server <- function(input, output, session) {
     dict %>% dplyr::filter(pretty_name == input$var_sel2) %>% dplyr::pull(variable)
   })
   
-  # Datos para el mapa (filtrados por país y año)
+  # -- 1.0) Data for the map (filtered by country & year) ---------------------
   data_map <- reactive({
     req(input$country_sel, input$year_sel)
     geom_filtered <- geom %>% dplyr::filter(country_name == input$country_sel)
@@ -46,9 +43,8 @@ server <- function(input, output, session) {
     dplyr::left_join(geom_filtered, data_filtered, by = "country_state_code")
   })
   
-  # =========================
-  # 1.1) DATA TAB SELECTORS BASADOS EN DATASET ACTIVO (GENÉRICO)
-  # =========================
+  
+  # ==== 1.1) DATA TAB SELECTORS (based on active dataset) ====================
   active_df <- reactive({
     req(input$db_sel)
     switch(input$db_sel,
@@ -80,17 +76,17 @@ server <- function(input, output, session) {
     uniq_sorted(df$year)
   })
   
-  # Actualiza selectores del Data Tab cuando cambia el dataset activo
+  # Update Data Tab selectors when active dataset changes
   observeEvent(active_df(), {
     req(current_tab() == "data_tab")
     shinyjs::disable("country_sel2"); shinyjs::disable("state_sel2"); shinyjs::disable("years")
     
-    # Países
+    # Countries
     countries <- available_countries()
     new_country <- if (length(input$country_sel2) && input$country_sel2 %in% countries) input$country_sel2 else countries[1]
     updateSelectInput(session, "country_sel2", choices = countries, selected = new_country)
     
-    # Estados
+    # States
     states <- isolate(available_states())
     if (length(states)) {
       new_state <- if (length(input$state_sel2) && input$state_sel2 %in% states) input$state_sel2 else states[1]
@@ -101,7 +97,7 @@ server <- function(input, output, session) {
       shinyjs::disable("state_sel2")
     }
     
-    # Años (pickerInput)
+    # Years (pickerInput)
     yrs <- available_years_scoped()
     old_sel <- isolate(input$years)
     new_sel <- if (length(old_sel) && all(old_sel %in% yrs)) old_sel else yrs
@@ -110,7 +106,7 @@ server <- function(input, output, session) {
     shinyjs::enable("country_sel2"); shinyjs::enable("years")
   })
   
-  # Cuando cambia el país en Data Tab: refresca estados
+  # Refresh states when country changes (Data Tab)
   observeEvent(input$country_sel2, {
     req(current_tab() == "data_tab")
     shinyjs::disable("state_sel2")
@@ -124,7 +120,7 @@ server <- function(input, output, session) {
     }
   }, ignoreInit = TRUE)
   
-  # Refresca picker de años (Data Tab) al cambiar dataset/país/estado
+  # Refresh years (Data Tab) on dataset/country/state changes
   observeEvent(list(active_df(), input$country_sel2, input$state_sel2), {
     req(current_tab() == "data_tab")
     yrs <- available_years_scoped()
@@ -135,9 +131,8 @@ server <- function(input, output, session) {
     shinyjs::enable("years")
   }, ignoreInit = TRUE)
   
-  # =========================
-  # 1.2) FILTRADO DE DATA PARA EL MÓDULO DE TABLA (FUERA DEL MÓDULO)
-  # =========================
+  
+  # ==== 1.2) FILTERED DATA FOR TABLE MODULE (outside module) =================
   data_filtered <- reactive({
     df <- active_df()
     if (has_col(df, "country_name") && length(input$country_sel2)) {
@@ -152,12 +147,10 @@ server <- function(input, output, session) {
     df
   })
   
-  # =========================
-  # 1.3) SELECTORES PROPIOS DE LA PESTAÑA CAMERA (SLED-driven)
-  # =========================
-  # UI renderers for camera-only selectors
+  
+  # ==== 1.3) CAMERA TAB SELECTORS (SLED-driven) ==============================
+  # UI renderers (camera-only)
   output$country_selector_camera <- renderUI({
-    #req(current_tab() == "camera")
     selectInput(
       "country_sel_camera", "Country",
       choices  = sort(unique(SLED$country_name)),
@@ -166,7 +159,6 @@ server <- function(input, output, session) {
   })
   
   output$state_selector_camera <- renderUI({
-    #req(current_tab() == "camera", input$country_sel_camera)
     req(input$country_sel_camera)
     choices <- SLED |>
       dplyr::filter(country_name == input$country_sel_camera) |>
@@ -181,7 +173,6 @@ server <- function(input, output, session) {
   })
   
   output$chamber_selector_camera <- renderUI({
-    #req(current_tab() == "camera")
     selectInput(
       "chamber_sel_camera", "Chamber",
       choices = c("Lower chamber" = 1, "Upper chamber" = 2),
@@ -189,9 +180,7 @@ server <- function(input, output, session) {
     )
   })
   
-  # Mantén tu year_selector_camera como ya lo tienes (sliderTextInput)
-  # Solo lo actualizamos con SLED (país/estado) abajo.
-  
+  # Year scoping helpers (camera)
   sled_years_scoped_camera <- reactive({
     df <- SLED
     if (!is.null(input$country_sel_camera) && nzchar(input$country_sel_camera)) {
@@ -203,6 +192,7 @@ server <- function(input, output, session) {
     sort(unique(df$year))
   })
   
+  # Keep year slider in sync (camera)
   observeEvent(list(current_tab(), input$country_sel_camera, input$state_sel_camera), {
     req(current_tab() == "camera")
     yrs <- sled_years_scoped_camera()
@@ -218,8 +208,7 @@ server <- function(input, output, session) {
     )
   }, ignoreInit = FALSE)
   
-  
-  # --- AVAILABLE CHAMBERS (scoped by Country/State and optionally Year) ---
+  # Available chambers (scoped)
   available_chambers_camera <- reactive({
     df <- SLED
     if (!is.null(input$country_sel_camera) && nzchar(input$country_sel_camera)) {
@@ -228,11 +217,9 @@ server <- function(input, output, session) {
     if (!is.null(input$state_sel_camera) && nzchar(input$state_sel_camera)) {
       df <- df[df$state_name == input$state_sel_camera, , drop = FALSE]
     }
-    # Optional: also scope by the currently selected year (keeps the UI tight)
     if (!is.null(input$year_sel_camera) && nzchar(input$year_sel_camera)) {
       df <- df[df$year == as.integer(input$year_sel_camera), , drop = FALSE]
     }
-    
     ch <- sort(unique(suppressWarnings(as.integer(df$chamber_election_sub_leg))))
     ch <- ch[!is.na(ch) & ch %in% c(1L, 2L)]
     ch
@@ -243,7 +230,7 @@ server <- function(input, output, session) {
     stats::setNames(v, labs)
   }
   
-  # --- KEEP CHAMBER SELECTOR IN SYNC ---
+  # Keep chamber selector in sync
   observeEvent(
     list(current_tab(), input$country_sel_camera, input$state_sel_camera, input$year_sel_camera),
     {
@@ -261,7 +248,6 @@ server <- function(input, output, session) {
       shinyjs::enable("chamber_sel_camera")
       choices_named <- .label_chambers(ch)
       
-      # preserve selection if still valid; else pick first available
       old_sel <- suppressWarnings(as.integer(isolate(input$chamber_sel_camera)))
       new_sel <- if (length(old_sel) && !is.na(old_sel) && old_sel %in% ch) old_sel else ch[1]
       
@@ -273,10 +259,7 @@ server <- function(input, output, session) {
   )
   
   
-  
-  # =========================
-  # 1.4) DATA FILTRADA PARA CAMERA (para resúmenes y/o pasar al módulo si lo refactoras)
-  # =========================
+  # ==== 1.4) FILTERED DATA FOR CAMERA =======================================
   sled_cam_filtered <- reactive({
     df <- SLED
     if (!is.null(input$country_sel_camera) && nzchar(input$country_sel_camera)) {
@@ -294,9 +277,8 @@ server <- function(input, output, session) {
     df
   })
   
-  # =========================
-  # 2) MODALES / MENSAJES
-  # =========================
+  
+  # ==== 2) MODALS / MESSAGES ================================================
   observe({
     showModal(modalDialog(
       title = "About the Subnational Politics Project (SPP)",
@@ -327,12 +309,34 @@ server <- function(input, output, session) {
   })
   
   
-  # Mensaje de “no data” en mapa
+  
+  # inside server
+  
+  
+  # --- SERVER ---
+  observeEvent(input$show_db_img, ignoreInit = TRUE, {
+    showModal(modalDialog(
+      #title = "Database structure", 
+      size = "l", easyClose = TRUE, footer = NULL,
+      tags$img(src = "databases_spp.jpg", style = "width:100%; height:auto;")
+    ))
+  })
+  
+  observeEvent(input$show_vars_img, ignoreInit = TRUE, {
+    showModal(modalDialog(
+      #title = "Variables description",
+      size = "l", easyClose = TRUE, footer = NULL,
+      tags$img(src = "variables_database.jpg", style = "width:100%; height:auto;")
+    ))
+  })
+  
+
+  
+  # “No data” message (map)
   output$no_data_message <- renderText("⚠ No data available for this country, variable and year.")
   
-  # =========================
-  # 3) CONTROLES DE CAPTURA DE MAPA
-  # =========================
+  
+  # ==== 3) MAP CAPTURE CONTROLS =============================================
   observeEvent(input$captureMapBtn, {
     session$sendCustomMessage(
       type = paste0("captureMap", "map1"),
@@ -350,10 +354,9 @@ server <- function(input, output, session) {
     }
   })
   
-  # =========================
-  # 4) UI DINÁMICO (SELECTORES)
-  # =========================
-  # Selector de estados (para gráfico - multipaís)
+  
+  # ==== 4) DYNAMIC UI (SELECTORS) ===========================================
+  # -- 4.1) States selector (graph - multi-country) --------------------------
   output$state_selector <- renderUI({
     req(current_tab() == "graph_tab")
     states_choices <- data %>%
@@ -378,26 +381,20 @@ server <- function(input, output, session) {
     )
   })
   
-  # Selector de base de datos (para data_tab)
+  # -- 4.2) Dataset selector (data_tab) --------------------------------------
   output$db_selector <- renderUI({
     selectInput("db_sel", label = "Select a database to view:",
                 choices = c("NED", "SED", "SEED", "SLED", "CFTDFLD"))
   })
   
-  # (legacy) cámara original — ya no se usa, mantenido por compatibilidad
-  output$camera_selector <- renderUI({
-    selectInput("camera_sel", label = "Select a camera:", choices = c(1, 2))
-  })
-  
-  # Selectores de país/año (map_tab)
+
+  # -- 4.4) Country/Year selectors (map_tab) ---------------------------------
   output$country_selector <- renderUI({
-    #req(current_tab() == "map_tab")
     selectInput("country_sel", "Country",
                 choices = c("Select a country", unique(data$country_name)),
                 selected = "MEXICO")
   })
   output$year_selector <- renderUI({
-    #req(current_tab() == "map_tab")
     shinyWidgets::sliderTextInput(
       inputId  = "year_sel", label = "Year",
       choices  = as.character(seq(1983, 2024, 1)),
@@ -405,26 +402,23 @@ server <- function(input, output, session) {
     )
   })
   
-  # Mantén tu year_selector_camera UI existente (se actualiza arriba)
+  # -- 4.5) Camera year selector (UI; updated above) -------------------------
   output$year_selector_camera <- renderUI({
-    #req(current_tab() == "camera")
     shinyWidgets::sliderTextInput(
       inputId  = "year_sel_camera", label = "Year",
       choices  = as.character(seq(1983, 2024, 1)),
-      grid     = TRUE, width = "90%", 
-      #animate = TRUE, 
+      grid     = TRUE, width = "90%",
       selected = 2019,
       animate  = shiny::animationOptions(
-        interval = 1000,  # 2 seconds between steps
-        loop = F
+        interval = 1000,
+        loop = FALSE
       )
     )
   })
   
-  # =========================
-  # 5) MOSTRAR / OCULTAR CONTROLES POR PESTAÑA
-  # =========================
-  # Mostrar/ocultar mensaje “no data” (mapa)
+  
+  # ==== 5) SHOW / HIDE CONTROLS BY TAB ======================================
+  # “No data” visibility (map)
   observe({
     req(current_tab() == "map_tab", data_map())
     if (nrow(data_map()) == 0 || all(is.na(data_map()[[var_normal_name()]]))) {
@@ -434,7 +428,7 @@ server <- function(input, output, session) {
     }
   })
   
-  # ---- put near top of server() ----
+  # Batch toggle helpers
   .combine_selector <- function(ids) if (length(ids)) paste0("#", ids, collapse = ", ") else NULL
   .batch_show <- function(ids) { sel <- .combine_selector(ids); if (!is.null(sel)) shinyjs::show(selector = sel) }
   .batch_hide <- function(ids) { sel <- .combine_selector(ids); if (!is.null(sel)) shinyjs::hide(selector = sel) }
@@ -445,7 +439,7 @@ server <- function(input, output, session) {
     "country_selector","var_sel","var_sel2","var_description_map","var_description_graph","jstree_container","state_selector",
     # data-tab selectors
     "country_sel2","state_sel2","db_selector","years",
-    # legacy camera selector (if any)
+    # legacy camera selector
     "camera_selector",
     # camera-tab selectors (SLED driven)
     "country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera"
@@ -462,61 +456,30 @@ server <- function(input, output, session) {
     )
   }
   
-  # ---- main visibility controller ----
+  # Main visibility controller
   observeEvent(current_tab(), {
     to_show <- .ids_to_show_for_tab(current_tab())
     to_hide <- setdiff(ALL_TOGGLES, to_show)
-    
-    # Hide first to avoid leftovers/flicker, then show what's needed
     .batch_hide(to_hide)
     .batch_show(to_show)
   }, ignoreInit = FALSE)
   
-  
-  # =========================
-  # 7) TEXTO DE DESCRIPCIÓN / VARS
-  # =========================
-  # Descripción de variable (mapa)
-  output$var_description_map <- renderText({
-    req(current_tab() == "map_tab", input$var_sel)
-    var_info <- dict %>% dplyr::filter(pretty_name == input$var_sel) %>% dplyr::slice(1)
-    paste0(var_info$pretty_name[1], ": ", var_info$description[1])
-  })
-  
-  # Descripción de variable (gráfico)
-  output$var_description_graph <- renderText({
-    req(current_tab() == "graph_tab", input$var_sel2)
-    var_info <- dict %>% dplyr::filter(pretty_name == input$var_sel2) %>% dplyr::slice(1)
-    paste0(var_info$pretty_name[1], ": ", var_info$description[1])
-  })
-  
-  # Sincroniza opciones por defecto de var_sel y var_sel2
-  observe({
-    updateSelectInput(
-      session, "var_sel",
-      choices  = dict$pretty_name[dict$viewable_map == 1],
-      selected = "Valid Votes"
-    )
-    updateSelectInput(
-      session, "var_sel2",
-      choices  = dict$pretty_name[dict$viewable_graph == 1],
-      selected = "Voter Turnout Percentage"
-    )
-  })
-  
-  
+  # ==== 6) TEXT BLOCKS (DB & CAMERA) ========================================
+  # -- 6.1) Database info text (data_tab) ------------------------------------
   output$texto_db <- renderUI({ 
     req(input$db_sel) 
-    texto <- switch(input$db_sel, 
-                    "NED" = "<b>National Executive Databse:</b> Data on national executive branches per country.", 
-                    "SED" = "<b>Subnational Executive Database:</b> Data on subnational executive branches per state/province, per country.",
-                    "SEED" = "<b>Subnational Executive Elections Database:</b> Data on electoral results for executive branch.", 
-                    "SLED" = "<b>Subnational Legislative Elections Database:</b> Data on subnational executive elections by state/province and country. It also includes institutional and electoral information on state- or provincial-level legislatures.", 
-                    "No data" ) 
+    texto <- switch(
+      input$db_sel, 
+      "NED"  = "<b>National Executive Databse:</b> Data on national executive branches per country.",
+      "SED"  = "<b>Subnational Executive Database:</b> Data on subnational executive branches per state/province, per country.",
+      "SEED" = "<b>Subnational Executive Elections Database:</b> Data on electoral results for executive branch.",
+      "SLED" = "<b>Subnational Legislative Elections Database:</b> Data on subnational executive elections by state/province and country. It also includes institutional and electoral information on state- or provincial-level legislatures.",
+      "No data"
+    ) 
     HTML(texto) 
   })
   
-  
+  # -- 6.2) Camera info text (camera tab) ------------------------------------
   output$text_camera <- renderUI({
     req(current_tab() == "camera", sled_cam_filtered(), input$state_sel_camera)
     df <- sled_cam_filtered()
@@ -560,7 +523,6 @@ server <- function(input, output, session) {
     elec_system    <- map_system(df$electoral_system_sub_leg)
     n_parties_cont <- first_or_summary(df$num_parties_election_contest_sub_leg)
     
-    # ENP: if identical across rows, show value; else show range
     enp_vals <- sort(unique(na.omit(as.numeric(df$enp_leg_sub))))
     enp_txt <- if (!length(enp_vals)) {
       "—"
@@ -583,10 +545,35 @@ server <- function(input, output, session) {
   
   
   
+  # ==== 7) VARIABLE DESCRIPTIONS (map & graph) ==============================
+  output$var_description_map <- renderText({
+    req(current_tab() == "map_tab", input$var_sel)
+    var_info <- dict %>% dplyr::filter(pretty_name == input$var_sel) %>% dplyr::slice(1)
+    paste0(var_info$pretty_name[1], ": ", var_info$description[1])
+  })
   
-  # =========================
-  # 8) RESUMEN LÍDER NACIONAL (MAPA)
-  # =========================
+  output$var_description_graph <- renderText({
+    req(current_tab() == "graph_tab", input$var_sel2)
+    var_info <- dict %>% dplyr::filter(pretty_name == input$var_sel2) %>% dplyr::slice(1)
+    paste0(var_info$pretty_name[1], ": ", var_info$description[1])
+  })
+  
+  # Keep default options of var_sel and var_sel2 in sync
+  observe({
+    updateSelectInput(
+      session, "var_sel",
+      choices  = dict$pretty_name[dict$viewable_map == 1],
+      selected = "Valid Votes"
+    )
+    updateSelectInput(
+      session, "var_sel2",
+      choices  = dict$pretty_name[dict$viewable_graph == 1],
+      selected = "Voter Turnout Percentage"
+    )
+  })
+  
+  
+  # ==== 8) NATIONAL LEADER SUMMARY (map) ====================================
   output$leader_summary <- renderUI({
     req(data_map(), input$country_sel)
     leader_info <- data_map() %>%
@@ -594,7 +581,6 @@ server <- function(input, output, session) {
       dplyr::select(
         name_head_nat_exe, sex_head_nat_exe, head_party_nat_exe,
         ideo_party_nat_exe, 
-        #reelec_nat_exe, 
         early_exit_nat_exe,
         year_election_nat_exe, year
       ) %>%
@@ -620,12 +606,7 @@ server <- function(input, output, session) {
   aboutSPPServer("about")
   
   
-  
-  
-  
-  # =========================
-  # 9) MÓDULOS (MAPA / LÍNEAS / TABLA / CÁMARA)
-  # =========================
+  # ==== 9) MODULES (map / lines / table / camera) ===========================
   mapModuleServer(
     id = "map1",
     data_map = data_map,
@@ -653,11 +634,10 @@ server <- function(input, output, session) {
     force_styles = TRUE
   )
   
-  # Hemiciclo: seguimos usando el módulo original (con inputs),
-  # pero ahora apuntando a los nuevos selectores camera-only.
+  # Hemicycle: still using original module (with inputs), now pointing to camera-only selectors.
   camaraServer(
     id = "camara",
-    data = SLED, # si luego refactoras el módulo, cambia a data_r = sled_cam_filtered
+    data = SLED, # if you later refactor the module, change to data_r = sled_cam_filtered
     state_r   = reactive(input$state_sel_camera),
     chamber_r = reactive(input$chamber_sel_camera),
     year_r    = reactive(input$year_sel_camera),
@@ -669,9 +649,8 @@ server <- function(input, output, session) {
     title_text = "Chamber composition"
   )
   
-  # =========================
-  # 10) DESCARGAS
-  # =========================
+  
+  # ==== 10) DOWNLOADS =======================================================
   output$download_data <- downloadHandler(
     filename = function() {
       ext <- if (identical(input$file_format, "csv")) "csv" else "xlsx"
@@ -698,10 +677,7 @@ server <- function(input, output, session) {
   )
   
   
-  
-  # =========================
-  # 11) VISOR PDF
-  # =========================
+  # ==== 11) PDF VIEWER ======================================================
   output$pdf_visor <- renderUI({
     tags$iframe(style = "height:800px; width:100%;", src = "codebook.pdf")
   })
