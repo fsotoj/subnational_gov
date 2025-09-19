@@ -23,6 +23,14 @@ ui <- dashboardPage(
           tags$label("Select a state:", `for` = "jstree_demo"),
           div(id = "jstree_demo")
         )),
+      shinyjs::hidden(
+        div(
+          id = "jstree_vars_container", # Agregamos un ID para poder referenciarlo
+          style = "padding: 15px;",
+          tags$label("Select a variable:", `for` = "jstree_vars_demo"),
+          div(id = "jstree_vars_demo")
+        )),
+      
       #hidden(uiOutput("state_selector")),
       hidden(selectInput("var_sel2", "Variable", choices = NULL)),
       hidden(selectInput("country_sel2", "Select a country:", choices = c(unique(data$country_name)), selected = "ARGENTINA")),
