@@ -213,6 +213,17 @@ button.download_map_btn i.fas.fa-camera {
   max-height: 200px;    /* evita crecimiento infinito */
 }
 
+#jstree_vars_demo {
+  background: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  border: none;
+  overflow-y: auto;     /* scroll propio */
+  overflow-x: hidden;   /* sin scroll horizontal */
+  max-height: 200px;    /* evita crecimiento infinito */
+}
+
 /* jstree tema/base */
 .jstree-default .jstree-container-ul {
   background: transparent;
@@ -238,8 +249,6 @@ button.download_map_btn i.fas.fa-camera {
   height: 50% !important;
   margin-top: 1px !important;
 }
-
-
 
 
 

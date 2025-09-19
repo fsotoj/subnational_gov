@@ -428,14 +428,51 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           highlightOptions = highlightOptions(weight = 5, color = "#666", fillOpacity = 1),
           label = ~paste0(stringr::str_to_title(state_name_geom), ": ", format_leaflet_value(.leaflet_value, var_info()$type)),
           popup = ~paste0(
-            "<div style='background-color:#041d2d; color:#f4e842; padding:6px 6px;
-            border-radius:3px; font-weight:bold; font-size:15px; text-align:center;'>",
+            #"<div style='background-color:#041d2d; color:#f4e842; padding:6px 6px;
+            "<style>
+            /* Base chevron */
+            details summary::before {
+            content: '▶';
+            float: right;
+            display: inline-block;
+            transition: transform 0.2s ease-in-out;
+            }
+            /* Rotate when open */
+            details[open] summary::before {
+            transform: rotate(90deg);
+            }
+            /* Normal state (blue + underline) */
+            details summary {
+            color:#007BFF;
+            text-decoration:underline;
+            cursor:pointer;
+            display:inline-flex;
+            font-weight:600;
+            }
+            /* Open state (darker, no underline) */
+            details[open] summary {
+            color:#0056b3;
+            text-decoration:none;
+            }
+            </style>",
+            
+            "<div style='color:#00000; padding:1px 1px;
+            border-radius:1px; font-weight:bold; font-size:15px; text-align:left;'>",
             var_info()$pretty_name, ": ", format_leaflet_value(.leaflet_value, var_info()$type),
             "</div>",
+            
+            "<div style='border:0; height:1px; 
+            background:linear-gradient(90deg, rgba(23,162,184,0), rgba(23,162,184,0.7), rgba(23,162,184,0)); 
+            margin:1px 0;'></div>",
             "<b>State:</b> ", stringr::str_to_title(state_name_geom), "<br/>",
-            "<b>Governor:</b> ", winner_candidate_sub_exe, "<br/>",
+            "<b>Governor:</b> ", stringr::str_to_title(winner_candidate_sub_exe), "<br/>",
+            "<b>Party:</b> ", stringr::str_to_title(head_party_sub_exe), "<br/>",
+            
+            "<details style='margin-top:4px;'>",
+            "<summary>Governor details</summary>",
+            "<div style='margin-top:1px;'>",
             "<b>Governor sex:</b> ", ifelse(sex_head_sub_exe == 1, "Female", "Male"), "<br/>",
-            "<b>Party:</b> ", head_party_sub_exe, "<br/>",
+            "<b>Party:</b> ", stringr::str_to_title(head_party_sub_exe), "<br/>",
             "<b>Ideology:</b> ", dplyr::case_when(
               ideo_party_sub_exe == 1 ~ "Left",
               ideo_party_sub_exe == 2 ~ "Center Left",
@@ -444,11 +481,10 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
               TRUE ~ as.character(ideo_party_sub_exe)
             ), "<br/>",
             "<b>Alignment:</b> ", ifelse(alignment_with_nat_sub_exe == 1, "Yes", "No"), "<br/>",
-            #"<b>Years in office:</b> ", years_sub_exe, "<br/>",
             "<b>Early exit:</b> ", ifelse(early_exit_sub_exe == 1, "Yes", "No"), "<br/>",
-            "<b>Reelected:</b> ", ifelse(reelec_sub_exe == 1, "Yes", "No"), "<br/>"
-            # ,
-            # "<b>Electoral sub. year:</b> ", ifelse(electoral_year_sub_exe == 1, "Yes", "No")
+            "<b>Reelected:</b> ", ifelse(reelec_sub_exe == 1, "Yes", "No"), "<br/>",
+            "</div>",
+            "</details>"
           )
         )
       

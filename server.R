@@ -15,6 +15,18 @@ server <- function(input, output, session) {
     )
   })
   
+
+  # Send to the client (message name is up to you; example: "jstree_vars_data")
+  observeEvent(session, {
+    session$sendCustomMessage(
+      "jstree_vars_data",
+      list(
+        data = jstree_json_vars
+        # , default_selected = c("NED-Voter Turnout Percentage") # optional
+      )
+    )
+  })
+  
   
   # ==== 1) GLOBAL REACTIVES ==================================================
   # -- 1.0) Selected states from JSTree (for the graph) ----------------------
@@ -24,6 +36,16 @@ server <- function(input, output, session) {
     states_selected_ids <- nodes[grepl("-", nodes)]
     sapply(strsplit(states_selected_ids, "-"), function(x) x[2])
   })
+  
+  
+  # -- 1.0) Selected vars from JSTree (for the map) ----------------------
+  selected_vars_vector <- reactive({
+    if (is.null(input$selected_nodes_vars) || input$selected_nodes_vars == "[]") return(character(0))
+    nodes <- jsonlite::fromJSON(input$selected_nodes_vars)
+    ids   <- nodes[grepl("-", nodes)]
+    sapply(strsplit(ids, "-"), function(x) x[2])  # returns pretty_name
+  })
+  
   
   # -- 1.0) Normalized variable names (map & graph) ---------------------------
   var_normal_name <- reactive({
@@ -309,11 +331,8 @@ server <- function(input, output, session) {
   })
   
   
+
   
-  # inside server
-  
-  
-  # --- SERVER ---
   observeEvent(input$show_db_img, ignoreInit = TRUE, {
     showModal(modalDialog(
       #title = "Database structure", 
@@ -436,7 +455,8 @@ server <- function(input, output, session) {
   # Everything we may toggle anywhere in the app
   ALL_TOGGLES <- c(
     # map/graph controls
-    "country_selector","var_sel","var_sel2","var_description_map","var_description_graph","jstree_container","state_selector",
+    "country_selector","var_sel","var_sel2","var_description_map","var_description_graph","jstree_container",
+    "state_selector","jstree_vars_container",
     # data-tab selectors
     "country_sel2","state_sel2","db_selector","years",
     # legacy camera selector
@@ -448,7 +468,7 @@ server <- function(input, output, session) {
   # Given a tab, return vector of IDs to show
   .ids_to_show_for_tab <- function(tab) {
     switch(tab,
-           "map_tab"   = c("country_selector","var_sel","var_description_map"),
+           "map_tab"   = c("country_selector","var_sel","var_description_map","jstree_vars_container"),
            "graph_tab" = c("var_sel2","var_description_graph","state_selector","jstree_container"),
            "data_tab"  = c("country_sel2","state_sel2","db_selector","years"),
            "camera"    = c("country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera"),
@@ -587,7 +607,9 @@ server <- function(input, output, session) {
       dplyr::slice(1)
     
     country_name <- stringr::str_to_title(input$country_sel)
+    leader_name <- stringr::str_to_title(leader_info$name_head_nat_exe)
     sex <- ifelse(leader_info$sex_head_nat_exe == 1, "female", "male")
+    leader_party <- stringr::str_to_title(leader_info$head_party_nat_exe)
     ideologies <- c("Left", "Center Left", "Center Right", "Right")
     ideology_text <- ifelse(leader_info$ideo_party_nat_exe %in% 1:4,
                             ideologies[leader_info$ideo_party_nat_exe], "Unknown")
@@ -595,8 +617,8 @@ server <- function(input, output, session) {
     text <- glue::glue(
       "<div>",
       " In the year <strong>{leader_info$year}</strong> the national leader in <strong>{country_name}</strong> ",
-      "was <strong>{leader_info$name_head_nat_exe}</strong>, a {sex} politician affiliated with the ",
-      "<strong>{leader_info$head_party_nat_exe}</strong> party, which leans towards the ",
+      "was <strong>{leader_name}</strong>, a {sex} politician affiliated with the ",
+      "<strong>{leader_party}</strong> party, which leans towards the ",
       "<strong>{ideology_text}</strong> on the ideological spectrum.",
       "</div>"
     )
