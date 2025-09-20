@@ -66,18 +66,8 @@ server <- function(input, output, session) {
   })
   
   
-  
-  observe({
-    cat("RAW ids:", input$selected_nodes_vars, "\n")
-    cat("Parsed:", selected_vars_vector(), "\n")
-    cat("_____________________\n")
-  })
-  
   # -- 1.0) Normalized variable names (map & graph) ---------------------------
-  var_normal_name <- reactive({
-    req(input$var_sel)
-    dict %>% dplyr::filter(pretty_name == input$var_sel) %>% dplyr::pull(variable)
-  })
+
   var_normal_name2 <- reactive({
     req(input$var_sel2)
     dict %>% dplyr::filter(pretty_name == input$var_sel2) %>% dplyr::pull(variable)

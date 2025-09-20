@@ -250,6 +250,15 @@ button.download_map_btn i.fas.fa-camera {
   margin-top: 1px !important;
 }
 
+.jstree-default .jstree-anchor {
+  display: inline-block;
+  width: 100%;              /* make anchor span the row */
+}
+
+.jstree-default .jstree-anchor:hover {
+  background-color: #e6f3ff; /* your hover color */
+  cursor: pointer;
+}
 
 
 /* =========================================================
