@@ -21,15 +21,15 @@ server <- function(input, output, session) {
     session$sendCustomMessage(
       "jstree_vars_data",
       list(
-        data = jstree_json_vars
-        # , default_selected = c("NED-Voter Turnout Percentage") # optional
+        data = jstree_json_vars, 
+        default_selected = list("SEED-Valid Votes") # optional
       )
     )
   })
   
   
   # ==== 1) GLOBAL REACTIVES ==================================================
-  # -- 1.0) Selected states from JSTree (for the graph) ----------------------
+  # -- 1.0) states JSTree graph ----------------------
   selected_states_vector <- reactive({
     if (is.null(input$selected_nodes) || input$selected_nodes == "[]") return(character(0))
     nodes <- jsonlite::fromJSON(input$selected_nodes)
@@ -38,14 +38,40 @@ server <- function(input, output, session) {
   })
   
   
-  # -- 1.0) Selected vars from JSTree (for the map) ----------------------
+  # -- 1.0) vars JSTree map ----------------------
   selected_vars_vector <- reactive({
-    if (is.null(input$selected_nodes_vars) || input$selected_nodes_vars == "[]") return(character(0))
-    nodes <- jsonlite::fromJSON(input$selected_nodes_vars)
-    ids   <- nodes[grepl("-", nodes)]
-    sapply(strsplit(ids, "-"), function(x) x[2])  # returns pretty_name
+    x <- input$selected_nodes_vars
+    if (is.null(x) || identical(x, "[]")) return(NULL)
+    ids <- jsonlite::fromJSON(x)
+    if (!length(ids)) return(NULL)
+    
+    parts <- strsplit(ids[1], "-", fixed = TRUE)[[1]]
+    # SLED-Lower-Pretty... / SLED-Upper-Pretty...
+    if (identical(parts[1], "SLED") && length(parts) >= 3 && parts[2] %in% c("Lower","Upper")) {
+      
+      n_chamber <- case_when(parts[2] == "Lower" ~ 1,
+                             parts[2] == "Upper" ~ 2)
+      
+      dict %>% 
+        filter(pretty_name == paste(parts[3:length(parts)], collapse = "-")) %>% 
+        pull(variable) %>% 
+        paste0(.,"_",n_chamber)
+      
+    } else {
+      # Generic: DATASET-Pretty...
+      
+      dict %>% filter(pretty_name == paste(parts[2:length(parts)], collapse = "-")) %>% pull(variable)
+      
+    }
   })
   
+  
+  
+  observe({
+    cat("RAW ids:", input$selected_nodes_vars, "\n")
+    cat("Parsed:", selected_vars_vector(), "\n")
+    cat("_____________________\n")
+  })
   
   # -- 1.0) Normalized variable names (map & graph) ---------------------------
   var_normal_name <- reactive({
@@ -360,7 +386,7 @@ server <- function(input, output, session) {
     session$sendCustomMessage(
       type = paste0("captureMap", "map1"),
       message = list(
-        filename = paste0("map_", input$country_sel, input$year_sel, "_", var_normal_name(), ".png"),
+        filename = paste0("map_", input$country_sel, input$year_sel, "_", selected_vars_vector(), ".png"),
         scale = 2
       )
     )
@@ -440,7 +466,7 @@ server <- function(input, output, session) {
   # “No data” visibility (map)
   observe({
     req(current_tab() == "map_tab", data_map())
-    if (nrow(data_map()) == 0 || all(is.na(data_map()[[var_normal_name()]]))) {
+    if (nrow(data_map()) == 0 || all(is.na(data_map()[[selected_vars_vector()]]))) {
       shinyjs::show("no_data_message")
     } else {
       shinyjs::hide("no_data_message")
@@ -567,8 +593,10 @@ server <- function(input, output, session) {
   
   # ==== 7) VARIABLE DESCRIPTIONS (map & graph) ==============================
   output$var_description_map <- renderText({
-    req(current_tab() == "map_tab", input$var_sel)
-    var_info <- dict %>% dplyr::filter(pretty_name == input$var_sel) %>% dplyr::slice(1)
+    req(current_tab() == "map_tab", selected_vars_vector())
+    clean_var <- sub("_[12]$", "", selected_vars_vector())  # remove "_1" or "_2" at the end
+    
+    var_info <- dict %>% dplyr::filter(variable == clean_var) %>% dplyr::slice(1)
     paste0(var_info$pretty_name[1], ": ", var_info$description[1])
   })
   
@@ -632,7 +660,7 @@ server <- function(input, output, session) {
   mapModuleServer(
     id = "map1",
     data_map = data_map,
-    input_var_sel = var_normal_name,
+    input_var_sel = selected_vars_vector,
     dict = dict,
     country_bboxes = country_bboxes,
     input_country_sel = reactive(input$country_sel),

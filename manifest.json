@@ -3646,29 +3646,23 @@
     ".RData": {
       "checksum": "76f90632319a873338f53248c95675c7"
     },
+    "about_spp_module.R": {
+      "checksum": "e92e42a78c6f31abd820d0c72c5c27e8"
+    },
     "app.R": {
-      "checksum": "391d25c638c113b541eab0aa65ed5147"
+      "checksum": "c753cc3dabaff61bc6b585c2ebe814c5"
     },
     "camera_module.R": {
-      "checksum": "9df464889928dc3a074a47735f81aada"
+      "checksum": "35bff6b9afa1755c6ada6f6240b2bdab"
     },
     "data/CFTDFLD (v.0.1).xlsx": {
       "checksum": "485afbb672ef562d5554db97990b1426"
     },
-    "data/complete_database_edit.xlsx": {
-      "checksum": "33084cb979c1cd392cb142acfca8b73f"
-    },
-    "data/data_without_SLED.xlsx": {
-      "checksum": "6cb555d76879026705bfabe8781cc490"
-    },
     "data/dict_new.xlsx": {
-      "checksum": "f6ed64c13075fe5fb068636a36db5198"
-    },
-    "data/geom_paises_simplified.gpkg": {
-      "checksum": "c1bbc231c8ef8fe3c14fc2a3271096cb"
+      "checksum": "38b37e5b3c8d90c57aaae310f04e75b1"
     },
     "data/geom_simple_maps.geojson": {
-      "checksum": "b35187620d9fc87333896605214d8d00"
+      "checksum": "bd60794f1ee0d2998f536c4343e04612"
     },
     "data/NED (v.0.1).xlsx": {
       "checksum": "8e80d97ce5f344219d7f508c45574585"
@@ -3677,7 +3671,7 @@
       "checksum": "cc3dc25c950926f91e470e89b01d7317"
     },
     "data/SED (v.0.1).xlsx": {
-      "checksum": "2e175b8278131be9e3251c42c568cbce"
+      "checksum": "b01028ddef5d993308fd25190e84f87a"
     },
     "data/SEED (v.0.1).xlsx": {
       "checksum": "7cf0389be9a2c26321d43caa02a15480"
@@ -3686,49 +3680,58 @@
       "checksum": "972ad7ffbf8d4e5b6fef25b546b149a0"
     },
     "data/SLED (v.0.1).xlsx": {
-      "checksum": "6fbb33fbc993659d4e7e668f187bd482"
+      "checksum": "2b7eec0026ddc7adc02124d709ecbac6"
     },
     "get_jstree_data.R": {
       "checksum": "98cbd8412239dd49633afef39b668380"
     },
+    "get_jstree_data_vars.R": {
+      "checksum": "96941b8ed6bee44e4122a5d926e49f4b"
+    },
     "global.R": {
-      "checksum": "4c74206a32c85344007c7ecc826e7ab7"
+      "checksum": "59f4c11b7dc86ea3334c89e84b3c440d"
     },
     "line_module.R": {
       "checksum": "f6b90a5f2d071a37ede0cd19b476c6e8"
     },
     "map_module.R": {
-      "checksum": "7a2309416e5fac539c4ab0121d03efa2"
+      "checksum": "4038e321d51ed2d33b8ae259bfce2d43"
     },
     "server.R": {
-      "checksum": "27e1330b76e7d19cb189080d23c983fb"
+      "checksum": "e64ef4f3fcc6c6e6f5e9df548741e983"
     },
     "tableModule.R": {
-      "checksum": "9aacec23292aa5f9f6f5bc8e287616cd"
+      "checksum": "029646baaf13fa071227593df879c848"
     },
     "ui.R": {
-      "checksum": "4da134c7096d2939ee90773585c043c5"
+      "checksum": "42aab12f70b8829e4128504eea61621d"
+    },
+    "www/agustina_picture.jpg": {
+      "checksum": "e4aa97762c523dc7fda540c44f003252"
+    },
+    "www/Codebook Subnational Politics Project v.1 (Sep 13 2025).docx": {
+      "checksum": "1964e462dec159af6941d9663700f79a"
     },
     "www/codebook.pdf": {
-      "checksum": "2c083c022faa583a7df1e275b3f84f5f"
+      "checksum": "6e9449a476ee06ae1d210f491648cbc0"
     },
     "www/custom.js": {
-      "checksum": "3ee28e8cc248be97b638071380f59f2a"
+      "checksum": "05c00c0b1ff8c26570edeab3e6ec7cba"
+    },
+    "www/databases_spp.jpg": {
+      "checksum": "5f02d753ac831d9d00daa9c356528bdf"
     },
     "www/styles.css": {
-      "checksum": "edea1999009315d5ed4d55a035f6a515"
-    },
-    "www/Subnational Politics Database in Latin America cmts AG 7.22 (1).docx": {
-      "checksum": "7e72b68688e3068e933eb2f12ea64592"
-    },
-    "www/Subnational Politics Database in Latin America cmts AG 7.22 (1).pdf": {
-      "checksum": "f7734d87543d631c10c20322e230302f"
+      "checksum": "22c871b7a8d6e3b24888360c037effd2"
     },
     "www/tec_logo_white.svg": {
       "checksum": "390575e260b59e50169ab3926ab7e7ea"
     },
     "www/tec_logo_white_no_letters.svg": {
       "checksum": "f41cdf15c732ea7f0c73ef861fc320a0"
+    },
+    "www/variables_database.jpg": {
+      "checksum": "968ea07dcc7a1adefca9b753d7b07c86"
     }
   },
   "users": null

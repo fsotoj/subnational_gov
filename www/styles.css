@@ -233,7 +233,7 @@ button.download_map_btn i.fas.fa-camera {
 /* Nodos: unificación de padding y estilo */
 .jstree-default .jstree-anchor {
   color: #000000 !important;
-  padding: 4px 4px !important;  /* compacto y clickeable */
+  padding: 2px 2px !important;  /* compacto y clickeable */
   border-radius: 2px;
 }
 
