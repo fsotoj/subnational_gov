@@ -3,6 +3,7 @@
 ui <- dashboardPage(
   dashboardHeader(title = "Subnational Politics Project",titleWidth = 280),
   dashboardSidebar(
+    width = 310,
     useShinyjs(),
     tagList(
       sidebarMenu(id = "tabs",
@@ -15,7 +16,7 @@ ui <- dashboardPage(
       ),
       hidden(uiOutput("db_selector")),
       hidden(uiOutput("country_selector")),  # default: visible
-      hidden(selectInput("var_sel", "Variable", choices = NULL)),
+      #hidden(selectInput("var_sel", "Variable", choices = NULL)),
       shinyjs::hidden(
         div(
           id = "jstree_container", # Agregamos un ID para poder referenciarlo
@@ -73,6 +74,11 @@ ui <- dashboardPage(
       HTML("Tool developed by <strong><a href='https://www.linkedin.com/in/felipesotojorquera/' target='_blank'>Felipe Soto Jorquera.</a></strong>")
     ),
     tags$head(
+      tags$style(HTML("
+      .content-wrapper, .right-side {
+        padding-bottom: 200px;  /* adjust value as you like */
+      }
+    ")),
       tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/jstree.min.js"),
       tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/themes/default/style.min.css"),
       tags$link(id = "theme-css", rel = "stylesheet", type = "text/css", href = "styles.css"),
@@ -198,7 +204,7 @@ ui <- dashboardPage(
 
                 ),
                 div(
-                  style = "position: absolute; bottom: 30px; left: 30%; right: 30%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
+                  style = "position: absolute; bottom: 230px; left: 30%; right: 30%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
                   uiOutput("year_selector_camera")
                 )
               )
@@ -251,7 +257,7 @@ ui <- dashboardPage(
                   # the image itself
                   tags$img(
                     src = "databases_spp.jpg",
-                    style = "width:100%; height:auto; filter:brightness(70%);" # darkens image
+                    style = "width:80%; height:auto; filter:brightness(70%);" # darkens image
                   ),
                   # the overlay title
                   tags$div(
@@ -277,7 +283,7 @@ ui <- dashboardPage(
                   style = "position:relative; display:inline-block; width:100%;",
                   tags$img(
                     src = "variables_database.jpg",
-                    style = "width:100%; height:auto; filter:brightness(70%);"
+                    style = "width:80%; height:auto; filter:brightness(70%);"
                   ),
                   tags$div(
                     "Variables description",

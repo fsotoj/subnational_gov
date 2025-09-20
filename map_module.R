@@ -81,7 +81,7 @@ get_leaflet_palette <- function(type, palette_vector, values) {
         )
       }
       
-      list(pal = pal, legend = c("Not avaible", legend_labels), domain = c(NA,values), colors = NULL)
+      list(pal = pal, legend = c("Not available", legend_labels), domain = c(NA,values), colors = NULL)
       
     }, error = function(e) {
       if (grepl("single unique value", e$message) && length(unique(valid_values)) == 1) {
@@ -89,7 +89,7 @@ get_leaflet_palette <- function(type, palette_vector, values) {
         breaks <- c(val, val + 1e-6) # Small range to define a bin for single value
         pal <- colorBin(palette = tail(palette_vector, 1), domain = values, bins = breaks, pretty = FALSE, na.color = na_color)
         legend_labels <- c(format_leaflet_value(val, type)) # Display the single value
-        return(list(pal = pal, legend = c("Not avaible", legend_labels), domain = c(NA,values), colors = NULL))
+        return(list(pal = pal, legend = c("Not available", legend_labels), domain = c(NA,values), colors = NULL))
       } else {
         warning(paste("Error in get_leaflet_palette (discrete/continuous/percentage):", e$message))
         return(list(pal = NULL, legend = NULL, domain = NULL, colors = NULL))
@@ -338,7 +338,10 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
     
     
     var_info <- reactive({
-      dict %>% filter(variable == input_var_sel()) %>% slice(1)
+      clean_var <- sub("_[12]$", "", input_var_sel())  # remove "_1" or "_2" at the end
+      dict %>% 
+        filter(variable == clean_var) %>% 
+        slice(1)
     })
     
     
@@ -467,13 +470,14 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
             "<b>State:</b> ", stringr::str_to_title(state_name_geom), "<br/>",
             "<b>Governor:</b> ", stringr::str_to_title(winner_candidate_sub_exe), "<br/>",
             "<b>Party:</b> ", stringr::str_to_title(head_party_sub_exe), "<br/>",
+            "<b>Chamber Structure:</b> ", case_when(chamber_sub_leg == 1 ~ "Unicameral",
+                                                    chamber_sub_leg == 2 ~ "Bicameral",
+                                                    is.na(chamber_sub_leg)~ "Not available"), "<br/>",
             
             "<details style='margin-top:4px;'>",
             "<summary>Governor details</summary>",
             "<div style='margin-top:1px;'>",
-            "<b>Governor sex:</b> ", ifelse(sex_head_sub_exe == 1, "Female", "Male"), "<br/>",
-            "<b>Party:</b> ", stringr::str_to_title(head_party_sub_exe), "<br/>",
-            "<b>Ideology:</b> ", dplyr::case_when(
+            "<b>Party Ideology:</b> ", dplyr::case_when(
               ideo_party_sub_exe == 1 ~ "Left",
               ideo_party_sub_exe == 2 ~ "Center Left",
               ideo_party_sub_exe == 3 ~ "Center Right",
@@ -481,11 +485,21 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
               TRUE ~ as.character(ideo_party_sub_exe)
             ), "<br/>",
             "<b>Alignment:</b> ", ifelse(alignment_with_nat_sub_exe == 1, "Yes", "No"), "<br/>",
-            "<b>Early exit:</b> ", ifelse(early_exit_sub_exe == 1, "Yes", "No"), "<br/>",
             "<b>Reelected:</b> ", ifelse(reelec_sub_exe == 1, "Yes", "No"), "<br/>",
             "</div>",
-            "</details>"
-          )
+            "</details>",
+            
+            ifelse(is.na(chamber_sub_leg),"",
+                   paste0("<details style='margin-top:4px;'>",
+                          "<summary>Legislative details</summary>",
+                          "<div style='margin-top:1px;'>",
+                          "<b>Low Chamber seats:</b> ", total_chamber_seats_sub_leg_1, "<br/>",
+                          ifelse(chamber_sub_leg == 1,"",
+                                 paste0("<b>Upper Chamber seats:</b> ", total_chamber_seats_sub_leg_2, "<br/>")),
+                          "</div>",
+                          "</details>"
+                          ))
+            )
         )
       
       # Incluye tab_changed en la condición para re-renderizar la leyenda

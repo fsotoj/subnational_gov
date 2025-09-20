@@ -45,22 +45,33 @@ SED <- read.xlsx("data/SED (v.0.1).xlsx")
 SLED <- read.xlsx("data/SLED (v.0.1).xlsx")
 CFTDFLD <- read.xlsx("data/CFTDFLD (v.0.1).xlsx")
 
-SLED_filtered <- SLED %>%
-  filter(chamber_election_sub_leg == 1) %>%
-  select(country_state_code, year, all_of(sled_names)) %>%
+cols_to_fill <- c("chamber_sub_leg",as.vector(outer(setdiff(sled_names,"chamber_sub_leg"), c("_1","_2"), paste0)))
+
+SLED_wide <- SLED %>%
+  select(country_state_code, year, chamber_election_sub_leg, all_of(sled_names)) %>%
   distinct() %>%
+  pivot_wider(
+    id_cols     = c(country_state_code, year,chamber_sub_leg),
+    names_from  = chamber_election_sub_leg,
+    values_from = c(all_of(sled_names),-chamber_sub_leg),
+    names_glue  = "{.value}_{chamber_election_sub_leg}",
+    #values_fn   = ~ dplyr::last(., na_rm = TRUE),   # collapse duplicates
+    values_fill = NA                                 # fill absent cells with NA
+  ) %>%
+  arrange(country_state_code, year)%>%
+  # carry-forward within each chamber separately
   group_by(country_state_code) %>%
-  complete(year = seq(min(year, na.rm = TRUE),
-                      max(year, na.rm = TRUE), 1)) %>%
+  complete(year = seq(min(year, na.rm = TRUE), max(year, na.rm = TRUE), 1)) %>%
   arrange(country_state_code, year) %>%
-  fill(all_of(sled_names), .direction = "down") %>%  # <- carry forward
+  fill(all_of(cols_to_fill), .direction = "down") %>%
   ungroup()
+
 
 data <- left_join(NED,SED,c("country_name","country_code","year")) %>% 
   left_join(.,SEED,c("country_state_code","year"))  %>%
   select(-matches("\\.y$")) %>%
   rename_with(~ gsub("\\.x$", "", .x), ends_with(".x")) %>% 
-  left_join(.,SLED_filtered,c("country_state_code","year"))  %>%
+  left_join(.,SLED_wide,c("country_state_code","year"))  %>%
   select(-matches("\\.y$")) %>%
   rename_with(~ gsub("\\.x$", "", .x), ends_with(".x"))
 
@@ -70,7 +81,7 @@ geom <- st_read("data/geom_simple_maps.geojson")
 
 party_colors <- read.xlsx("data/party_colors.xlsx")
 jstree_json_data <- get_jstree_data(data)
-jstree_json_vars <- get_jstree_data_vars(dict %>% filter(viewable_map == 1))
+jstree_json_vars <- get_jstree_data_vars(dict %>% filter(viewable_map == 1, variable != "chamber_sub_leg"))
 
 
 
