@@ -13,6 +13,26 @@ get_leaflet_palette <- function(type, palette_vector, values) {
     pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
     legend_labels <- c("Male", "Female","Other")
     
+  } else if (type == "chamber") {
+    domain <- c(1,2)
+    pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
+    legend_labels <- c("Unicameral", "Bicameral")
+    
+  } else if (type == "system") {
+    domain <- c(1,2,3,4)
+    pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
+    legend_labels <- c(
+      "Proportional Representation (PR)",
+      "Simple Majority",
+      "Mixed (PR + Majority)",
+      "Mixed (PR + predefined districts)"
+    )
+    
+  } else if (type == "renewal") {
+    domain <- c(1,2)
+    pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
+    legend_labels <- c("Staggered every 2 years", "Full renewal")
+    
   } else if (type == "categorical") {
     
     domain <- sort(unique(values))
@@ -245,6 +265,23 @@ format_leaflet_value <- function(value, type) {
                          value[i] == "0" ~ "Male",
                          value[i] == "1" ~ "Female",
                          value[i] == "2" ~ "Other",
+                         TRUE ~ as.character(value[i])
+                       ),
+                       "chamber" = case_when(
+                         value[i] == "1" ~ "Unicameral",
+                         value[i] == "2" ~ "Bicameral",
+                         TRUE ~ as.character(value[i])
+                       ),
+                       "system" = case_when(
+                         value[i] == "1" ~ "Proportional Representation (PR)",
+                         value[i] == "2" ~ "Simple Majority",
+                         value[i] == "3" ~ "Mixed (PR + Majority)",
+                         value[i] == "4" ~ "Mixed (PR + predefined districts)",
+                         TRUE ~ as.character(value[i])
+                       ),
+                       "renewal" =case_when(
+                         value[i] == "1" ~ "Staggered every 2 years",
+                         value[i] == "2" ~ "Full renewal",
                          TRUE ~ as.character(value[i])
                        ),
                        "ordinal" = dplyr::case_when(
@@ -493,7 +530,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
                    paste0("<details style='margin-top:4px;'>",
                           "<summary>Legislative details</summary>",
                           "<div style='margin-top:1px;'>",
-                          "<b>Low Chamber seats:</b> ", total_chamber_seats_sub_leg_1, "<br/>",
+                          "<b>Lower Chamber seats:</b> ", total_chamber_seats_sub_leg_1, "<br/>",
                           ifelse(chamber_sub_leg == 1,"",
                                  paste0("<b>Upper Chamber seats:</b> ", total_chamber_seats_sub_leg_2, "<br/>")),
                           "</div>",

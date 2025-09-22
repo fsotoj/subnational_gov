@@ -20,26 +20,26 @@ get_jstree_data_vars <- function(dict) {
       
       lower_children <- lapply(vars, function(v) {
         list(
-          id   = paste("SLED", "Lower", v, sep = "-"),  # e.g., "SLED-Lower-Voter Turnout Percentage"
+          id   = paste("SLED", "Lower Chamber", v, sep = "-"),  # e.g., "SLED-Lower-Voter Turnout Percentage"
           text = v
         )
       })
       lower_node <- list(
-        id = "SLED-Lower",
-        text = "Lower",
+        id = "SLED-Lower Chamber",
+        text = "Lower Chamber",
         children = lower_children
       )
       
       # Build UPPER branch
       upper_children <- lapply(vars, function(v) {
         list(
-          id   = paste("SLED", "Upper", v, sep = "-"),  # e.g., "SLED-Upper-Voter Turnout Percentage"
+          id   = paste("SLED", "Upper Chamber", v, sep = "-"),  # e.g., "SLED-Upper-Voter Turnout Percentage"
           text = v
         )
       })
       upper_node <- list(
-        id = "SLED-Upper",
-        text = "Upper",
+        id = "SLED-Upper Chamber",
+        text = "Upper Chamber",
         children = upper_children
       )
       
