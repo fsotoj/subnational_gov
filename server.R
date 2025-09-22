@@ -47,10 +47,10 @@ server <- function(input, output, session) {
     
     parts <- strsplit(ids[1], "-", fixed = TRUE)[[1]]
     # SLED-Lower-Pretty... / SLED-Upper-Pretty...
-    if (identical(parts[1], "SLED") && length(parts) >= 3 && parts[2] %in% c("Lower","Upper")) {
+    if (identical(parts[1], "SLED") && length(parts) >= 3 && parts[2] %in% c("Lower Chamber","Upper Chamber")) {
       
-      n_chamber <- case_when(parts[2] == "Lower" ~ 1,
-                             parts[2] == "Upper" ~ 2)
+      n_chamber <- case_when(parts[2] == "Lower Chamber" ~ 1,
+                             parts[2] == "Upper Chamber" ~ 2)
       
       dict %>% 
         filter(pretty_name == paste(parts[3:length(parts)], collapse = "-")) %>% 
@@ -426,7 +426,8 @@ server <- function(input, output, session) {
   # -- 4.4) Country/Year selectors (map_tab) ---------------------------------
   output$country_selector <- renderUI({
     selectInput("country_sel", "Country",
-                choices = c("Select a country", unique(data$country_name)),
+                #choices = c("Select a country", unique(data$country_name)),
+                choices = unique(data$country_name),
                 selected = "MEXICO")
   })
   output$year_selector <- renderUI({

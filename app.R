@@ -11,4 +11,5 @@ shinyApp(ui, server)
 
 #rsconnect::writeManifest(appDir = ".", appPrimaryDoc = NULL, contentCategory = NULL)
 
-# tabasco invalid votes 2017
+# MEXICO PARTIES 2015 and 2017
+# CONCURRENT WITH NATIONAL ELECTIONS LEG

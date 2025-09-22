@@ -45,7 +45,7 @@ SED <- read.xlsx("data/SED (v.0.1).xlsx")
 SLED <- read.xlsx("data/SLED (v.0.1).xlsx")
 CFTDFLD <- read.xlsx("data/CFTDFLD (v.0.1).xlsx")
 
-cols_to_fill <- c("chamber_sub_leg",as.vector(outer(setdiff(sled_names,"chamber_sub_leg"), c("_1","_2"), paste0)))
+cols_to_fill <- c("chamber_sub_leg",as.vector(outer(setdiff(sled_names,c("chamber_sub_leg","concurrent_election_with_nat_sub_leg")), c("_1","_2"), paste0)))
 
 SLED_wide <- SLED %>%
   select(country_state_code, year, chamber_election_sub_leg, all_of(sled_names)) %>%
@@ -63,6 +63,10 @@ SLED_wide <- SLED %>%
   group_by(country_state_code) %>%
   complete(year = seq(min(year, na.rm = TRUE), max(year, na.rm = TRUE), 1)) %>%
   arrange(country_state_code, year) %>%
+  mutate(across(
+    starts_with("concurrent_election_with_nat_sub_leg_"),
+    ~ replace(., is.na(.), 0)
+  )) %>%
   fill(all_of(cols_to_fill), .direction = "down") %>%
   ungroup()
 
@@ -89,6 +93,7 @@ jstree_json_vars <- get_jstree_data_vars(dict %>% filter(viewable_map == 1, vari
 country_bboxes <- list(
   ARGENTINA = list(lng1 = -73.5, lat1 = -59, lng2 = -56, lat2 = -21.8),
   BRAZIL    = list(lng1 = -73.9, lat1 = -33.7, lng2 = -44.5, lat2 = 5.3),
-  MEXICO    = list(lng1 = -118.5, lat1 = 14.5, lng2 = -86.7, lat2 = 32.7),
-  `Select a country`  = list(lng1 = -118.5, lat1 = -55.1, lng2 = -34.8, lat2 = 32.7)
+  MEXICO    = list(lng1 = -118.5, lat1 = 14.5, lng2 = -86.7, lat2 = 32.7)
+  # ,
+  # `Select a country`  = list(lng1 = -118.5, lat1 = -55.1, lng2 = -34.8, lat2 = 32.7)
 )
