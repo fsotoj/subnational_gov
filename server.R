@@ -22,7 +22,18 @@ server <- function(input, output, session) {
       "jstree_vars_data",
       list(
         data = jstree_json_vars, 
-        default_selected = list("SEED-Valid Votes") # optional
+        default_selected = list("Executive Elections-Valid Votes") # optional
+      )
+    )
+  })
+  
+  
+  observeEvent(session, {
+    session$sendCustomMessage(
+      "jstree_vars_data_graph",
+      list(
+        data = jstree_json_vars_graph, 
+        default_selected = list("Executive Elections-Valid Votes") # optional
       )
     )
   })
@@ -47,7 +58,36 @@ server <- function(input, output, session) {
     
     parts <- strsplit(ids[1], "-", fixed = TRUE)[[1]]
     # SLED-Lower-Pretty... / SLED-Upper-Pretty...
-    if (identical(parts[1], "SLED") && length(parts) >= 3 && parts[2] %in% c("Lower Chamber","Upper Chamber")) {
+    if (identical(parts[1], "Legislative Elections") && length(parts) >= 3 && parts[2] %in% c("Lower Chamber","Upper Chamber")) {
+      
+      n_chamber <- case_when(parts[2] == "Lower Chamber" ~ 1,
+                             parts[2] == "Upper Chamber" ~ 2)
+      
+      dict %>% 
+        filter(pretty_name == paste(parts[3:length(parts)], collapse = "-")) %>% 
+        pull(variable) %>% 
+        paste0(.,"_",n_chamber)
+      
+    } else {
+      # Generic: DATASET-Pretty...
+      
+      dict %>% filter(pretty_name == paste(parts[2:length(parts)], collapse = "-")) %>% pull(variable)
+      
+    }
+  })
+  
+  
+  
+  
+  selected_vars_vector_graph <- reactive({
+    x <- input$selected_nodes_vars_graph
+    if (is.null(x) || identical(x, "[]")) return(NULL)
+    ids <- jsonlite::fromJSON(x)
+    if (!length(ids)) return(NULL)
+    
+    parts <- strsplit(ids[1], "-", fixed = TRUE)[[1]]
+    # SLED-Lower-Pretty... / SLED-Upper-Pretty...
+    if (identical(parts[1], "Legislative Elections") && length(parts) >= 3 && parts[2] %in% c("Lower Chamber","Upper Chamber")) {
       
       n_chamber <- case_when(parts[2] == "Lower Chamber" ~ 1,
                              parts[2] == "Upper Chamber" ~ 2)
@@ -68,10 +108,10 @@ server <- function(input, output, session) {
   
   # -- 1.0) Normalized variable names (map & graph) ---------------------------
 
-  var_normal_name2 <- reactive({
-    req(input$var_sel2)
-    dict %>% dplyr::filter(pretty_name == input$var_sel2) %>% dplyr::pull(variable)
-  })
+  # var_normal_name2 <- reactive({
+  #   req(input$var_sel2)
+  #   dict %>% dplyr::filter(pretty_name == input$var_sel2) %>% dplyr::pull(variable)
+  # })
   
   # -- 1.0) Data for the map (filtered by country & year) ---------------------
   data_map <- reactive({
@@ -333,10 +373,10 @@ server <- function(input, output, session) {
       <p style='text-align:justify;'>
         This application provides direct access to the SPP databases and interactive tools for exploring subnational political dynamics. As of September 2025, the project includes comprehensive databases for three federal countries in Latin America—Argentina, Brazil, and Mexico—covering the period from the 1980s through 2024.
       </p>
-      <hr style='border-color:#17a2b8;'/>
-      <h4 style='color:#17a2b8;'>References</h4>
+      <hr style='border:0; height:1px; background:linear-gradient(90deg, rgba(23,162,184,0), rgba(23,162,184,0.7), rgba(23,162,184,0)); margin:18px 0;'/>
+      <h4 style='color:#17a2b8;'>Reference</h4>
       <p style='font-size: 0.9em; color: #bbb;'>
-        Giraudy, Agustina. 2025. “Codebook Subnational Politics Project (SPP) (v. 1).” <em>Subnational Politics Project</em>. 
+        Giraudy, Agustina; Gonzalez, Guadalupe Andrea; Urdinez, Francisco, 2025, <em>\"Codebook: Subnational Politics Project (SPP) (v. 1)\"</em>, 
         <a href='https://doi.org/doi:10.7910/DVN/IBSJO2' target='_blank'>https://doi.org/doi:10.7910/DVN/IBSJO2</a>.
       </p>
     "),
@@ -472,8 +512,8 @@ server <- function(input, output, session) {
   # Everything we may toggle anywhere in the app
   ALL_TOGGLES <- c(
     # map/graph controls
-    "country_selector","var_sel","var_sel2","var_description_map","var_description_graph","jstree_container",
-    "state_selector","jstree_vars_container",
+    "country_selector","var_sel","var_description_map","var_description_graph","jstree_container",
+    "state_selector","jstree_vars_container","jstree_vars_container_graph",
     # data-tab selectors
     "country_sel2","state_sel2","db_selector","years",
     # legacy camera selector
@@ -486,7 +526,7 @@ server <- function(input, output, session) {
   .ids_to_show_for_tab <- function(tab) {
     switch(tab,
            "map_tab"   = c("country_selector","var_sel","var_description_map","jstree_vars_container"),
-           "graph_tab" = c("var_sel2","var_description_graph","state_selector","jstree_container"),
+           "graph_tab" = c("var_description_graph","state_selector","jstree_container","jstree_vars_container_graph"),
            "data_tab"  = c("country_sel2","state_sel2","db_selector","years"),
            "camera"    = c("country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera"),
            character(0)
@@ -659,10 +699,10 @@ server <- function(input, output, session) {
   )
   
   linePlotModuleServer(
-    id = "line_plot1",
+    id = "lp",
     data = reactive(data),
     dict = dict,
-    input_variable = var_normal_name2,
+    input_variable = selected_vars_vector_graph,
     input_states = selected_states_vector,
     Ymin = reactive(if (isTRUE(input$force_y0)) 0 else NULL),
     active_tab = current_tab
@@ -677,7 +717,7 @@ server <- function(input, output, session) {
   
   # Hemicycle: still using original module (with inputs), now pointing to camera-only selectors.
   camaraServer(
-    id = "camara",
+    id = "cam",
     data = SLED, # if you later refactor the module, change to data_r = sled_cam_filtered
     state_r   = reactive(input$state_sel_camera),
     chamber_r = reactive(input$chamber_sel_camera),
@@ -686,8 +726,9 @@ server <- function(input, output, session) {
     seats_col = "total_seats_party_sub_leg",
     state_col = "state_name",
     chamber_filter_col = "chamber_election_sub_leg",
-    year_col = "year",
-    title_text = "Chamber composition"
+    year_col = "year"
+    # ,
+    # title_text = "Chamber composition"
   )
   
   

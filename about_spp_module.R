@@ -6,38 +6,52 @@ aboutSPPUI <- function(id) {
     #", root_id, " { background-color:#0F1D2C; color:#eef1f4; font-family: Helvetica, Arial, sans-serif; padding:24px 16px 40px; }
     #", root_id, " .spp-container { max-width:900px; margin:0 auto; }
 
-    /* Panels */
-    #", root_id, " .spp-panel { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:18px; margin-bottom:28px; }
+    /* Unified card style for About panel and Team cards */
+    #", root_id, " .card { 
+      background:rgba(255,255,255,0.06); 
+      border:1px solid rgba(255,255,255,0.08); 
+      border-radius:12px; 
+      padding:18px; 
+      margin-bottom:28px;
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    #", root_id, " .card:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 6px 14px rgba(0,0,0,0.25); 
+      border-color: rgba(23,162,184,0.35);
+    }
 
-    /* Section kickers + compact titles */
-    #", root_id, " .kicker { color:#8fd2df; text-transform:uppercase; letter-spacing:0.12em; font-size:20px; margin:0 0 6px 0; opacity:0.9; }
-    #", root_id, " .spp-title { color:#dfe7ee; font-size:20px; font-weight:600; margin:0 0 12px 0; }
+    /* Section kickers */
+    #", root_id, " .kicker { color:#8fd2df; text-transform:uppercase; letter-spacing:0.12em; font-size:24px; margin:0 0 8px 0; opacity:0.9; }
 
+    /* Body text */
     #", root_id, " .spp-text { color:#dbe2ea; line-height:1.6; text-align:justify; }
     #", root_id, " .spp-meta { color:#b9c4d0; font-size:0.92em; }
     #", root_id, " .spp-hr { border:0; height:1px; background:linear-gradient(90deg, rgba(23,162,184,0), rgba(23,162,184,0.7), rgba(23,162,184,0)); margin:18px 0; }
 
     /* Badges for roles */
-    #", root_id, " .badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; vertical-align:middle; margin-left:8px; }
+    #", root_id, " .badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; vertical-align:middle; margin-right:6px; }
     #", root_id, " .badge-pi { background:#17a2b8; color:#0F1D2C; }
     #", root_id, " .badge-collab { background:rgba(23,162,184,0.18); color:#9bdbe7; border:1px solid rgba(23,162,184,0.35); }
 
-    /* PI card */
-    #", root_id, " .pi-card { display:flex; gap:16px; align-items:flex-start; border-left:3px solid #17a2b8; padding-left:12px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px; }
-    #", root_id, " .pi-img { width:120px; border-radius:10px; flex:0 0 120px; }
-    #", root_id, " .pi-name { margin:0; color:#fff; font-weight:650; font-size:1.08em; }
-    #", root_id, " .pi-affil { margin:2px 0 6px 0; color:#b9c4d0; font-size:0.92em; }
-    #", root_id, " .pi-bio { color:#dbe2ea; line-height:1.6; margin:6px 0 0 0; text-align:justify; }
+    /* Team grid & cards */
+    #", root_id, " .team-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:20px; text-align:center; }
+    #", root_id, " .team-card { composes: card; background:rgba(255,255,255,0.06); }
+    /* Since CSS 'composes' isn't standard, we apply same look by adding both classes where used. */
 
-    /* Collaborators list */
-    #", root_id, " .collab-panel { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px; }
-    #", root_id, " .collab-list { list-style:none; padding-left:0; margin:0; }
-    #", root_id, " .collab-item { margin-bottom:12px; color:#dbe2ea; }
-    #", root_id, " .collab-item:last-child { margin-bottom:0; }
-    #", root_id, " .collab-name { color:#ffffff; font-weight:600; }
+    /* Avatars (B/W with hover to color) */
+    #", root_id, " .team-avatar {
+      width:120px; height:120px; object-fit:cover; border-radius:50%;
+      margin-bottom:12px; border:2px solid rgba(23,162,184,0.6);
+      filter:grayscale(100%); transition:filter .3s ease;
+    }
+    #", root_id, " .team-avatar:hover { filter:grayscale(0%); }
+
+    .collab-name { color:#ffffff; font-weight:600; margin:0 0 6px 0; }
+    .pi-affil { color:#b9c4d0; font-size:0.9em; margin-top:8px; }
 
     /* LinkedIn button */
-    #", root_id, " .lnk-btn { display:inline-block; margin-left:6px; width:20px; height:20px; line-height:20px; text-align:center; border-radius:50%; background:#0A66C2; color:#fff; text-decoration:none; font-weight:700; font-family:Arial, Helvetica, sans-serif; font-size:11px; transition:filter .15s ease; vertical-align:middle; }
+    #", root_id, " .lnk-btn { display:inline-block; width:20px; height:20px; line-height:20px; text-align:center; border-radius:50%; background:#0A66C2; color:#fff; text-decoration:none; font-weight:700; font-family:Arial, Helvetica, sans-serif; font-size:11px; transition:filter .15s ease; vertical-align:middle; }
     #", root_id, " .lnk-btn:hover { filter:brightness(1.15); }
 
     /* Links */
@@ -50,10 +64,9 @@ aboutSPPUI <- function(id) {
     tags$div(id = root_id,
              tags$div(class = "spp-container",
                       
-                      # ABOUT
+                      # ABOUT (now uses same 'card' class as team)
                       tags$p(class="kicker", "About"),
-                      #tags$h3(class="spp-title", "The Subnational Politics Project (SPP)"),
-                      tags$div(class="spp-panel",
+                      tags$div(class="card",
                                tags$p(class="spp-text",
                                       tags$strong("The Subnational Politics Project (SPP)"),
                                       " is part of a broader research project designed to compile, ",
@@ -78,63 +91,98 @@ aboutSPPUI <- function(id) {
                                tags$hr(class="spp-hr"),
                                tags$p(class="kicker", "Reference"),
                                tags$p(class="spp-meta",
-                                      HTML("Giraudy, Agustina; Gonzalez, Guadalupe Andrea; Urdinez, Francisco, 2025, \"Codebook: Subnational Politics Project (SPP) (v. 1)\","),
+                                      HTML("Giraudy, Agustina; Gonzalez, Guadalupe Andrea; Urdinez, Francisco, 2025, \"Codebook: Subnational Politics Project (SPP) (v. 1)\", "),
                                       tags$a(href="https://doi.org/doi:10.7910/DVN/IBSJO2", target="_blank", class="spp-link",
                                              "https://doi.org/doi:10.7910/DVN/IBSJO2"), "."
                                )
                       ),
                       
                       # TEAM
-                      tags$p(class="kicker", "Team"),
-                      #tags$h3(class="spp-title", "People behind the project"),
+                      tags$p(class="kicker", "People behind the SPP"),
                       
-                      # Principal Investigator
-                      tags$div(class="pi-card",
-                               tags$img(src="agustina_picture.jpg", alt="Agustina Giraudy", class="pi-img"),
-                               tags$div(
-                                 tags$p(class="pi-name",
-                                        "Agustina Giraudy",
-                                        tags$span(class="badge badge-pi", "Principal Investigator"),
-                                        tags$a(href="https://www.linkedin.com/in/agustina-giraudy-72a3b81a9/",
-                                               target="_blank", class="lnk-btn", "in")
-                                 ),
-                                 tags$p(class="pi-bio", "Professor American University / Visiting Distinguished Professor Tecnologico de Monterrey"),
-                                 # tags$p(class="pi-bio",
-                                 #        "Professor (American University / Visiting Distinguished Professor Tecnologico de Monterrey)."
-                                 # )
-                               )
-                      ),
-                      
-                      # Collaborators
-                      tags$div(class="collab-panel",
-                               tags$ul(class="collab-list",
-                                       tags$li(
-                                         tags$span(class="collab-name", "Francisco Urdinez"),
-                                         tags$span(class="badge badge-collab", "Collaborator"),
-                                         tags$a(href="https://www.linkedin.com/in/francisco-urdinez-a8061813/", target="_blank", class="lnk-btn", "in"),
-                                         HTML("&nbsp;— Universidad Católica de Chile")
-                                       ),
-                                       tags$li(
-                                         tags$span(class="collab-name", "Sergio Huertas Hernández"),
-                                         tags$span(class="badge badge-collab", "Collaborator"),
-                                         tags$a(href="https://www.linkedin.com/in/sergio-huertas-hern%C3%A1ndez/", target="_blank", class="lnk-btn", "in"),
-                                         HTML("&nbsp;— Universidad Católica de Chile")
-                                       ),
-                                       tags$li(
-                                         tags$span(class="collab-name", "Guadalupe González"),
-                                         tags$span(class="badge badge-collab", "Collaborator"),
-                                         tags$a(href="https://www.linkedin.com/in/guadag12/", target="_blank", class="lnk-btn", "in"),
-                                         HTML("&nbsp;— University of Maryland, College Park")
-                                       ),
-                                       tags$li(
-                                         tags$span(class="collab-name", "Felipe Soto Jorquera"),
-                                         tags$span(class="badge badge-collab", "Collaborator"),
-                                         tags$a(href="https://www.linkedin.com/in/felipesotojorquera/", target="_blank", class="lnk-btn", "in"),
-                                         HTML("&nbsp;— Hertie School, Berlin")
-                                       )
+                      # Grid: All team members in same format (each is also a 'card')
+                      tags$div(class="team-grid",
+                               
+                               # Agustina
+                               tags$div(class="team-card card",
+                                        tags$a(
+                                          href="https://agustinagiraudy.com", 
+                                          target="_blank",
+                                          class="avatar-link",
+                                          tags$img(src="agustina.jpg", alt="Agustina Giraudy", class="team-avatar"),
+                                          tags$span(class="tooltip-text", "Go to my webpage")
+                                        ),
+                                        tags$p(class="collab-name", "Agustina Giraudy"),
+                                        tags$div(
+                                          tags$span(class="badge badge-pi", "Principal Investigator"),
+                                          tags$a(href="https://www.linkedin.com/in/agustina-giraudy-72a3b81a9/",
+                                                 target="_blank", class="lnk-btn", "in")
+                                        ),
+                                        tags$p(class="pi-affil", "American University / Tecnológico de Monterrey")
+                               ),
+                               
+                               # Francisco
+                               tags$div(class="team-card card",
+                                        tags$a(
+                                          href="https://www.furdinez.com/", 
+                                          target="_blank",
+                                          class="avatar-link",
+                                          tags$img(src="francisco.jpg", alt="Francisco Urdinez", class="team-avatar"),
+                                          tags$span(class="tooltip-text", "Go to my webpage")
+                                          ),
+                                        tags$p(class="collab-name", "Francisco Urdinez"),
+                                        tags$div(
+                                          tags$span(class="badge badge-collab", "Collaborator"),
+                                          tags$a(href="https://www.linkedin.com/in/francisco-urdinez-a8061813/", target="_blank", class="lnk-btn", "in")
+                                        ),
+                                        tags$p(class="pi-affil", "Universidad Católica de Chile")
+                               ),
+                               
+                               # Sergio
+                               tags$div(class="team-card card",
+                                        tags$a(
+                                          href="https://serhuertas.github.io/", 
+                                          target="_blank",
+                                          class="avatar-link",
+                                          tags$img(src="sergio.jpg", alt="Sergio Huertas Hernández", class="team-avatar"),
+                                          tags$span(class="tooltip-text", "Go to my webpage")
+                                        ),
+                                        tags$p(class="collab-name", "Sergio Huertas Hernández"),
+                                        tags$div(
+                                          tags$span(class="badge badge-collab", "Collaborator"),
+                                          tags$a(href="https://www.linkedin.com/in/sergio-huertas-hern%C3%A1ndez/", target="_blank", class="lnk-btn", "in")
+                                        ),
+                                        tags$p(class="pi-affil", "Universidad Católica de Chile")
+                               ),
+                               
+                               # Guadalupe
+                               tags$div(class="team-card card",
+                                        tags$a(
+                                          href="https://guadagonzalez.com/", 
+                                          target="_blank",
+                                          class="avatar-link",
+                                          tags$img(src="guadalupe.jpg", alt="Guadalupe González", class="team-avatar"),
+                                          tags$span(class="tooltip-text", "Go to my webpage")
+                                        ),
+                                        tags$p(class="collab-name", "Guadalupe González"),
+                                        tags$div(
+                                          tags$span(class="badge badge-collab", "Collaborator"),
+                                          tags$a(href="https://www.linkedin.com/in/guadag12/", target="_blank", class="lnk-btn", "in")
+                                        ),
+                                        tags$p(class="pi-affil", "University of Maryland, College Park")
+                               ),
+                               
+                               # Felipe
+                               tags$div(class="team-card card",
+                                        tags$img(src="felipe.jpg", alt="Felipe Soto Jorquera", class="team-avatar"),
+                                        tags$p(class="collab-name", "Felipe Soto Jorquera"),
+                                        tags$div(
+                                          tags$span(class="badge badge-collab", "Collaborator"),
+                                          tags$a(href="https://www.linkedin.com/in/felipesotojorquera/", target="_blank", class="lnk-btn", "in")
+                                        ),
+                                        tags$p(class="pi-affil", "Hertie School, Berlin")
                                )
                       )
-                      
              )
     )
   )
