@@ -32,8 +32,16 @@ ui <- dashboardPage(
           div(id = "jstree_vars_demo")
         )),
       
+      shinyjs::hidden(
+        div(
+          id = "jstree_vars_container_graph", # Agregamos un ID para poder referenciarlo
+          style = "padding: 15px;",
+          tags$label("Select a variable:", `for` = "jstree_vars_demo_graph"),
+          div(id = "jstree_vars_demo_graph")
+        )),
+      
       #hidden(uiOutput("state_selector")),
-      hidden(selectInput("var_sel2", "Variable", choices = NULL)),
+      #hidden(selectInput("var_sel2", "Variable", choices = NULL)),
       hidden(selectInput("country_sel2", "Select a country:", choices = c(unique(data$country_name)), selected = "ARGENTINA")),
       hidden( pickerInput(
         inputId = "years",
@@ -167,7 +175,7 @@ ui <- dashboardPage(
         tabName = "graph_tab",  # Este va directamente dentro de tabItem()
         fluidRow(
           column(9,
-                 linePlotModuleUI("line_plot1")
+                 linePlotModuleUI("lp")
           ),
           column(3,
                  box(
@@ -180,8 +188,12 @@ ui <- dashboardPage(
                  ),
                  box(width = NULL,
                      height = NULL,
-                   checkboxInput("force_y0", "Click for Y-axis start at 0", value = FALSE, ))
-                 )
+                   checkboxInput("force_y0", "Click for Y-axis start at 0", value = FALSE, )),
+                 box(width = NULL,
+                     height = NULL,
+                     linePlotLegendUI("lp"))
+                 ),
+          
         )
       ),
       
@@ -190,7 +202,11 @@ ui <- dashboardPage(
               tagList(
                 fluidRow(
                   column(9,
-                         camaraUI("camara"),
+                         camaraUI("cam"),
+                         div(
+                           style = "left: 40%; right: 40%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
+                           uiOutput("year_selector_camera")
+                         )
                   ),
                   column(3,
                          box(
@@ -200,13 +216,13 @@ ui <- dashboardPage(
                            collapsed = FALSE,
                            width = NULL,
                            uiOutput("text_camera")
-                         ))
+                         ),
+                         box(width = NULL,
+                             height = NULL,
+                             camaraLegendUI("cam")))
 
                 ),
-                div(
-                  style = "position: absolute; bottom: 230px; left: 30%; right: 30%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
-                  uiOutput("year_selector_camera")
-                )
+                
               )
 
       ),

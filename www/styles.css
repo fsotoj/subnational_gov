@@ -224,6 +224,17 @@ button.download_map_btn i.fas.fa-camera {
   max-height: 200px;    /* evita crecimiento infinito */
 }
 
+#jstree_vars_demo_graph {
+  background: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  border: none;
+  overflow-y: auto;     /* scroll propio */
+  overflow-x: hidden;   /* sin scroll horizontal */
+  max-height: 200px;    /* evita crecimiento infinito */
+}
+
 /* jstree tema/base */
 .jstree-default .jstree-container-ul {
   background: transparent;
@@ -262,6 +273,34 @@ button.download_map_btn i.fas.fa-camera {
 
 
 /* =========================================================
-   9) UTILIDADES / AJUSTES VARIOS
+   9) TEAM STYLE
    ========================================================= */
-/* (Reservado para utilidades futuras) */
+
+.avatar-link {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 70px;
+  background-color: #0a426e;
+  color: #fff;
+  text-align: center;
+  border-radius:6px;
+  padding: 0px;
+  position: absolute;
+  z-index: 1;
+  bottom: 50%; /* above the avatar */
+  right: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 12px;
+}
+
+.avatar-link:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+

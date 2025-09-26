@@ -1,5 +1,5 @@
 # Build a JSTree where each dataset is a parent; for SLED add Lower/Upper branches
-get_jstree_data_vars <- function(dict) {
+get_jstree_data_vars <- function(dict, chamber_structure = TRUE) {
   tree_data <- list()
   datasets <- unique(dict$dataset)
   for (ds in datasets) {
@@ -11,21 +11,18 @@ get_jstree_data_vars <- function(dict) {
     
     vars <- unique(dict$pretty_name[dict$dataset == ds])
     
-    if (identical(ds, "SLED")) {
+    if (identical(ds, "Legislative Elections")) {
       # Build LOWER branch
-      chamber_node <- list(
-        id = "SLED-Chamber Structure",
-        text = "Chamber Structure"
-      )
+    
       
       lower_children <- lapply(vars, function(v) {
         list(
-          id   = paste("SLED", "Lower Chamber", v, sep = "-"),  # e.g., "SLED-Lower-Voter Turnout Percentage"
+          id   = paste("Legislative Elections", "Lower Chamber", v, sep = "-"),  # e.g., "SLED-Lower-Voter Turnout Percentage"
           text = v
         )
       })
       lower_node <- list(
-        id = "SLED-Lower Chamber",
+        id = "Legislative Elections-Lower Chamber",
         text = "Lower Chamber",
         children = lower_children
       )
@@ -33,17 +30,32 @@ get_jstree_data_vars <- function(dict) {
       # Build UPPER branch
       upper_children <- lapply(vars, function(v) {
         list(
-          id   = paste("SLED", "Upper Chamber", v, sep = "-"),  # e.g., "SLED-Upper-Voter Turnout Percentage"
+          id   = paste("Legislative Elections", "Upper Chamber", v, sep = "-"),  # e.g., "SLED-Upper-Voter Turnout Percentage"
           text = v
         )
       })
       upper_node <- list(
-        id = "SLED-Upper Chamber",
+        id = "Legislative Elections-Upper Chamber",
         text = "Upper Chamber",
         children = upper_children
       )
+    
+      if (chamber_structure) {
+        chamber_node <- list(
+          id = "Legislative Elections-Chamber Structure",
+          text = "Chamber Structure"
+        )
+        
+        ds_node$children <- append(ds_node$children,
+                                   list(chamber_node,lower_node, upper_node))
+      } else {
+        
+        ds_node$children <- append(ds_node$children,
+                                   list(lower_node, upper_node))
+        }
       
-      ds_node$children <- append(ds_node$children, list(chamber_node,lower_node, upper_node))
+        
+      
       
     } else {
       # Default: dataset -> variables (single level)

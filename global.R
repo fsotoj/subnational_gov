@@ -32,7 +32,7 @@ data_info <- read.xlsx("data/dict_new.xlsx") %>%
 dict <- read.xlsx("data/dict_new.xlsx") %>% filter(scope == "subnational")
 
 sled_names <- dict %>% 
-  filter(dataset == "SLED", viewable_map == 1) %>% pull(variable)
+  filter(dataset == "Legislative Elections", viewable_map == 1) %>% pull(variable)
 
 
 NED <- read.xlsx("data/NED (v.0.1).xlsx") %>%
@@ -86,6 +86,7 @@ geom <- st_read("data/geom_simple_maps.geojson")
 party_colors <- read.xlsx("data/party_colors.xlsx")
 jstree_json_data <- get_jstree_data(data)
 jstree_json_vars <- get_jstree_data_vars(dict %>% filter(viewable_map == 1, variable != "chamber_sub_leg"))
+jstree_json_vars_graph <- get_jstree_data_vars(dict %>% filter(viewable_graph == 1, variable != "chamber_sub_leg"), FALSE)
 
 
 

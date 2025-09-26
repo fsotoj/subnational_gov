@@ -1,4 +1,3 @@
-
 #-------------------------------
 # Hemicycle layout (clean wedges)
 #-------------------------------
@@ -25,7 +24,7 @@ hemicycle_layout <- function(N, layers = NULL, r_min = 0.4, r_max = 1) {
     }
   }
   
-  coords <- map2_dfr(
+  coords <- purrr::map2_dfr(
     .x = seq_along(radii),
     .y = n_per_layer,
     ~{
@@ -41,8 +40,8 @@ hemicycle_layout <- function(N, layers = NULL, r_min = 0.4, r_max = 1) {
 
 #-------------------------------------------
 # Expand seats by party & assign contiguous blocks
-#  - Respeta el orden de df_agg tal cual viene (no reordena).
-#  - Si existe el label de "non-contested", lo coloca al FINAL => derecha.
+#  - Respects df_agg current order (no reordering).
+#  - If 'non-contested' label exists, it is placed at the END => right side.
 #-------------------------------------------
 expand_and_assign <- function(df_agg,
                               party_col = "party",
@@ -54,25 +53,24 @@ expand_and_assign <- function(df_agg,
     mutate(across(all_of(party_col), as.character)) %>%
     filter(.data[[seats_col]] > 0)
   
-  # separar non-contested y reales, respetando el orden actual
+  # split non-contested vs real, keep given order
   df_nc   <- df_agg %>% filter(.data[[party_col]] == non_contested_label)
   df_real <- df_agg %>% filter(.data[[party_col]] != non_contested_label)
   
-  # combinamos: reales primero en el orden dado, luego non-contested
   df_ord <- bind_rows(df_real, df_nc)
   
   N   <- sum(df_ord[[seats_col]])
   if (N <= 0) return(tibble(party = character(), x = numeric(), y = numeric()))
   lay <- hemicycle_layout(N)
   
-  # construir spans según ese orden
+  # spans
   spans <- df_ord %>%
     mutate(
       start = cumsum(dplyr::lag(.data[[seats_col]], default = 0)) + 1L,
       end   = cumsum(.data[[seats_col]])
     )
   
-  expanded <- map_dfr(seq_len(nrow(spans)), function(i) {
+  expanded <- purrr::map_dfr(seq_len(nrow(spans)), function(i) {
     tibble(
       party = spans[[party_col]][i],
       seat_index = seq.int(spans$start[i], spans$end[i])
@@ -97,15 +95,38 @@ palette_distinct <- function(labels) {
 }
 
 #-------------------------------
-# Module UI
+# Module UI (chart only)
 #-------------------------------
-camaraUI <- function(id, height = "90vh") {
+camaraUI <- function(id, height = "70vh") {
   ns <- NS(id)
   echarts4rOutput(ns("chart"), height = height)
 }
 
 #-------------------------------
-# Module Server (no validate/need)
+# External Legend UI (place anywhere, e.g., below your last box)
+#  - Non-clickable
+#  - Colors strictly synced with chart colors
+#-------------------------------
+camaraLegendUI <- function(id) {
+  ns <- NS(id)
+  tagList(
+    tags$style(HTML(sprintf('
+      #%1$s-legend { width: 100%%; }
+      #%1$s-legend .legend-wrap { display: flex; flex-direction: column; gap: 10px; }
+      #%1$s-legend .legend-group { display: flex; flex-direction: column; gap: 6px; }
+      #%1$s-legend .legend-row { display: flex; flex-wrap: wrap; gap: 6px 10px; }
+      #%1$s-legend .legend-item { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 9999px; background: #0E1626; box-shadow: 0 0 0 1px #1F2937 inset; color: #D1D5DB; font-size: 12px; }
+      #%1$s-legend .legend-swatch { width: 14px; height: 14px; border-radius: 2px; display: inline-block; box-shadow: 0 0 0 1px #111; margin-right: 6px; }
+      #%1$s-legend .legend-text { white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+    ', ns("chart")))),
+    div(id = paste0(ns("chart"), "-legend"),
+        uiOutput(ns("legend"), container = div, inline = FALSE)
+    )
+  )
+}
+
+#-------------------------------
+# Module Server
 #-------------------------------
 camaraServer <- function(id,
                          data,                      # static data.frame OR reactive
@@ -117,12 +138,13 @@ camaraServer <- function(id,
                          state_col   = "state_name",
                          chamber_filter_col = "chamber_election_sub_leg",
                          year_col    = "year",
-                         title_text  = "Chamber composition",
+                       #  title_text  = "Chamber composition",
                          previous_name  = "NON-CONTESTED SEATS",
                          previous_color = "rgba(154,160,166,0.40)") {
   
   moduleServer(id, function(input, output, session) {
     
+    # --- Reactive data wrapper ---
     data_r <- if (inherits(data, "reactive")) data else reactive(data)
     
     output$chart <- renderEcharts4r({
@@ -138,7 +160,7 @@ camaraServer <- function(id,
         )
       }
       
-      # columnas mínimas
+      # columns check
       cols_needed <- c(state_col, chamber_filter_col, year_col, party_col, seats_col)
       missing <- setdiff(cols_needed, names(df))
       if (length(missing) > 0) {
@@ -150,7 +172,7 @@ camaraServer <- function(id,
         )
       }
       
-      # tipos
+      # types
       df[[state_col]]          <- as.character(df[[state_col]])
       df[[party_col]]          <- as.character(df[[party_col]])
       df[[seats_col]]          <- suppressWarnings(as.integer(df[[seats_col]]))
@@ -164,7 +186,7 @@ camaraServer <- function(id,
       sel_year    <- suppressWarnings(as.integer(tryCatch(year_r(), error = function(e) NA_integer_)))
       sel_chamber <- suppressWarnings(as.integer(tryCatch(chamber_r(), error = function(e) NA_integer_)))
       
-      # filtro
+      # filter
       dff <- df %>% filter(.data[[seats_col]] != 0)
       if (!is.null(sel_states) && length(sel_states) > 0) {
         dff <- dff %>% filter(.data[[state_col]] %in% sel_states)
@@ -185,13 +207,13 @@ camaraServer <- function(id,
         )
       }
       
-      # agregación base
+      # aggregate base
       agg_base <- dff %>%
         transmute(party = .data[[party_col]], seats = .data[[seats_col]]) %>%
         group_by(party) %>%
         summarise(seats = sum(seats, na.rm = TRUE), .groups = "drop")
       
-      # total de cámara
+      # total chamber + NON-CONTESTED seats (exactly as requested)
       total_chamber_vec <- suppressWarnings(as.integer(na.omit(dff$total_chamber_seats_sub_leg)))
       total_chamber <- if (length(total_chamber_vec)) {
         tb <- sort(table(total_chamber_vec), decreasing = TRUE)
@@ -210,13 +232,13 @@ camaraServer <- function(id,
         }
       }
       
-      # ordenar reales por tamaño y dejar NON-CONTESTED al final
+      # order: real by size, non-contested last
       agg <- agg %>%
         mutate(.is_prev = as.integer(party == previous_name)) %>%
         arrange(.is_prev, desc(seats), party) %>%
         select(-.is_prev)
       
-      # expansión de asientos (forzando non-contested al final/derecha)
+      # expand seats (force non-contested to the right/end)
       pts <- expand_and_assign(
         agg,
         party_col = "party",
@@ -232,63 +254,103 @@ camaraServer <- function(id,
         )
       }
       
-      # series order & palette
-      seat_totals <- agg %>% select(party)
-      pts <- pts %>% mutate(party = factor(party, levels = seat_totals$party))
-      
+      # series order & palette (SYNC SOURCE for legend)
+      pts <- pts %>% mutate(party = factor(party, levels = agg$party))
       pal <- palette_distinct(levels(pts$party))
-      if (previous_name %in% names(pal)) {
-        pal[previous_name] <- previous_color
-      }
+      if (previous_name %in% names(pal)) pal[previous_name] <- previous_color
       
-      # sizes
+      # dot sizes
       N <- nrow(pts)
       pt_size <- dplyr::case_when(
         N <= 30 ~ 60, N <= 50 ~ 40, N <= 100 ~ 30, N <= 150 ~ 20,
         TRUE ~ 16
       )
       
-      # plot
+      # chart (legend OFF; external legend mirrors 'agg' & 'pal')
       pts %>%
         group_by(party) %>%
         e_charts(x) %>%
         e_scatter(
           y,
+          name = ~party,
           symbolSize = pt_size,
           itemStyle = list(opacity = 0.95)
         ) %>%
-        e_color(unname(pal[levels(pts$party)]) #, background = "white") %>%
-        ) %>%
+        e_color(unname(pal[levels(pts$party)])) %>%
         e_x_axis(min = -1.1, max = 1.1, show = FALSE) %>%
-        e_y_axis(min = 0, max = 1.1, show = FALSE) %>%
-          # Leyenda a la derecha del grid, en la parte inferior (afuera del grid)
-        e_legend(
-          show = T,
-          orient = "horizontal",            # columna
-          #type = "scroll",                # scroll si hay muchas series
-          #right = "-10%",                      # pegada al borde derecho
-          #bottom = "2%",                  # en la parte inferior (no abajo-abajo)
-          padding = 0,
-          itemGap = 10,
-          textStyle = list(
-            color = "white",            # texto oscuro sobre fondo blanco
-            fontSize = 13,
-            fontWeight = "bold"
-          )
-        ) %>%
-        # Deja espacio a la derecha para la leyenda (afuera del grid)
-        e_grid(
-          left = "4%",
-          right = "0%",                  # <--- reserva espacio para la leyenda
-          top = "12%",
-          bottom = "30%",
-          containLabel = FALSE
-        ) %>%
+        e_y_axis(min = 0,   max = 1.1, show = FALSE) %>%
+        e_legend(show = FALSE) %>%
+        e_grid(left = "4%", right = "2%", top = "0%", bottom = "10%", containLabel = FALSE) %>%
+        #e_title(title_text) %>%
         e_animation(duration = 100)
-      
-      
-      
-      
     })
+    
+    # ---- External legend (NON-clickable). Colors synced with plot ----
+    output$legend <- renderUI({
+      req(data_r(), state_r(), chamber_r(), year_r())
+      df <- data_r()
+      
+      # replicate the same filter + aggregation used for the chart
+      dff <- df %>% filter(.data[[seats_col]] != 0)
+      sel_states  <- tryCatch(state_r(), error = function(e) NULL)
+      if (length(sel_states) == 1 && identical(sel_states, "")) sel_states <- NULL
+      sel_states  <- if (!is.null(sel_states)) as.character(sel_states) else NULL
+      sel_year    <- suppressWarnings(as.integer(tryCatch(year_r(), error = function(e) NA_integer_)))
+      sel_chamber <- suppressWarnings(as.integer(tryCatch(chamber_r(), error = function(e) NA_integer_)))
+      if (!is.null(sel_states) && length(sel_states) > 0) dff <- dff %>% filter(.data[[state_col]] %in% sel_states)
+      if (!is.na(sel_chamber)) dff <- dff %>% filter(.data[[chamber_filter_col]] == sel_chamber)
+      if (!is.na(sel_year))    dff <- dff %>% filter(.data[[year_col]] == sel_year)
+      
+      agg_base <- dff %>%
+        transmute(party = .data[[party_col]], seats = .data[[seats_col]]) %>%
+        group_by(party) %>% summarise(seats = sum(seats, na.rm = TRUE), .groups = "drop")
+      
+      total_chamber_vec <- suppressWarnings(as.integer(na.omit(dff$total_chamber_seats_sub_leg)))
+      total_chamber <- if (length(total_chamber_vec)) {
+        tb <- sort(table(total_chamber_vec), decreasing = TRUE)
+        cand <- as.integer(names(tb[ tb == max(tb) ]))
+        max(cand)
+      } else NA_integer_
+      
+      agg <- agg_base
+      if (!is.na(total_chamber)) {
+        falta <- total_chamber - sum(agg_base$seats, na.rm = TRUE)
+        if (falta > 0) {
+          agg <- bind_rows(
+            agg_base,
+            tibble(party = previous_name, seats = falta)
+          )
+        }
+      }
+      
+      agg <- agg %>%
+        mutate(.is_prev = as.integer(party == previous_name)) %>%
+        arrange(.is_prev, desc(seats), party) %>%
+        select(-.is_prev)
+      
+      if (nrow(agg) == 0) return(NULL)
+      
+      # Build palette in the exact same order as the chart
+      pal <- palette_distinct(agg$party)
+      if (previous_name %in% names(pal)) pal[previous_name] <- previous_color
+      
+      # Build items according to 'agg$party' order so colors line up 1:1
+      items <- lapply(seq_len(nrow(agg)), function(i) {
+        p <- agg$party[i]
+        col <- pal[[p]] %||% "#888"
+        htmltools::tags$span(
+          class = "legend-item",
+          htmltools::span(class = "legend-swatch", style = paste0("background:", col, ";")),
+          htmltools::span(class = "legend-text", p)
+        )
+      })
+      
+      htmltools::div(id = paste0(session$ns("chart"), "-legend"), class = "legend-wrap",
+                     htmltools::div(class = "legend-group",
+                                    htmltools::div(class = "legend-row", items)
+                     )
+      )
+    })
+    
   })
 }
