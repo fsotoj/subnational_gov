@@ -1,7 +1,12 @@
 
 
-ui <- dashboardPage(
-  dashboardHeader(title = "Subnational Politics Project",titleWidth = 280),
+ui <- dashboardPage(  
+  dashboardHeader(title = tags$div(
+    class = "app-header-logo",
+    tags$img(src = "spp_logo_v3.svg", height = "50px")
+    ),
+     titleWidth = 310
+    ),
   dashboardSidebar(
     width = 310,
     useShinyjs(),
@@ -82,6 +87,19 @@ ui <- dashboardPage(
       HTML("Tool developed by <strong><a href='https://www.linkedin.com/in/felipesotojorquera/' target='_blank'>Felipe Soto Jorquera.</a></strong>")
     ),
     tags$head(
+      
+      ## move the toggle
+      tags$script(HTML("
+    $(function () {
+      var $logo   = $('.main-header .logo').first();
+      var $toggle = $('.main-header .navbar .sidebar-toggle').first();
+      if ($logo.length && $toggle.length) {
+        // Move the existing toggle into the logo, before the title text
+        $toggle.attr('id','sidebar-toggle-relocated'); // give it an id for styling
+        $toggle.detach().prependTo($logo);
+      }
+    });
+  ")),
       tags$style(HTML("
       .content-wrapper, .right-side {
         padding-bottom: 200px;  /* adjust value as you like */
@@ -128,12 +146,13 @@ ui <- dashboardPage(
             draggable = F,
             div(class = "small-text-box",
                 box(
-                  title = "Variable description", 
-                  solidHeader = TRUE,
-                  collapsible = TRUE,
+                  #title = "Variable description", 
+                  solidHeader = F,
+                  collapsible = F,
                   collapsed = FALSE,
                   width = NULL,
-                  textOutput("var_description_map")
+                  closable = TRUE,
+                  uiOutput("var_description_map")
                 )
             ),
             div(class = "small-text-box",
@@ -179,19 +198,23 @@ ui <- dashboardPage(
           ),
           column(3,
                  box(
-                   title = "Variable description", 
-                   solidHeader = TRUE,
+                   #title = "Variable description", 
+                   solidHeader = F,
                    collapsible = FALSE, 
                    collapsed = FALSE,
                    width = NULL,
-                   textOutput("var_description_graph")
+                   closable = TRUE,
+                   uiOutput("var_description_graph")
                  ),
+                 box(
+                   #title = "States:", 
+                   #solidHeader = F,
+                   width = NULL,
+                   height = NULL,
+                   linePlotLegendUI("lp")),
                  box(width = NULL,
                      height = NULL,
-                   checkboxInput("force_y0", "Click for Y-axis start at 0", value = FALSE, )),
-                 box(width = NULL,
-                     height = NULL,
-                     linePlotLegendUI("lp"))
+                     checkboxInput("force_y0", "Click for Y-axis start at 0", value = FALSE, ))
                  ),
           
         )
@@ -210,8 +233,8 @@ ui <- dashboardPage(
                   ),
                   column(3,
                          box(
-                           title = "Election Description", 
-                           solidHeader = TRUE,
+                           #title = "Election Description", 
+                           solidHeader = F,
                            collapsible = FALSE, 
                            collapsed = FALSE,
                            width = NULL,

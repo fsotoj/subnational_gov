@@ -113,7 +113,7 @@ server <- function(input, output, session) {
   #   dict %>% dplyr::filter(pretty_name == input$var_sel2) %>% dplyr::pull(variable)
   # })
   
-  # -- 1.0) Data for the map (filtered by country & year) ---------------------
+  # -- 1.0) DATA MAP ---------------------
   data_map <- reactive({
     req(input$country_sel, input$year_sel)
     geom_filtered <- geom %>% dplyr::filter(country_name == input$country_sel)
@@ -359,26 +359,31 @@ server <- function(input, output, session) {
   # ==== 2) MODALS / MESSAGES ================================================
   observe({
     showModal(modalDialog(
-      title = "About the Subnational Politics Project (SPP)",
+      title = HTML("<span style='color: var(--gray);'>About the Subnational Politics Project (SPP)</span>"),
       HTML("
-      <p style='text-align:justify;'>
-        The Subnational Politics Project (SPP) is part of a broader research project designed to compile, generate, and disseminate systematic, transparent, and publicly accessible data on subnational political institutions, subnational political processes, and subnational electoral outcomes in Latin America.
-      </p>
-      <p style='text-align:justify;'>
-        The primary objective of the project is to create a centralized and standardized data infrastructure that facilitates both in-depth within-country analyses and cross-national comparative research on subnational political dynamics.
-      </p>
-      <p style='text-align:justify;'>
-        By providing longitudinal and spatially disaggregated data, the SPP seeks to support empirical scholarship on a wide range of topics, including federalism, decentralization, party competition, electoral accountability, and territorial governance.
-      </p>
-      <p style='text-align:justify;'>
-        This application provides direct access to the SPP databases and interactive tools for exploring subnational political dynamics. As of September 2025, the project includes comprehensive databases for three federal countries in Latin America—Argentina, Brazil, and Mexico—covering the period from the 1980s through 2024.
-      </p>
-      <hr style='border:0; height:1px; background:linear-gradient(90deg, rgba(23,162,184,0), rgba(23,162,184,0.7), rgba(23,162,184,0)); margin:18px 0;'/>
-      <h4 style='color:#17a2b8;'>Reference</h4>
-      <p style='font-size: 0.9em; color: #bbb;'>
-        Giraudy, Agustina; Gonzalez, Guadalupe Andrea; Urdinez, Francisco, 2025, <em>\"Codebook: Subnational Politics Project (SPP) (v. 1)\"</em>, 
-        <a href='https://doi.org/doi:10.7910/DVN/IBSJO2' target='_blank'>https://doi.org/doi:10.7910/DVN/IBSJO2</a>.
-      </p>
+      <div style='color:#111;'>
+        <p style='text-align:justify;'>
+          The Subnational Politics Project (SPP) is part of a broader research project designed to compile, generate, and disseminate systematic, transparent, and publicly accessible data on subnational political institutions, subnational political processes, and subnational electoral outcomes in Latin America.
+        </p>
+        <p style='text-align:justify;'>
+          The primary objective of the project is to create a centralized and standardized data infrastructure that facilitates both in-depth within-country analyses and cross-national comparative research on subnational political dynamics.
+        </p>
+        <p style='text-align:justify;'>
+          By providing longitudinal and spatially disaggregated data, the SPP seeks to support empirical scholarship on a wide range of topics, including federalism, decentralization, party competition, electoral accountability, and territorial governance.
+        </p>
+        <p style='text-align:justify;'>
+          This application provides direct access to the SPP databases and interactive tools for exploring subnational political dynamics. As of September 2025, the project includes comprehensive databases for three federal countries in Latin America—Argentina, Brazil, and Mexico—covering the period from the 1980s through 2024.
+        </p>
+
+        <hr style='border:0; height:1px; margin:18px 0;
+            background:linear-gradient(90deg, rgba(255,169,42,0), rgba(255,169,42,0.8), rgba(255,169,42,0));' />
+
+        <h4 style='color:#FFA92A; margin-top:0;'>Reference</h4>
+        <p style='font-size:0.9em; color:#4D4D4D;'>
+          Giraudy, Agustina; Gonzalez, Guadalupe Andrea; Urdinez, Francisco, 2025, <em>\"Codebook: Subnational Politics Project (SPP) (v. 1)\"</em>, 
+          <a href='https://doi.org/doi:10.7910/DVN/IBSJO2' target='_blank' style='color:#E5007D; text-decoration:none;'>https://doi.org/doi:10.7910/DVN/IBSJO2</a>.
+        </p>
+      </div>
     "),
       easyClose = TRUE,
       size = "xl",
@@ -623,20 +628,83 @@ server <- function(input, output, session) {
   
   
   # ==== 7) VARIABLE DESCRIPTIONS (map & graph) ==============================
-  output$var_description_map <- renderText({
-    req(current_tab() == "map_tab", selected_vars_vector())
+  output$var_description_map <- renderUI({
+    req(selected_vars_vector())
+    x <- input$selected_nodes_vars
+    if (is.null(x) || identical(x, "[]")) return(NULL)
+    ids <- jsonlite::fromJSON(x)
+    if (!length(ids)) return(NULL)
+    
+    parts <- strsplit(ids[1], "-", fixed = TRUE)[[1]]
+    
+    
+    if (identical(parts[1], "Legislative Elections") && length(parts) >= 3 && parts[2] %in% c("Lower Chamber","Upper Chamber")) {
+     chamber <- parts[2]
+    } else {
+       chamber <- NULL
+     }
+    
+    
     clean_var <- sub("_[12]$", "", selected_vars_vector())  # remove "_1" or "_2" at the end
     
     var_info <- dict %>% dplyr::filter(variable == clean_var) %>% dplyr::slice(1)
-    paste0(var_info$pretty_name[1], ": ", var_info$description[1])
+    #paste0(var_info$pretty_name[1], ": ", var_info$description[1], input$selected_nodes_vars)
+    
+    text_d <- paste0("<div>You are seeing <strong>",var_info$description_for_ui[1], "</strong>",
+                     ifelse(!is.null(chamber),paste0(
+                      " (",chamber,") "),
+                      ""),
+                     #"</strong> for the year",
+           # input$year_sel,
+           # " in ",stringr::str_to_title(input$country_sel),
+           "; from the Subnational <strong>",
+           parts[1],
+           "</strong> Database.</div>") 
+    
+    HTML(text_d)
+    
   })
   
-  output$var_description_graph <- renderText({
-    req(current_tab() == "graph_tab", input$var_sel2)
-    var_info <- dict %>% dplyr::filter(pretty_name == input$var_sel2) %>% dplyr::slice(1)
-    paste0(var_info$pretty_name[1], ": ", var_info$description[1])
+  
+  output$var_description_graph <- renderUI({
+    req(selected_vars_vector_graph())
+    x <- input$selected_nodes_vars_graph
+    if (is.null(x) || identical(x, "[]")) return(NULL)
+    ids <- jsonlite::fromJSON(x)
+    if (!length(ids)) return(NULL)
+    
+    parts <- strsplit(ids[1], "-", fixed = TRUE)[[1]]
+    
+    
+    if (identical(parts[1], "Legislative Elections") && length(parts) >= 3 && parts[2] %in% c("Lower Chamber","Upper Chamber")) {
+      chamber <- parts[2]
+    } else {
+      chamber <- NULL
+    }
+    
+    
+    clean_var <- sub("_[12]$", "", selected_vars_vector_graph())  # remove "_1" or "_2" at the end
+    
+    var_info <- dict %>% dplyr::filter(variable == clean_var) %>% dplyr::slice(1)
+    #paste0(var_info$pretty_name[1], ": ", var_info$description[1], input$selected_nodes_vars)
+    
+    text_d <- paste0("<div>You are seeing <strong>",var_info$description_for_ui[1], "</strong>",
+                     ifelse(!is.null(chamber),paste0(
+                       " (",chamber,") "),
+                       ""),
+                     #"</strong> for the year",
+                     # input$year_sel,
+                     # " in ",stringr::str_to_title(input$country_sel),
+                     "; from the Subnational <strong>",
+                     parts[1],
+                     "</strong> Database.</div>") 
+    
+    HTML(text_d)
+    
   })
   
+  
+
   # Keep default options of var_sel and var_sel2 in sync
   observe({
     updateSelectInput(

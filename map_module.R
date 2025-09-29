@@ -422,7 +422,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           lng2 = country_bboxes[[input_country_sel()]]$lng2,
           lat2 = country_bboxes[[input_country_sel()]]$lat2
         ) %>%
-        addProviderTiles("CartoDB.DarkMatterNoLabels")
+        addProviderTiles("CartoDB.PositronNoLabels") # clean white base, no labels
     })
     
     observe({
@@ -483,7 +483,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
             }
             /* Normal state (blue + underline) */
             details summary {
-            color:#007BFF;
+            color: var(--magenta);
             text-decoration:underline;
             cursor:pointer;
             display:inline-flex;
@@ -491,7 +491,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
             }
             /* Open state (darker, no underline) */
             details[open] summary {
-            color:#0056b3;
+            color:var(--purple);
             text-decoration:none;
             }
             </style>",
@@ -502,7 +502,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
             "</div>",
             
             "<div style='border:0; height:1px; 
-            background:linear-gradient(90deg, rgba(23,162,184,0), rgba(23,162,184,0.7), rgba(23,162,184,0)); 
+            background:linear-gradient(90deg, rgba(255,169,42,0), rgba(255,169,42,0.8), rgba(255,169,42,0));
             margin:1px 0;'></div>",
             "<b>State:</b> ", stringr::str_to_title(state_name_geom), "<br/>",
             "<b>Governor:</b> ", stringr::str_to_title(winner_candidate_sub_exe), "<br/>",
