@@ -284,66 +284,15 @@ ui <- dashboardPage(
             ),
             downloadButton("download_data", "Download this database"),
             
-            br(),br(),
-            
-            # container for one clickable image with overlay title
-            tags$div(
-              style = "position:relative; text-align:center; color:white; margin-bottom:15px; cursor:pointer;",
-              actionLink(
-                inputId = "show_db_img",
-                label = tags$div(
-                  style = "position:relative; display:inline-block; width:100%;",
-                  # the image itself
-                  tags$img(
-                    src = "databases_spp.jpg",
-                    style = "width:80%; height:auto; filter:brightness(70%);" # darkens image
-                  ),
-                  # the overlay title
-                  tags$div(
-                    "Database structure",
-                    style = "position:absolute; top:50%; left:50%;
-                 transform:translate(-50%, -50%);
-                 font-size:2.2em; font-weight:bold;
-                 color:white; text-shadow:1px 1px 4px rgba(0,0,0,0.7);
-                 
-                 
-                 padding:6px 12px; border-radius:4px;"
-                  )
-                ),
-                class = "p-0 border-0 bg-transparent"
-              )
-            ),
-            
-            tags$div(
-              style = "position:relative; text-align:center; color:white; cursor:pointer;",
-              actionLink(
-                inputId = "show_vars_img",
-                label = tags$div(
-                  style = "position:relative; display:inline-block; width:100%;",
-                  tags$img(
-                    src = "variables_database.jpg",
-                    style = "width:80%; height:auto; filter:brightness(70%);"
-                  ),
-                  tags$div(
-                    "Variables description",
-                    style = "position:absolute; top:50%; left:50%;
-                 transform:translate(-50%, -50%);
-                 font-size:2.2em; font-weight:bold;
-                 color:white; text-shadow:1px 1px 4px rgba(0,0,0,0.7);
-                 
-                 padding:6px 12px; border-radius:4px;"
-                  )
-                ),
-                class = "p-0 border-0 bg-transparent"
-              )
+            br(),br()
             )
-            
-          )
-        )
-      )
-      ,
+        ),
+        fluidRow(column(12,databaseInfoModuleUI("dbinfo_data", title = "About the SPP Databases", 
+                                                max_width = 1100)))
+      ),
       
-      tabItem(tabName = "about", aboutSPPUI("about"))
+      tabItem(tabName = "about", aboutSPPUI("about"),
+              databaseInfoModuleUI("dbinfo_about", title = "About the SPP Databases"))
       
       
     ),
