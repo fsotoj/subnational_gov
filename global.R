@@ -25,6 +25,7 @@ source("get_jstree_data_vars.R")
 source("tableModule.R")
 source("camera_module.R")
 source("about_spp_module.R")
+source("dataBaseInfo.R")
 
 
 data_info <- read.xlsx("data/dict_new.xlsx") %>% 

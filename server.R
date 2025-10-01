@@ -799,6 +799,12 @@ server <- function(input, output, session) {
     # title_text = "Chamber composition"
   )
   
+  databaseInfoModuleServer("dbinfo_data")
+  
+  databaseInfoModuleServer("dbinfo_about")
+  
+  
+  
   
   # ==== 10) DOWNLOADS =======================================================
   output$download_data <- downloadHandler(
@@ -832,3 +838,6 @@ server <- function(input, output, session) {
     tags$iframe(style = "height:800px; width:100%;", src = "codebook.pdf")
   })
 }
+
+
+
