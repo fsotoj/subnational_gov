@@ -358,14 +358,21 @@ server <- function(input, output, session) {
   
   # ==== 2) MODALS / MESSAGES ================================================
   observe({
-    showModal(modalDialog(
-      title = HTML("<span style='color: var(--gray);'>About the Subnational Politics Project (SPP)</span>"),
-      HTML("
-      <div style='color:#111;'>
-        <p style='text-align:justify;'>
+    showModal(
+      tags$div(
+        id = "aboutSPPModal",
+        modalDialog(
+          title = HTML("
+      <div style='display:flex; align-items:center; justify-content:center;'>
+        <img src='spp_logo_v4.svg'/>
+      </div>
+    "),
+          HTML("
+          <div style='color:#111; font-size: 0.95em;'>
+          <p style='text-align:justify;'>
           The Subnational Politics Project (SPP) is part of a broader research project designed to compile, generate, and disseminate systematic, transparent, and publicly accessible data on subnational political institutions, subnational political processes, and subnational electoral outcomes in Latin America.
-        </p>
-        <p style='text-align:justify;'>
+          </p>
+          <p style='text-align:justify;'>
           The primary objective of the project is to create a centralized and standardized data infrastructure that facilitates both in-depth within-country analyses and cross-national comparative research on subnational political dynamics.
         </p>
         <p style='text-align:justify;'>
@@ -388,29 +395,11 @@ server <- function(input, output, session) {
       easyClose = TRUE,
       size = "xl",
       footer = modalButton("Close")
-    ))
+    )))
   })
   
   
-
   
-  observeEvent(input$show_db_img, ignoreInit = TRUE, {
-    showModal(modalDialog(
-      #title = "Database structure", 
-      size = "l", easyClose = TRUE, footer = NULL,
-      tags$img(src = "databases_spp.jpg", style = "width:100%; height:auto;")
-    ))
-  })
-  
-  observeEvent(input$show_vars_img, ignoreInit = TRUE, {
-    showModal(modalDialog(
-      #title = "Variables description",
-      size = "l", easyClose = TRUE, footer = NULL,
-      tags$img(src = "variables_database.jpg", style = "width:100%; height:auto;")
-    ))
-  })
-  
-
   
   # “No data” message (map)
   output$no_data_message <- renderText("⚠ No data available for this country, variable and year.")
@@ -719,40 +708,8 @@ server <- function(input, output, session) {
     )
   })
   
+
   
-  # ==== 8) NATIONAL LEADER SUMMARY (map) ====================================
-  output$leader_summary <- renderUI({
-    req(data_map(), input$country_sel)
-    leader_info <- data_map() %>%
-      sf::st_drop_geometry() %>%
-      dplyr::select(
-        name_head_nat_exe, sex_head_nat_exe, head_party_nat_exe,
-        ideo_party_nat_exe, 
-        early_exit_nat_exe,
-        year_election_nat_exe, year
-      ) %>%
-      dplyr::slice(1)
-    
-    country_name <- stringr::str_to_title(input$country_sel)
-    leader_name <- stringr::str_to_title(leader_info$name_head_nat_exe)
-    sex <- ifelse(leader_info$sex_head_nat_exe == 1, "female", "male")
-    leader_party <- stringr::str_to_title(leader_info$head_party_nat_exe)
-    ideologies <- c("Left", "Center Left", "Center Right", "Right")
-    ideology_text <- ifelse(leader_info$ideo_party_nat_exe %in% 1:4,
-                            ideologies[leader_info$ideo_party_nat_exe], "Unknown")
-    
-    text <- glue::glue(
-      "<div>",
-      " In the year <strong>{leader_info$year}</strong> the national leader in <strong>{country_name}</strong> ",
-      "was <strong>{leader_name}</strong>, a {sex} politician affiliated with the ",
-      "<strong>{leader_party}</strong> party, which leans towards the ",
-      "<strong>{ideology_text}</strong> on the ideological spectrum.",
-      "</div>"
-    )
-    HTML(text)
-  })
-  
-  aboutSPPServer("about")
   
   
   # ==== 9) MODULES (map / lines / table / camera) ===========================
@@ -803,7 +760,7 @@ server <- function(input, output, session) {
   
   databaseInfoModuleServer("dbinfo_about")
   
-  
+  aboutSPPServer("about")
   
   
   # ==== 10) DOWNLOADS =======================================================

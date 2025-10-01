@@ -303,3 +303,39 @@ button.download_map_btn i.fas.fa-camera {
 }
 
 
+/* =========================================================
+   11. Modal about
+   ========================================================= */
+
+/* Header: orange, centered, and clipped neatly */
+#aboutSPPModal .modal-header {
+  background-color: var(--orange) !important;
+  display: flex;               /* ensure flex context */
+  align-items: center;         /* vertical centering */
+  justify-content: center;     /* horizontal centering */
+  padding: 0px 16px;           /* reduce tall padding */
+  min-height: 56px;            /* consistent height */
+  overflow: hidden;            /* prevent overflow */
+}
+
+/* Title container: no extra line height/margins, flex center */
+#aboutSPPModal .modal-header .modal-title {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  line-height: 0;              /* remove extra inline height */
+}
+
+/* Actual logo sizing: keep it inside the header */
+#aboutSPPModal .modal-header .modal-title img {
+  display: block;              /* remove inline-gap */
+  max-height: 80px;            /* <-- adjust as you like (32–40px) */
+  height: auto;
+  width: auto;
+  filter: brightness(0) invert(1); /* force white */
+}
+
+

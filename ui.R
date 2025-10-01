@@ -3,10 +3,11 @@
 ui <- dashboardPage(  
   dashboardHeader(title = tags$div(
     class = "app-header-logo",
-    tags$img(src = "spp_logo_v3.svg", height = "50px")
+    tags$img(src = "spp_logo_v5.svg", height = "50px")
     ),
      titleWidth = 310
     ),
+  title = "SPP-Subnational Politics Project",   # <-- this sets <title>
   dashboardSidebar(
     width = 310,
     useShinyjs(),
@@ -154,17 +155,7 @@ ui <- dashboardPage(
                   closable = TRUE,
                   uiOutput("var_description_map")
                 )
-            ),
-            div(class = "small-text-box",
-                box(
-                  title = "National Leader Summary",
-                  solidHeader = TRUE,
-                  collapsible = TRUE,
-                  collapsed = TRUE,
-                  width = NULL,
-                  uiOutput("leader_summary")
-                  )
-          )),
+            )),
           
           # Custom year selector placed at the bottom of the tab
           div(
@@ -214,7 +205,7 @@ ui <- dashboardPage(
                    linePlotLegendUI("lp")),
                  box(width = NULL,
                      height = NULL,
-                     checkboxInput("force_y0", "Click for Y-axis start at 0", value = FALSE, ))
+                     checkboxInput("force_y0", "Y-axis starts at 0", value = FALSE, ))
                  ),
           
         )
