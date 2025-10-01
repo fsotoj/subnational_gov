@@ -364,7 +364,7 @@ server <- function(input, output, session) {
         modalDialog(
           title = HTML("
       <div style='display:flex; align-items:center; justify-content:center;'>
-        <img src='spp_logo_v4.svg'/>
+        <img src='spp_logo_v5.svg'/>
       </div>
     "),
           HTML("
