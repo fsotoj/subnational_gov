@@ -47,7 +47,7 @@ databaseInfoModuleUI <- function(id,
                       
                       # Card 1: Databases’ Structure -----------------------------------------
                       tags$div(class = "card",
-                               tags$p(class = "section-title", section1_title),
+                               tags$p(class="kicker", section1_title),
                                tags$p(class = "spp-text",
                                       "As Figure 1 shows, the Subnational Politics Project (SPP) is made up of different databases. ",
                                       "Each database employs a country–state–year structure, with observations at the subnational unit level for each electoral year. ",
@@ -61,7 +61,7 @@ databaseInfoModuleUI <- function(id,
                       
                       # Card 2: Variable Information -----------------------------------------
                       tags$div(class = "card",
-                               tags$p(class = "section-title", section2_title),
+                               tags$p(class="kicker", section2_title),
                                tags$p(class = "spp-text",
                                       "As shown in Figure 2, the databases in the Subnational Politics Project divide variables into the following variable types:"),
                                
