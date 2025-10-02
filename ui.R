@@ -82,11 +82,11 @@ ui <- dashboardPage(
       font-size: 11px;
       text-align: left;
       width: max-content;
-      background: linear-gradient(to right, rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0));
-      color: #ccc;
+      background: linear-gradient(to right, var(--orange), rgba(18, 18, 18, 0));
+      color: var(--gray);
       z-index: 1050;
     ",
-      HTML("Tool developed by <strong><a href='https://www.linkedin.com/in/felipesotojorquera/' target='_blank'>Felipe Soto Jorquera.</a></strong>")
+      HTML("Tool developed by <strong><a href='https://www.linkedin.com/in/felipesotojorquera/' target='_blank' style='color:var(--magenta, #E5007D)'>Felipe Soto Jorquera.</a></strong>")
     ),
     tags$head(
       
