@@ -13,12 +13,13 @@ ui <- dashboardPage(
     useShinyjs(),
     tagList(
       sidebarMenu(id = "tabs",
-                  menuItem("Mapping tool", tabName = "map_tab", icon = icon("map")),
+                  menuItem("About", tabName = "about", icon = icon("info-circle")),
+                  menuItem("Mapping tool", tabName = "map_tab", icon = icon("map"),selected = TRUE),
                   menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
                   menuItem("Camera Viz tool", tabName = "camera", icon = icon("landmark")),
                   menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
-                  menuItem("Data", tabName = "data_tab", icon = icon("table")),
-                  menuItem("About", tabName = "about", icon = icon("info-circle"))
+                  menuItem("Data", tabName = "data_tab", icon = icon("table"))
+                  
       ),
       hidden(uiOutput("db_selector")),
       hidden(uiOutput("country_selector")),  # default: visible
@@ -277,13 +278,11 @@ ui <- dashboardPage(
             
             br(),br()
             )
-        ),
-        fluidRow(column(12,databaseInfoModuleUI("dbinfo_data", title = "About the SPP Databases", 
-                                                max_width = 1100)))
+        )
       ),
       
-      tabItem(tabName = "about", aboutSPPUI("about"),
-              databaseInfoModuleUI("dbinfo_about", title = "About the SPP Databases"))
+      tabItem(tabName = "about", 
+              sppAboutModuleUI("about", title = "ABOUT"))
       
       
     ),

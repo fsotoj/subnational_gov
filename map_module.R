@@ -59,7 +59,7 @@ get_leaflet_palette <- function(type, palette_vector, values) {
     }
     
     pal <- colorFactor(palette = palette_vector, domain = domain, na.color = na_color)
-    legend_labels <- domain
+    legend_labels <- domain %>% stringr::str_to_title()
     
   } else if (type == "ordinal") {
     domain <- 1:4
@@ -291,6 +291,7 @@ format_leaflet_value <- function(value, type) {
                          value[i] == 4 ~ "Right",
                          TRUE ~ as.character(value[i])
                        ),
+                       "categorical" = stringr::str_to_title(value[i]),
                        "discrete" = format(value[i] %>% as.double(), big.mark = ",", scientific = FALSE),
                        "continuous" = format(round(value[i]%>% as.double(), 2), nsmall = 2, big.mark = ","),
                        "percentage" = paste0(format(round(as.double(value[i]), 2), nsmall = 2, big.mark = ","),"%"),

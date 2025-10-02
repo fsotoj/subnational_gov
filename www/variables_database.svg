@@ -1,0 +1,1051 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="200mm"
+   height="103mm"
+   viewBox="0 0 200 103"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   sodipodi:docname="variables_database.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="true"
+     inkscape:zoom="1.4378367"
+     inkscape:cx="408.2522"
+     inkscape:cy="184.6524"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       id="grid1"
+       units="mm"
+       originx="0"
+       originy="0"
+       spacingx="0.99999999"
+       spacingy="0.99999997"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       enabled="true"
+       visible="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1">
+    <pattern
+       id="EMFhbasepattern"
+       patternUnits="userSpaceOnUse"
+       width="6"
+       height="6"
+       x="0"
+       y="0" />
+    <pattern
+       id="EMFhbasepattern-2"
+       patternUnits="userSpaceOnUse"
+       width="6"
+       height="6"
+       x="0"
+       y="0" />
+  </defs>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g22">
+      <path
+         d="M 95.503256,40.621528 H 57.187357 l -0.778934,0.158485 -0.635793,0.432065 -0.42889,0.640821 -0.157162,0.784754 v 4.687887 l 0.157162,0.784754 0.42889,0.641086 0.635793,0.432329 0.778934,0.158485 h 38.315899 l 0.778934,-0.158485 0.635793,-0.432329 0.42889,-0.641086 0.157162,-0.784754 v -4.687887 l -0.157162,-0.784754 -0.42889,-0.640821 -0.635793,-0.432065 z"
+         fill="#fccc8a"
+         fill-rule="evenodd"
+         id="path1"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text1"
+         x="59.737411"
+         y="43.002777"
+         style="stroke-width:0.264583">Sub</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text2"
+         x="64.78566"
+         y="43.002777"
+         style="stroke-width:0.264583">-</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text3"
+         x="66.418938"
+         y="43.002777"
+         style="stroke-width:0.264583">national</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text4"
+         x="78.108223"
+         y="43.002777"
+         style="stroke-width:0.264583">Executive</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text5"
+         x="69.826767"
+         y="46.177776"
+         style="stroke-width:0.264583">Variables</text>
+      <path
+         d="m 159.54512,40.621528 h -58.69913 l -0.77973,0.158485 -0.636852,0.432065 -0.429154,0.640821 -0.157427,0.784754 v 4.687887 l 0.157427,0.784754 0.429154,0.641086 0.636852,0.432329 0.77973,0.158485 h 58.69913 l 0.77973,-0.158485 0.63685,-0.432329 0.42942,-0.641086 0.15769,-0.784754 v -4.687887 l -0.15769,-0.784754 -0.42942,-0.640821 -0.63685,-0.432065 z"
+         fill="#fccc8a"
+         fill-rule="evenodd"
+         id="path5"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text6"
+         x="101.43574"
+         y="43.002777"
+         style="stroke-width:0.264583">Data</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text7"
+         x="108.52658"
+         y="43.002777"
+         style="stroke-width:0.264583">on</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text8"
+         x="112.81627"
+         y="43.002777"
+         style="stroke-width:0.264583">subnational</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text9"
+         x="129.63161"
+         y="43.002777"
+         style="stroke-width:0.264583">executive</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text10"
+         x="143.4111"
+         y="43.002777"
+         style="stroke-width:0.264583">branches per</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text11"
+         x="108.31491"
+         y="46.177776"
+         style="stroke-width:0.264583">state/province, per country</text>
+      <path
+         d="m 173.56592,40.621528 h -8.4238 l -0.78052,0.158485 -0.63765,0.432065 -0.42968,0.640821 -0.15769,0.784754 v 4.687887 l 0.15769,0.784754 0.42968,0.641086 0.63765,0.432329 0.78052,0.158485 h 8.4238 l 0.78079,-0.158485 0.63738,-0.432329 0.42995,-0.641086 0.15769,-0.784754 v -4.687887 l -0.15769,-0.784754 -0.42995,-0.640821 -0.63738,-0.432065 z"
+         fill="#fccc8a"
+         fill-rule="evenodd"
+         id="path11"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Arial Black', 'Arial Black_MSFontService', sans-serif"
+         font-weight="900"
+         font-size="2.91042px"
+         id="text12"
+         x="166.39967"
+         y="45.913197"
+         style="stroke-width:0.264583">SED</text>
+      <path
+         d="m 159.54512,30.567361 h -58.69913 l -0.77973,0.153723 -0.636852,0.418836 -0.429154,0.621506 -0.157427,0.760942 v 4.545806 l 0.157427,0.761206 0.429154,0.621506 0.636852,0.4191 0.77973,0.153723 h 58.69913 l 0.77973,-0.153723 0.63685,-0.4191 0.42942,-0.621506 0.15769,-0.761206 v -4.545806 l -0.15769,-0.760942 -0.42942,-0.621506 -0.63685,-0.418836 z"
+         fill="#fccc8a"
+         fill-rule="evenodd"
+         id="path12"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text13"
+         x="101.27699"
+         y="32.948612"
+         style="stroke-width:0.264583">Data</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text14"
+         x="108.36783"
+         y="32.948612"
+         style="stroke-width:0.264583">on</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text15"
+         x="112.65752"
+         y="32.948612"
+         style="stroke-width:0.264583">national</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text16"
+         x="124.50556"
+         y="32.948612"
+         style="stroke-width:0.264583">executive</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text17"
+         x="138.28506"
+         y="32.948612"
+         style="stroke-width:0.264583">branches</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text18"
+         x="151.54068"
+         y="32.948612"
+         style="stroke-width:0.264583">per</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text19"
+         x="124.78972"
+         y="36.123611"
+         style="stroke-width:0.264583">country</text>
+      <path
+         d="m 173.56592,30.567361 h -8.4238 l -0.78052,0.153723 -0.63765,0.418836 -0.42968,0.621506 -0.15769,0.760942 v 4.545806 l 0.15769,0.761206 0.42968,0.621506 0.63765,0.4191 0.78052,0.153723 h 8.4238 l 0.78079,-0.153723 0.63738,-0.4191 0.42995,-0.621506 0.15769,-0.761206 v -4.545806 l -0.15769,-0.760942 -0.42995,-0.621506 -0.63738,-0.418836 z"
+         fill="#fccc8a"
+         fill-rule="evenodd"
+         id="path19"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Arial Black', 'Arial Black_MSFontService', sans-serif"
+         font-weight="900"
+         font-size="2.91042px"
+         id="text20"
+         x="166.15283"
+         y="35.859028"
+         style="stroke-width:0.264583">NED</text>
+      <path
+         d="m 159.54512,50.675694 h -58.69913 l -0.77973,0.158486 -0.636852,0.432064 -0.429154,0.640821 -0.157427,0.784754 v 4.687888 l 0.157427,0.784754 0.429154,0.641085 0.636852,0.43233 0.77973,0.158485 h 58.69913 l 0.77973,-0.158485 0.63685,-0.43233 0.42942,-0.641085 0.15769,-0.784754 v -4.687888 l -0.15769,-0.784754 -0.42942,-0.640821 -0.63685,-0.432064 z"
+         fill="#f9b048"
+         fill-rule="evenodd"
+         id="path20"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text21"
+         x="103.34074"
+         y="53.056946"
+         style="stroke-width:0.264583">Data</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text22"
+         x="110.27283"
+         y="53.056946"
+         style="stroke-width:0.264583">on</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text23"
+         x="114.42149"
+         y="53.056946"
+         style="stroke-width:0.264583">electoral</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text24"
+         x="126.81114"
+         y="53.056946"
+         style="stroke-width:0.264583">results</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text25"
+         x="136.68539"
+         y="53.056946"
+         style="stroke-width:0.264583">for</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text26"
+         x="141.27486"
+         y="53.056946"
+         style="stroke-width:0.264583">executive</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text27"
+         x="125.24824"
+         y="56.231945"
+         style="stroke-width:0.264583">branch</text>
+      <path
+         d="m 173.56592,50.675694 h -8.4238 l -0.78052,0.158486 -0.63765,0.432064 -0.42968,0.640821 -0.15769,0.784754 v 4.687888 l 0.15769,0.784754 0.42968,0.641085 0.63765,0.43233 0.78052,0.158485 h 8.4238 l 0.78079,-0.158485 0.63738,-0.43233 0.42995,-0.641085 0.15769,-0.784754 v -4.687888 l -0.15769,-0.784754 -0.42995,-0.640821 -0.63738,-0.432064 z"
+         fill="#f9b048"
+         fill-rule="evenodd"
+         id="path27"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Arial Black', 'Arial Black_MSFontService', sans-serif"
+         font-weight="900"
+         font-size="2.91042px"
+         id="text28"
+         x="165.42972"
+         y="55.967361"
+         style="stroke-width:0.264583">SEED</text>
+      <path
+         d="M 95.503256,60.994444 H 57.187357 l -0.778934,0.158486 -0.635793,0.432064 -0.42889,0.640821 -0.157162,0.784754 v 4.687888 l 0.157162,0.784754 0.42889,0.641085 0.635793,0.432329 0.778934,0.158486 h 38.315899 l 0.778934,-0.158486 0.635793,-0.432329 0.42889,-0.641085 0.157162,-0.784754 V 63.010569 L 97.346873,62.225815 96.917983,61.584994 96.28219,61.15293 Z"
+         fill="#f9b048"
+         fill-rule="evenodd"
+         id="path28"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text29"
+         x="59.578663"
+         y="63.375694"
+         style="stroke-width:0.264583">Subnational</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text30"
+         x="76.457222"
+         y="63.375694"
+         style="stroke-width:0.264583">Legislative</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text31"
+         x="62.841766"
+         y="66.550697"
+         style="stroke-width:0.264583">Elections</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text32"
+         x="75.806351"
+         y="66.550697"
+         style="stroke-width:0.264583">Variables</text>
+      <path
+         d="m 159.54512,60.994444 h -58.69913 l -0.77973,0.158486 -0.636852,0.432064 -0.429154,0.640821 -0.157427,0.784754 v 4.687888 l 0.157427,0.784754 0.429154,0.641085 0.636852,0.432329 0.77973,0.158486 h 58.69913 l 0.77973,-0.158486 0.63685,-0.432329 0.42942,-0.641085 0.15769,-0.784754 v -4.687888 l -0.15769,-0.784754 -0.42942,-0.640821 -0.63685,-0.432064 z"
+         fill="#f9b048"
+         fill-rule="evenodd"
+         id="path32"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text33"
+         x="101.64741"
+         y="63.375694"
+         style="stroke-width:0.264583">Data</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text34"
+         x="108.70305"
+         y="63.375694"
+         style="stroke-width:0.264583">on</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text35"
+         x="112.95755"
+         y="63.375694"
+         style="stroke-width:0.264583">subnational</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text36"
+         x="129.73743"
+         y="63.375694"
+         style="stroke-width:0.264583">executive</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text37"
+         x="143.48148"
+         y="63.375694"
+         style="stroke-width:0.264583">elections per</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text38"
+         x="108.31491"
+         y="66.550697"
+         style="stroke-width:0.264583">state/province, per country</text>
+      <path
+         d="m 173.56592,60.994444 h -8.4238 l -0.78052,0.158486 -0.63765,0.432064 -0.42968,0.640821 -0.15769,0.784754 v 4.687888 l 0.15769,0.784754 0.42968,0.641085 0.63765,0.432329 0.78052,0.158486 h 8.4238 l 0.78079,-0.158486 0.63738,-0.432329 0.42995,-0.641085 0.15769,-0.784754 v -4.687888 l -0.15769,-0.784754 -0.42995,-0.640821 -0.63738,-0.432064 z"
+         fill="#f9b048"
+         fill-rule="evenodd"
+         id="path38"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Arial Black', 'Arial Black_MSFontService', sans-serif"
+         font-weight="900"
+         font-size="2.91042px"
+         id="text39"
+         x="165.53555"
+         y="66.28611"
+         style="stroke-width:0.264583">SLED</text>
+      <path
+         d="M 95.503256,71.048611 H 57.187357 l -0.778934,0.158485 -0.635793,0.432065 -0.42889,0.640821 -0.157162,0.784754 v 4.687887 l 0.157162,0.784754 0.42889,0.641086 0.635793,0.432329 0.778934,0.158485 h 38.315899 l 0.778934,-0.158485 0.635793,-0.432329 0.42889,-0.641086 0.157162,-0.784754 v -4.687887 l -0.157162,-0.784754 -0.42889,-0.640821 -0.635793,-0.432065 z"
+         fill="#f9b048"
+         fill-rule="evenodd"
+         id="path39"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text40"
+         x="58.520329"
+         y="73.429863"
+         style="stroke-width:0.264583">Subnational</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text41"
+         x="75.381432"
+         y="73.429863"
+         style="stroke-width:0.264583">Legislatures</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text42"
+         x="69.826767"
+         y="76.604858"
+         style="stroke-width:0.264583">Variables</text>
+      <path
+         d="m 159.54512,71.048611 h -58.69913 l -0.77973,0.158485 -0.636852,0.432065 -0.429154,0.640821 -0.157427,0.784754 v 4.687887 l 0.157427,0.784754 0.429154,0.641086 0.636852,0.432329 0.77973,0.158485 h 58.69913 l 0.77973,-0.158485 0.63685,-0.432329 0.42942,-0.641086 0.15769,-0.784754 v -4.687887 l -0.15769,-0.784754 -0.42942,-0.640821 -0.63685,-0.432065 z"
+         fill="#f9b048"
+         fill-rule="evenodd"
+         id="path42"
+         style="stroke-width:0.264583" />
+      <path
+         d="m 173.56592,71.048611 h -8.4238 l -0.78052,0.158485 -0.63765,0.432065 -0.42968,0.640821 -0.15769,0.784754 v 4.687887 l 0.15769,0.784754 0.42968,0.641086 0.63765,0.432329 0.78052,0.158485 h 8.4238 l 0.78079,-0.158485 0.63738,-0.432329 0.42995,-0.641086 0.15769,-0.784754 v -4.687887 l -0.15769,-0.784754 -0.42995,-0.640821 -0.63738,-0.432065 z"
+         fill="#f9b048"
+         fill-rule="evenodd"
+         id="path53"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Arial Black', 'Arial Black_MSFontService', sans-serif"
+         font-weight="900"
+         font-size="2.91042px"
+         id="text54"
+         x="165.53555"
+         y="76.340279"
+         style="stroke-width:0.264583">SLED</text>
+      <path
+         d="M 51.605971,20.248611 H 23.045524 l -0.7747,0.158486 -0.632619,0.432064 -0.426508,0.640821 -0.156369,0.784754 v 4.687888 l 0.156369,0.784754 0.426508,0.641085 0.632619,0.43233 0.7747,0.158485 h 28.560447 l 0.7747,-0.158485 0.632884,-0.43233 0.426508,-0.641085 0.156633,-0.784754 v -4.687888 l -0.156633,-0.784754 -0.426508,-0.640821 -0.632884,-0.432064 z"
+         fill="#feddb3"
+         fill-rule="evenodd"
+         id="path54"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text55"
+         x="23.101351"
+         y="25.011112"
+         style="stroke-width:0.264583">Identifiers</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text56"
+         x="38.380245"
+         y="25.011112"
+         style="stroke-width:0.264583">Variables</text>
+      <path
+         d="M 95.503256,20.248611 H 57.187357 l -0.778934,0.158486 -0.635793,0.432064 -0.42889,0.640821 -0.157162,0.784754 v 4.687888 l 0.157162,0.784754 0.42889,0.641085 0.635793,0.43233 0.778934,0.158485 h 38.315899 l 0.778934,-0.158485 0.635793,-0.43233 0.42889,-0.641085 0.157162,-0.784754 v -4.687888 l -0.157162,-0.784754 -0.42889,-0.640821 -0.635793,-0.432064 z"
+         fill="#feddb3"
+         fill-rule="evenodd"
+         id="path56"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text57"
+         x="58.890743"
+         y="25.011112"
+         style="stroke-width:0.264583">Cross</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text58"
+         x="66.611282"
+         y="25.011112"
+         style="stroke-width:0.264583">-</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text59"
+         x="68.24456"
+         y="25.011112"
+         style="stroke-width:0.264583">National</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text60"
+         x="80.443703"
+         y="25.011112"
+         style="stroke-width:0.264583">Variables</text>
+      <path
+         d="m 159.54512,20.248611 h -58.69913 l -0.77973,0.158486 -0.636852,0.432064 -0.429154,0.640821 -0.157427,0.784754 v 4.687888 l 0.157427,0.784754 0.429154,0.641085 0.636852,0.43233 0.77973,0.158485 h 58.69913 l 0.77973,-0.158485 0.63685,-0.43233 0.42942,-0.641085 0.15769,-0.784754 v -4.687888 l -0.15769,-0.784754 -0.42942,-0.640821 -0.63685,-0.432064 z"
+         fill="#feddb3"
+         fill-rule="evenodd"
+         id="path60"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text61"
+         x="108.65014"
+         y="22.629862"
+         style="stroke-width:0.264583">Data</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text62"
+         x="115.58222"
+         y="22.629862"
+         style="stroke-width:0.264583">on</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text63"
+         x="119.73089"
+         y="22.629862"
+         style="stroke-width:0.264583">country</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text64"
+         x="130.76216"
+         y="22.629862"
+         style="stroke-width:0.264583">names,</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text65"
+         x="141.25739"
+         y="22.629862"
+         style="stroke-width:0.264583">years, and</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text66"
+         x="122.93764"
+         y="25.804861"
+         style="stroke-width:0.264583">states</text>
+      <path
+         d="M 51.605971,30.567361 H 23.045524 l -0.7747,0.156898 -0.632619,0.428361 -0.426508,0.635 -0.156369,0.777875 v 14.785974 l 0.156369,0.777875 0.426508,0.635 0.632619,0.428361 0.7747,0.156898 h 28.560447 l 0.7747,-0.156898 0.632884,-0.428361 0.426508,-0.635 0.156633,-0.777875 V 32.565495 l -0.156633,-0.777875 -0.426508,-0.635 -0.632884,-0.428361 z"
+         fill="#fccc8a"
+         fill-rule="evenodd"
+         id="path67"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text67"
+         x="24.81241"
+         y="39.298615"
+         style="stroke-width:0.264583">Executive</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text68"
+         x="38.54958"
+         y="39.298615"
+         style="stroke-width:0.264583">Branch</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text69"
+         x="30.844912"
+         y="42.738197"
+         style="stroke-width:0.264583">Variables</text>
+      <path
+         d="M 95.503256,30.567361 H 57.187357 l -0.778934,0.153723 -0.635793,0.418836 -0.42889,0.621506 -0.157162,0.760942 v 4.545806 l 0.157162,0.761206 0.42889,0.621506 0.635793,0.4191 0.778934,0.153723 h 38.315899 l 0.778934,-0.153723 0.635793,-0.4191 0.42889,-0.621506 0.157162,-0.761206 V 32.522368 L 97.346873,31.761426 96.917983,31.13992 96.28219,30.721084 Z"
+         fill="#fccc8a"
+         fill-rule="evenodd"
+         id="path69"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text70"
+         x="62.930138"
+         y="32.948612"
+         style="stroke-width:0.264583">National</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text71"
+         x="74.952805"
+         y="32.948612"
+         style="stroke-width:0.264583">Executive</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text72"
+         x="69.826767"
+         y="36.123611"
+         style="stroke-width:0.264583">Variables</text>
+      <path
+         d="M 51.605971,50.675694 H 23.045524 l -0.7747,0.157957 -0.632619,0.430741 -0.426508,0.638704 -0.156369,0.782109 v 25.071916 l 0.156369,0.782373 0.426508,0.638704 0.632619,0.430742 0.7747,0.157956 h 28.560447 l 0.7747,-0.157956 0.632884,-0.430742 0.426508,-0.638704 0.156633,-0.782373 V 52.685205 l -0.156633,-0.782109 -0.426508,-0.638704 -0.632884,-0.430741 z"
+         fill="#f9b048"
+         fill-rule="evenodd"
+         id="path72"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text73"
+         x="24.159683"
+         y="66.28611"
+         style="stroke-width:0.264583">Electoral</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text74"
+         x="36.753853"
+         y="66.28611"
+         style="stroke-width:0.264583">Variables</text>
+      <path
+         d="M 95.503256,50.675694 H 57.187357 l -0.778934,0.158486 -0.635793,0.432064 -0.42889,0.640821 -0.157162,0.784754 v 4.687888 l 0.157162,0.784754 0.42889,0.641085 0.635793,0.43233 0.778934,0.158485 h 38.315899 l 0.778934,-0.158485 0.635793,-0.43233 0.42889,-0.641085 0.157162,-0.784754 V 52.691819 L 97.346873,51.907065 96.917983,51.266244 96.28219,50.83418 Z"
+         fill="#f9b048"
+         fill-rule="evenodd"
+         id="path74"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text75"
+         x="60.284306"
+         y="53.056946"
+         style="stroke-width:0.264583">Subnational</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text76"
+         x="77.180595"
+         y="53.056946"
+         style="stroke-width:0.264583">Executive</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text77"
+         x="62.841766"
+         y="56.231945"
+         style="stroke-width:0.264583">Elections</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text78"
+         x="75.806351"
+         y="56.231945"
+         style="stroke-width:0.264583">Variables</text>
+      <path
+         d="M 51.605971,81.102777 H 23.045524 l -0.7747,0.158486 -0.632619,0.432064 -0.426508,0.640821 -0.156369,0.784754 v 4.687888 l 0.156369,0.784754 0.426508,0.641085 0.632619,0.432329 0.7747,0.158486 h 28.560447 l 0.7747,-0.158486 0.632884,-0.432329 0.426508,-0.641085 0.156633,-0.784754 v -4.687888 l -0.156633,-0.784754 -0.426508,-0.640821 -0.632884,-0.432064 z"
+         fill="#f7a72f"
+         fill-rule="evenodd"
+         id="path78"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text79"
+         x="26.470554"
+         y="85.86528"
+         style="stroke-width:0.264583">Index</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text80"
+         x="35.147038"
+         y="85.86528"
+         style="stroke-width:0.264583">Variables</text>
+      <path
+         d="M 95.503256,81.102777 H 57.187357 l -0.778934,0.158486 -0.635793,0.432064 -0.42889,0.640821 -0.157162,0.784754 v 4.687888 l 0.157162,0.784754 0.42889,0.641085 0.635793,0.432329 0.778934,0.158486 h 38.315899 l 0.778934,-0.158486 0.635793,-0.432329 0.42889,-0.641085 0.157162,-0.784754 v -4.687888 l -0.157162,-0.784754 -0.42889,-0.640821 -0.635793,-0.432064 z"
+         fill="#f7a72f"
+         fill-rule="evenodd"
+         id="path80"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text81"
+         x="58.943661"
+         y="83.484024"
+         style="stroke-width:0.264583">Subnational</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text82"
+         x="75.839951"
+         y="83.484024"
+         style="stroke-width:0.264583">Democracy</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text83"
+         x="65.434685"
+         y="86.659027"
+         style="stroke-width:0.264583">Index</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text84"
+         x="73.882034"
+         y="86.659027"
+         style="stroke-width:0.264583">Variables</text>
+      <path
+         d="m 159.54512,81.102777 h -58.69913 l -0.77973,0.158486 -0.636852,0.432064 -0.429154,0.640821 -0.157427,0.784754 v 4.687888 l 0.157427,0.784754 0.429154,0.641085 0.636852,0.432329 0.77973,0.158486 h 58.69913 l 0.77973,-0.158486 0.63685,-0.432329 0.42942,-0.641085 0.15769,-0.784754 v -4.687888 l -0.15769,-0.784754 -0.42942,-0.640821 -0.63685,-0.432064 z"
+         fill="#f7a72f"
+         fill-rule="evenodd"
+         id="path84"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text85"
+         x="101.17116"
+         y="83.484024"
+         style="stroke-width:0.264583">Data</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text86"
+         x="108.2268"
+         y="83.484024"
+         style="stroke-width:0.264583">on</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text87"
+         x="112.4813"
+         y="83.484024"
+         style="stroke-width:0.264583">levels</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text88"
+         x="120.9268"
+         y="83.484024"
+         style="stroke-width:0.264583">of</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text89"
+         x="124.46693"
+         y="83.484024"
+         style="stroke-width:0.264583">subnational</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text90"
+         x="141.2468"
+         y="83.484024"
+         style="stroke-width:0.264583">democracy per</text>
+      <text
+         font-family="'Lucida Sans Unicode', 'Lucida Sans Unicode_MSFontService', sans-serif"
+         font-weight="400"
+         font-size="2.91042px"
+         id="text91"
+         x="108.31491"
+         y="86.659027"
+         style="stroke-width:0.264583">state/province, per country</text>
+      <path
+         d="m 173.56592,81.102777 h -8.4238 l -0.78052,0.158486 -0.63765,0.432064 -0.42968,0.640821 -0.15769,0.784754 v 4.687888 l 0.15769,0.784754 0.42968,0.641085 0.63765,0.432329 0.78052,0.158486 h 8.4238 l 0.78079,-0.158486 0.63738,-0.432329 0.42995,-0.641085 0.15769,-0.784754 v -4.687888 l -0.15769,-0.784754 -0.42995,-0.640821 -0.63738,-0.432064 z"
+         fill="#f7a72f"
+         fill-rule="evenodd"
+         id="path91"
+         style="stroke-width:0.264583" />
+      <text
+         font-family="'Arial Black', 'Arial Black_MSFontService', sans-serif"
+         font-weight="900"
+         font-size="2.91042px"
+         id="text92"
+         x="165.69431"
+         y="86.394447"
+         style="stroke-width:0.264583">SDID</text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;line-height:125%;font-family:'Lucida Sans Unicode';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="30.386322"
+         y="17.916792"
+         id="text5-9"><tspan
+           sodipodi:role="line"
+           x="30.386322"
+           y="17.916792"
+           id="tspan5"
+           style="stroke-width:0.264583"><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan1">Variables</tspan><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan2"> </tspan><tspan
+             dx="0.20066451"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan3">Type</tspan><tspan
+             dx="-0.35197681"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan4"> </tspan></tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;line-height:125%;font-family:'Lucida Sans Unicode';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="61.857494"
+         y="17.916792"
+         id="text14-4"><tspan
+           sodipodi:role="line"
+           x="61.857494"
+           y="17.916792"
+           id="tspan14"
+           style="stroke-width:0.264583"><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan6">Sub</tspan><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan7">-</tspan><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan8">variable</tspan><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan9"> </tspan><tspan
+             dx="0.32765788"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan10">Type</tspan><tspan
+             dx="-0.35197681"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan11">                                       </tspan><tspan
+             dx="-0.43430269"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan12">Description</tspan><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan13"> </tspan></tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;line-height:125%;font-family:'Lucida Sans Unicode';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="164.36304"
+         y="17.916792"
+         id="text17-8"><tspan
+           x="164.36304"
+           y="17.916792"
+           id="tspan17"
+           style="stroke-width:0.264583"
+           sodipodi:role="line"><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan15">Dataset</tspan><tspan
+             dx="-0.31694409"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:3.9026px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan16"> </tspan></tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;line-height:125%;font-family:'Lucida Sans Unicode';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="99.367004"
+         y="74.84861"
+         id="text20-4"><tspan
+           sodipodi:role="line"
+           x="99.367004"
+           y="74.84861"
+           id="tspan20"
+           style="stroke-width:0.264583"><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan1-5">Data</tspan><tspan
+             dx="-0.32470328"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan2-5"> </tspan><tspan
+             dx="-0.43430269"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan3-1">on</tspan><tspan
+             dx="-0.16812605"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan4-7"> </tspan><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan5-1">institutional</tspan><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan6-1"> </tspan><tspan
+             dx="-0.43430269"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan7-5">and</tspan><tspan
+             dx="-0.1733333"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan8-2"> </tspan><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan9-7">electoral</tspan><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan10-6"> </tspan><tspan
+             dx="-0.39197147"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan11-1">information</tspan></tspan><tspan
+           sodipodi:role="line"
+           x="99.367004"
+           y="78.403946"
+           style="stroke-width:0.264583"
+           id="tspan21"><tspan
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan22"> </tspan><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan12-4">about</tspan><tspan
+             dx="-0.23274893"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan13-2"> </tspan><tspan
+             dx="-0.43430269"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan14-3">state</tspan><tspan
+             dx="-0.25625873"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan15-2">-</tspan><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan16-2">level/provincial</tspan><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan17-1"> </tspan><tspan
+             dx="-0.43430269"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan18">legislatures</tspan><tspan
+             dx="0"
+             dy="0"
+             style="font-style:normal;font-variant:normal;font-weight:400;font-size:2.84427px;font-family:'Lucida Sans Unicode';fill:#000000;stroke-width:0.264583"
+             id="tspan19"> </tspan></tspan></text>
+    </g>
+  </g>
+</svg>

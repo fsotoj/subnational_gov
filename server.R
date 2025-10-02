@@ -238,17 +238,30 @@ server <- function(input, output, session) {
   
   output$state_selector_camera <- renderUI({
     req(input$country_sel_camera)
-    choices <- SLED |>
+    
+    # Get original values (what you want returned)
+    choices_vals <- SLED |>
       dplyr::filter(country_name == input$country_sel_camera) |>
       dplyr::pull(state_name) |>
       unique() |>
       sort()
+    
+    # Build labels (what you want displayed)
+    choices_labs <- stringr::str_to_title(choices_vals)
+    
+    # Name the vector: names = labels, values = originals
+    names(choices_vals) <- choices_labs
+    
     selectInput(
-      "state_sel_camera", "State",
-      choices  = choices,
-      selected = if (length(choices)) choices[1] else NULL
+      inputId  = "state_sel_camera",
+      label    = "State",
+      choices  = choices_vals,                 # shows Title Case, returns originals
+      selected = if (length(choices_vals))
+        choices_vals[[min(6, length(choices_vals))]]
+      else NULL
     )
   })
+  
   
   output$chamber_selector_camera <- renderUI({
     selectInput(
@@ -428,15 +441,20 @@ server <- function(input, output, session) {
   # -- 4.1) States selector (graph - multi-country) --------------------------
   output$state_selector <- renderUI({
     req(current_tab() == "graph_tab")
+    
     states_choices <- data %>%
       dplyr::distinct(country_name, state_name) %>%
       dplyr::arrange(country_name, state_name) %>%
       dplyr::group_by(country_name) %>%
       dplyr::group_split()
     
+    # For each country group: labels = Title Case, values = original state_name
     choices_list <- lapply(states_choices, function(group) {
-      stats::setNames(as.list(group$state_name), group$state_name)
+      vals  <- group$state_name
+      labs  <- stringr::str_to_title(vals)
+      stats::setNames(as.list(vals), labs)  # names = labels shown; list items = values returned
     })
+    
     countries <- sapply(states_choices, function(g) unique(g$country_name))
     names(choices_list) <- countries
     
@@ -444,9 +462,11 @@ server <- function(input, output, session) {
       inputId = "state_sel",
       label   = "Select states from any country:",
       choices = choices_list,
-      selected = c("CAPITAL FEDERAL", "DISTRITO FEDERAL", "CDMX"),
+      selected = c("CAPITAL FEDERAL", "DISTRITO FEDERAL", "CDMX"),  # original values still work
       multiple = TRUE,
-      options  = list(`actions-box` = TRUE, `live-search` = TRUE, `selectedTextFormat` = "values")
+      options  = list(`actions-box` = TRUE,
+                      `live-search` = TRUE,
+                      `selectedTextFormat` = "values")
     )
   })
   
@@ -756,11 +776,8 @@ server <- function(input, output, session) {
     # title_text = "Chamber composition"
   )
   
-  databaseInfoModuleServer("dbinfo_data")
-  
-  databaseInfoModuleServer("dbinfo_about")
-  
-  aboutSPPServer("about")
+
+  sppAboutModuleServer("about")
   
   
   # ==== 10) DOWNLOADS =======================================================
