@@ -220,9 +220,35 @@ button.download_map_btn i.fas.fa-camera {
 }
 
 .jstree-default .jstree-container-ul { color: var(--text-dark); }
-.jstree-default .jstree-anchor { color: var(--text-dark) !important; }
-.jstree-default .jstree-anchor:hover { background-color: rgba(255,169,42,0.15); }
+/* === JSTree (sidebar) — make anchor transparent so wholerow controls bg === */
+/* === Scope to sidebar to beat skin rules === */
+.skin-blue .main-sidebar .jstree-default a.jstree-anchor,
+.skin-blue .main-sidebar .jstree-default a.jstree-anchor:hover,
+.skin-blue .main-sidebar .jstree-default a.jstree-anchor:focus,
+.skin-blue .main-sidebar .jstree-default a.jstree-anchor.jstree-clicked,
+.skin-blue .main-sidebar .sidebar a.jstree-anchor,
+.skin-blue .main-sidebar .sidebar a.jstree-anchor:hover,
+.skin-blue .main-sidebar .treeview-menu > li > a.jstree-anchor:hover {
+  background: transparent !important;      /* kill light-blue hover */
+  color: var(--text-dark) !important;      /* default text (unselected) */
+}
 
+/* Hover (full row) */
+.skin-blue .main-sidebar .jstree-default .jstree-wholerow-hovered {
+  background-color: rgba(255,169,42,0.25) !important; /* orange tint */
+  box-shadow: inset 0 0 0 2px rgba(255,169,42,0.25);   /* optional ring */
+}
+
+/* Selected (full row) */
+.skin-blue .main-sidebar .jstree-default .jstree-wholerow-clicked {
+  background-color: var(--purple) !important;
+}
+
+/* Selected text on purple */
+.skin-blue .main-sidebar .jstree-default a.jstree-anchor.jstree-clicked {
+  color: #fff !important;
+  font-weight: 600;
+}
 
 
 

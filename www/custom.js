@@ -14,7 +14,7 @@ $(document).ready(function () {
         tie_selection: false,
         whole_node: false
       },
-      plugins: ["checkbox"]
+      plugins: ["checkbox", "wholerow"]
     });
 
     $('#jstree_demo')
@@ -71,7 +71,7 @@ $(document).ready(function () {
         themes: { icons: false,  dots: false   },
         multiple: false                // <-- SINGLE selection
       },
-      plugins: []                      // <-- no "checkbox" plugin
+      plugins: ["wholerow"]                      // <-- no "checkbox" plugin
     });
   
     $el
@@ -116,7 +116,7 @@ $(document).ready(function () {
         themes: { icons: false,  dots: false   },
         multiple: false                // <-- SINGLE selection
       },
-      plugins: []                      // <-- no "checkbox" plugin
+      plugins: ["wholerow"]                      // <-- no "checkbox" plugin
     });
   
     $el
