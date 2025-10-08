@@ -308,3 +308,49 @@ button.download_map_btn i.fas.fa-camera {
 }
 
 
+/* =========================================================
+   SELECTIZE INPUTS — hover, focus, and dropdown
+   ========================================================= */
+
+/* Main box */
+.selectize-input {
+  border: 1px solid var(--gray) !important;
+  border-radius: 6px;
+  background-color: #fff !important;
+  color: var(--text-dark) !important;
+  transition: all 0.2s ease;
+}
+
+/* Hover: highlight border + subtle shadow */
+.selectize-input:hover {
+  border-color: var(--orange) !important;
+  box-shadow: 0 0 0 2px rgba(255,169,42,0.25);
+}
+
+/* Focus (when clicked) */
+.selectize-input .focus {
+  border-color: var(--purple) !important;
+  box-shadow: 0 0 0 2px rgba(114,36,100,0.25);
+}
+
+/* Selected item pills inside the box */
+/*.selectize-input .item {
+  background-color: var(--orange) !important;
+  color: #111 !important;
+  padding: 2px 8px;
+  margin: 1px 2px;
+}*/
+
+/* Dropdown item hover/active */
+.selectize-dropdown .option:hover,
+.selectize-dropdown .option.active {
+background-color: rgba(255,169,42,0.15) !important;
+color: var(--text-dark) !important;
+}
+
+
+/* Dropdown selected option (highlighted when chosen) */
+.selectize-dropdown .option.selected {
+background-color: var(--purple) !important;
+color: #fff !important;
+}
