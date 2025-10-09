@@ -800,11 +800,11 @@ server <- function(input, output, session) {
     }
   )
   
-  output$download_geom <- downloadHandler(
-    filename = function() paste0("countries_geom_", Sys.Date(), ".geojson"),
-    content = function(file) sf::st_write(geom, file, append = FALSE),
-    contentType = "application/geo+json"
-  )
+  # output$download_geom <- downloadHandler(
+  #   filename = function() paste0("countries_geom_", Sys.Date(), ".geojson"),
+  #   content = function(file) sf::st_write(geom, file, append = FALSE),
+  #   contentType = "application/geo+json"
+  # )
   
   
   # ==== 11) PDF VIEWER ======================================================

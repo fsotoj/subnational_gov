@@ -380,3 +380,19 @@ color: var(--text-dark) !important;
 background-color: var(--purple) !important;
 color: #fff !important;
 }
+
+
+/* =========================================================
+   Download button dissabled
+   ========================================================= */
+
+
+
+#download_data {
+  pointer-events: none;    /* block any mouse interaction */
+  opacity: 0.5;            /* faded look */
+  cursor: not-allowed;     /* disabled cursor */
+  text-decoration: none;   /* remove underline if any */
+}
+
+
