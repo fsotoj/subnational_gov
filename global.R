@@ -45,6 +45,7 @@ SEED <- read.xlsx("data/SEED SHINY (v.0.1).xlsx")
 SED <- read.xlsx("data/SED (v.0.1).xlsx")
 SLED <- read.xlsx("data/SLED (v.0.1).xlsx")
 CFTDFLD <- read.xlsx("data/CFTDFLD (v.0.1).xlsx")
+SDI <- read.xlsx("data/SDI (v.1).xlsx")
 
 cols_to_fill <- c("chamber_sub_leg",as.vector(outer(setdiff(sled_names,c("chamber_sub_leg","concurrent_election_with_nat_sub_leg")), c("_1","_2"), paste0)))
 
@@ -78,7 +79,11 @@ data <- left_join(NED,SED,c("country_name","country_code","year")) %>%
   rename_with(~ gsub("\\.x$", "", .x), ends_with(".x")) %>% 
   left_join(.,SLED_wide,c("country_state_code","year"))  %>%
   select(-matches("\\.y$")) %>%
+  rename_with(~ gsub("\\.x$", "", .x), ends_with(".x")) %>% 
+  left_join(.,SDI,c("country_state_code","year"))  %>%
+  select(-matches("\\.y$")) %>%
   rename_with(~ gsub("\\.x$", "", .x), ends_with(".x"))
+
 
 
 geom <- st_read("data/geom_simple_maps.geojson")
