@@ -112,19 +112,19 @@ sppAboutModuleUI <- function(id,
             tags$p(
               class = "spp-text",
               tags$strong("The Subnational Politics Project (SPP)"),
-              " is part of a broader research project designed to compile, generate, and disseminate systematic, transparent, and publicly accessible data on subnational political institutions, subnational political processes, and subnational electoral outcomes in Latin America."
+              "is a collaborative initiative dedicated to compiling, generating, and disseminating systematic, transparent, and publicly accessible data on subnational political institutions, processes, and electoral outcomes across Latin America."
             ),
             tags$p(
               class = "spp-text",
-              "The primary objective of the project is to create a centralized and standardized data infrastructure that facilitates both in-depth within-country analyses and cross-national comparative research on subnational political dynamics."
+              "The SPP’s central goal is to build a comprehensive and standardized data infrastructure that enables both detailed within-country analysis and robust cross-national comparisons of subnational political dynamics."
             ),
             tags$p(
               class = "spp-text",
-              "By providing longitudinal and spatially disaggregated data, the SPP supports empirical scholarship on federalism, decentralization, party competition, electoral accountability, and territorial governance."
+              "By providing consistent, high-quality, and spatially disaggregated longitudinal data, the SPP seeks to advance scholarly and policy-oriented research on the political foundations and consequences of territorial inequality in Latin America."
             ),
             tags$p(
               class = "spp-text",
-              "This application provides direct access to the SPP databases and interactive tools for exploring subnational political dynamics. As of September 2025, the project includes comprehensive databases for three federal countries in Latin America—Argentina, Brazil, and Mexico—covering the period from the 1980s through 2024."
+              "This data infrastructure will support empirical work on a wide range of topics, including federalism, decentralization, subnational democracy and authoritarianism, party competition, electoral accountability, territorial governance, among others."
             )
           )
         ),

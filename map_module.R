@@ -463,8 +463,8 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
         addPolygons(
           layerId = ~country_state_code,
           fillColor = ~pal()$pal(.leaflet_value),
-          color = "black",
-          weight = 1,
+          color = "#111",
+          weight = 1.2,
           fillOpacity = 0.9,
           highlightOptions = highlightOptions(weight = 5, color = "#666", fillOpacity = 1),
           label = ~paste0(stringr::str_to_title(state_name_geom), ": ", format_leaflet_value(.leaflet_value, var_info()$type)),
@@ -523,7 +523,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
               TRUE ~ as.character(ideo_party_sub_exe)
             ), "<br/>",
             "<b>Alignment:</b> ", ifelse(alignment_with_nat_sub_exe == 1, "Yes", "No"), "<br/>",
-            "<b>Reelected:</b> ", ifelse(reelec_sub_exe == 1, "Yes", "No"), "<br/>",
+            "<b>Reelected:</b> ", ifelse(consecutive_reelection_sub_exe == 1, "Yes", "No"), "<br/>",
             "</div>",
             "</details>",
             
