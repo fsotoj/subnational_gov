@@ -5,11 +5,11 @@ ui <- dashboardPage(
     class = "app-header-logo",
     tags$img(src = "spp_logo_v5.svg", height = "50px")
     ),
-     titleWidth = 310
+     titleWidth = 390
     ),
   title = "SPP-Subnational Politics Project",   # <-- this sets <title>
   dashboardSidebar(
-    width = 310,
+    width = 390,
     useShinyjs(),
     tagList(
       sidebarMenu(id = "tabs",
@@ -18,7 +18,7 @@ ui <- dashboardPage(
                   menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
                   menuItem("Camera Viz tool", tabName = "camera", icon = icon("landmark")),
                   menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
-                  menuItem("Data", tabName = "data_tab", icon = icon("table"))
+                  menuItem("Datasets", tabName = "data_tab", icon = icon("table"))
                   
       ),
       hidden(uiOutput("db_selector")),
@@ -257,28 +257,7 @@ ui <- dashboardPage(
       
       tabItem(
         tabName = "data_tab",
-        fluidRow(
-          column(9, tableModuleUI("sub_table")),
-          column(
-            3,
-            box(
-              title = "Current database",
-              solidHeader = TRUE,
-              collapsible = FALSE,
-              collapsed = FALSE,
-              width = NULL,
-              uiOutput("texto_db")
-            ),
-            selectInput(
-              "file_format",
-              "Select download format:",
-              choices = c("CSV" = "csv", "Excel" = "xlsx")
-            ),
-            downloadButton("download_data", "Download this database"),
-            
-            br(),br()
-            )
-        )
+        spp_mvp_ui("spp1")
       ),
       
       tabItem(tabName = "about", 

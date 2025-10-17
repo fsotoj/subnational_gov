@@ -29,12 +29,16 @@ linePlotLegendUI <- function(id, width = NULL) {
           background: #FFFFFF; 
           box-shadow: 0 0 0 1px #E6E6E6 inset; 
           color: #4D4D4D; font-size: 12px; transition: box-shadow .12s ease;
+          cursor: pointer;
         }
         #%1$s-legend .legend-item:hover { box-shadow: 0 0 0 1px #FFA92A inset; }
 
         #%1$s-legend .legend-swatch { width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; }
         #%1$s-legend .legend-text { white-space: nowrap; }
         #%1$s-legend svg { display: block; }
+        
+        
+
       ', ns("line_plot")))),
       div(id = paste0(ns("line_plot"), "-legend"), 
           tags$div(class = "legend-title", "States"),  # <-- your title here
@@ -140,10 +144,9 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Y
           type = "scatter",
           mode = "lines+markers",
           name = state,
-          legendgroup = country,
           customdata = df_state$.formatted_value,
-          hovertemplate = paste0("<b>", state, "</b><br>", pretty_name, ": %{customdata}<extra></extra>"),
-          line = list(color = color, width = 2.5),
+          hovertemplate = paste0("<b>", state, "</b>: %{customdata}<extra></extra>"),
+          line = list(color = color, width = 2),
           marker = list(symbol = symbol_map[[state]], size = 9, color = color)
         )
       }
@@ -169,7 +172,8 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Y
           showspikes = TRUE,
           spikemode = "across",
           spikedash = "solid",
-          spikethickness = 1
+          spikethickness = 1,
+          fixedrange = TRUE           # <- added
         ),
         yaxis = list(
           title = list(text = pretty_name, standoff = 14, font = list(size = 13, color = axis_txt)),
@@ -180,20 +184,90 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Y
           zeroline = FALSE,
           tickvals = y_vals,
           ticktext = y_labs,
-          range = y_range
+          range = y_range,
+          fixedrange = TRUE           # <- added
         ),
         hovermode = "x unified",
-        hoverlabel = list(bgcolor = paper_bg, bordercolor = accent, font = list(color = axis_txt, size = 12)),
+        hoverlabel = list(bgcolor = paper_bg, bordercolor = accent, font = list(color = axis_txt, size = 10)),
         showlegend = FALSE,
         margin = list(l = 56, r = 16, b = 40, t = 16),
         plot_bgcolor = plot_bg,
         paper_bgcolor = paper_bg
       )
       
+      
+      fig <- htmlwidgets::onRender(fig, sprintf("
+function(el, x) {
+  const gd = document.getElementById(el.id);
+  const legendRoot = document.querySelector('#%s-legend');
+  if (!gd || !legendRoot) return;
+
+  const DEFAULTS = { lineWidth: 2, markerSize: 9, opacity: 1 };
+  let lockedState = null;
+
+  function restyleFor(stateOrNull) {
+    const n = (gd.data || []).length;
+    if (!n) return;
+    if (stateOrNull === null) {
+      Plotly.restyle(gd, {
+        'opacity':     new Array(n).fill(DEFAULTS.opacity),
+        'line.width':  new Array(n).fill(DEFAULTS.lineWidth),
+        'marker.size': new Array(n).fill(DEFAULTS.markerSize)
+      });
+      return;
+    }
+    const opacities = new Array(n).fill(0.15);
+    const widths    = new Array(n).fill(1.5);
+    const sizes     = new Array(n).fill(7);
+    (gd.data || []).forEach((tr, i) => {
+      if (tr && tr.name === stateOrNull) {
+        opacities[i] = 1.0;
+        widths[i]    = 3.5;
+        sizes[i]     = 10;
+      }
+    });
+    Plotly.restyle(gd, { 'opacity': opacities, 'line.width': widths, 'marker.size': sizes });
+  }
+  const applyLocked    = () => restyleFor(lockedState);
+  const clearHighlight = () => (lockedState ? applyLocked() : restyleFor(null));
+  const highlightState = (s) => restyleFor(s);
+
+  // Legend hover + click-to-lock
+  legendRoot.querySelectorAll('.legend-item').forEach(item => {
+    const state = item.getAttribute('data-state');
+    item.style.cursor = 'pointer';
+    item.addEventListener('mouseenter', () => highlightState(state));
+    item.addEventListener('mouseleave', clearHighlight);
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      lockedState = (lockedState === state) ? null : state;
+      lockedState ? applyLocked() : restyleFor(null);
+    });
+  });
+
+  // Clear lock when clicking outside legend/modebar; dblclick plot clears lock
+  document.addEventListener('click', (e) => {
+    const insideLegend = legendRoot.contains(e.target);
+    if (!insideLegend && !e.target.closest('.modebar')) {
+      if (lockedState !== null) { lockedState = null; restyleFor(null); }
+    }
+  });
+  gd.addEventListener('dblclick', () => { lockedState = null; restyleFor(null); });
+}
+", session$ns("line_plot")))
+      
+      
+      
+      
       fig %>% plotly::config(
         displaylogo = FALSE,
+        scrollZoom = FALSE,        # <- no scroll wheel zoom
+        doubleClick = FALSE,       # <- disable double-click zoom/reset
         modeBarButtonsToRemove = c(
-          "autoScale2d","toggleSpikelines","lasso2d","select2d","zoomIn2d","zoomOut2d","resetScale2d"
+          "zoom2d","pan2d","autoScale2d","resetScale2d",
+          "zoomIn2d","zoomOut2d",
+          "select2d","lasso2d",
+          "toggleSpikelines"
         ),
         toImageButtonOptions = list(
           format = "png",
@@ -201,6 +275,7 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Y
           width = 1400, height = 800, scale = 1
         )
       )
+      
     })
     
     # External legend (rendered wherever linePlotLegendUI() is placed) --------
@@ -226,27 +301,35 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Y
       selected_states <- input_states()
       symbol_map <- setNames(rep(symbols, length.out = length(selected_states)), selected_states)
       
-      order_df <- df %>% dplyr::mutate(state_order = match(state_name, selected_states)) %>% dplyr::arrange(state_order)
+      order_df <- df %>%
+        dplyr::mutate(state_order = match(state_name, selected_states)) %>%
+        dplyr::arrange(state_order)
       country_order <- unique(order_df$country_name)
       
       groups_ui <- lapply(country_order, function(ctry) {
-        col <- country_colors[[ctry]] %||% "#666666"
+        col <- if (!is.null(country_colors[[ctry]])) country_colors[[ctry]] else "#666666"
         states_ctry <- selected_states[selected_states %in% (df %>% dplyr::filter(country_name == ctry) %>% dplyr::pull(state_name) %>% unique())]
         items <- lapply(states_ctry, function(st) {
-          htmltools::tags$span(class = "legend-item",
-                               htmltools::span(class = "legend-swatch", symbol_svg(symbol_map[[st]], col)),
-                               htmltools::span(class = "legend-text", st)
+          htmltools::tags$span(
+            class = "legend-item",
+            `data-state` = st,  # <- used by JS to find the matching trace
+            htmltools::span(class = "legend-swatch", symbol_svg(symbol_map[[st]], col)),
+            htmltools::span(class = "legend-text", st)
           )
         })
         htmltools::div(
           class = "legend-group",
-          htmltools::span(class = "legend-country", htmltools::span(class = "country-swatch", style = paste0("background:", col, ";")), ctry),
+          htmltools::span(class = "legend-country",
+                          htmltools::span(class = "country-swatch", style = paste0("background:", col, ";")),
+                          ctry),
           htmltools::div(class = "legend-row", items)
         )
       })
       
-      htmltools::div(id = paste0(session$ns("line_plot"), "-legend"), class = "legend-wrap", groups_ui)
+      # Return ONLY the inner content; the outer container with the id lives in the UI helper
+      htmltools::div(class = "legend-wrap", groups_ui)
     })
+    
     
   })
 }

@@ -106,12 +106,6 @@ server <- function(input, output, session) {
   })
   
   
-  # -- 1.0) Normalized variable names (map & graph) ---------------------------
-
-  # var_normal_name2 <- reactive({
-  #   req(input$var_sel2)
-  #   dict %>% dplyr::filter(pretty_name == input$var_sel2) %>% dplyr::pull(variable)
-  # })
   
   # -- 1.0) DATA MAP ---------------------
   data_map <- reactive({
@@ -123,107 +117,107 @@ server <- function(input, output, session) {
   
   
   # ==== 1.1) DATA TAB SELECTORS (based on active dataset) ====================
-  active_df <- reactive({
-    req(input$db_sel)
-    switch(input$db_sel,
-           SED = SED, SEED = SEED, SLED = SLED, NED = NED, CFTDFLD = CFTDFLD)
-  })
-  has_col <- function(df, nm) nm %in% names(df)
-  uniq_sorted <- function(x) sort(unique(stats::na.omit(x)))
-  
-  available_countries <- reactive({
-    df <- active_df()
-    if (!has_col(df, "country_name")) character(0) else uniq_sorted(df$country_name)
-  })
-  available_states <- reactive({
-    df <- active_df()
-    if (!has_col(df, "state_name")) character(0) else {
-      if (!length(input$country_sel2)) uniq_sorted(df$state_name)
-      else uniq_sorted(df$state_name[df$country_name == input$country_sel2])
-    }
-  })
-  available_years_scoped <- reactive({
-    df <- active_df()
-    if (!has_col(df, "year")) return(integer(0))
-    if (has_col(df, "country_name") && !is.null(input$country_sel2) && nzchar(input$country_sel2)) {
-      df <- df[df$country_name == input$country_sel2, , drop = FALSE]
-    }
-    if (has_col(df, "state_name") && !is.null(input$state_sel2) && nzchar(input$state_sel2)) {
-      df <- df[df$state_name == input$state_sel2, , drop = FALSE]
-    }
-    uniq_sorted(df$year)
-  })
-  
-  # Update Data Tab selectors when active dataset changes
-  observeEvent(active_df(), {
-    req(current_tab() == "data_tab")
-    shinyjs::disable("country_sel2"); shinyjs::disable("state_sel2"); shinyjs::disable("years")
-    
-    # Countries
-    countries <- available_countries()
-    new_country <- if (length(input$country_sel2) && input$country_sel2 %in% countries) input$country_sel2 else countries[1]
-    updateSelectInput(session, "country_sel2", choices = countries, selected = new_country)
-    
-    # States
-    states <- isolate(available_states())
-    if (length(states)) {
-      new_state <- if (length(input$state_sel2) && input$state_sel2 %in% states) input$state_sel2 else states[1]
-      updateSelectInput(session, "state_sel2", choices = states, selected = new_state)
-      shinyjs::enable("state_sel2")
-    } else {
-      updateSelectInput(session, "state_sel2", choices = character(0), selected = character(0))
-      shinyjs::disable("state_sel2")
-    }
-    
-    # Years (pickerInput)
-    yrs <- available_years_scoped()
-    old_sel <- isolate(input$years)
-    new_sel <- if (length(old_sel) && all(old_sel %in% yrs)) old_sel else yrs
-    shinyWidgets::updatePickerInput(session, "years", choices = yrs, selected = new_sel)
-    
-    shinyjs::enable("country_sel2"); shinyjs::enable("years")
-  })
-  
-  # Refresh states when country changes (Data Tab)
-  observeEvent(input$country_sel2, {
-    req(current_tab() == "data_tab")
-    shinyjs::disable("state_sel2")
-    states <- available_states()
-    if (length(states)) {
-      new_state <- if (length(input$state_sel2) && input$state_sel2 %in% states) input$state_sel2 else states[1]
-      updateSelectInput(session, "state_sel2", choices = states, selected = new_state)
-      shinyjs::enable("state_sel2")
-    } else {
-      updateSelectInput(session, "state_sel2", choices = character(0), selected = character(0))
-    }
-  }, ignoreInit = TRUE)
-  
-  # Refresh years (Data Tab) on dataset/country/state changes
-  observeEvent(list(active_df(), input$country_sel2, input$state_sel2), {
-    req(current_tab() == "data_tab")
-    yrs <- available_years_scoped()
-    old_sel <- isolate(input$years)
-    new_sel <- if (length(old_sel) && all(old_sel %in% yrs)) old_sel else yrs
-    shinyjs::disable("years")
-    shinyWidgets::updatePickerInput(session, "years", choices = yrs, selected = new_sel)
-    shinyjs::enable("years")
-  }, ignoreInit = TRUE)
-  
-  
-  # ==== 1.2) FILTERED DATA FOR TABLE MODULE (outside module) =================
-  data_filtered <- reactive({
-    df <- active_df()
-    if (has_col(df, "country_name") && length(input$country_sel2)) {
-      df <- df[df$country_name == input$country_sel2, , drop = FALSE]
-    }
-    if (has_col(df, "state_name") && length(input$state_sel2)) {
-      df <- df[df$state_name == input$state_sel2, , drop = FALSE]
-    }
-    if (has_col(df, "year") && length(input$years)) {
-      df <- df[df$year %in% input$years, , drop = FALSE]  # pickerInput → membership
-    }
-    df
-  })
+  # active_df <- reactive({
+  #   req(input$db_sel)
+  #   switch(input$db_sel,
+  #          SED = SED, SEED = SEED, SLED = SLED, NED = NED, CFTDFLD = CFTDFLD)
+  # })
+  # has_col <- function(df, nm) nm %in% names(df)
+  # uniq_sorted <- function(x) sort(unique(stats::na.omit(x)))
+  # 
+  # available_countries <- reactive({
+  #   df <- active_df()
+  #   if (!has_col(df, "country_name")) character(0) else uniq_sorted(df$country_name)
+  # })
+  # available_states <- reactive({
+  #   df <- active_df()
+  #   if (!has_col(df, "state_name")) character(0) else {
+  #     if (!length(input$country_sel2)) uniq_sorted(df$state_name)
+  #     else uniq_sorted(df$state_name[df$country_name == input$country_sel2])
+  #   }
+  # })
+  # available_years_scoped <- reactive({
+  #   df <- active_df()
+  #   if (!has_col(df, "year")) return(integer(0))
+  #   if (has_col(df, "country_name") && !is.null(input$country_sel2) && nzchar(input$country_sel2)) {
+  #     df <- df[df$country_name == input$country_sel2, , drop = FALSE]
+  #   }
+  #   if (has_col(df, "state_name") && !is.null(input$state_sel2) && nzchar(input$state_sel2)) {
+  #     df <- df[df$state_name == input$state_sel2, , drop = FALSE]
+  #   }
+  #   uniq_sorted(df$year)
+  # })
+  # 
+  # # Update Data Tab selectors when active dataset changes
+  # observeEvent(active_df(), {
+  #   req(current_tab() == "data_tab")
+  #   shinyjs::disable("country_sel2"); shinyjs::disable("state_sel2"); shinyjs::disable("years")
+  #   
+  #   # Countries
+  #   countries <- available_countries()
+  #   new_country <- if (length(input$country_sel2) && input$country_sel2 %in% countries) input$country_sel2 else countries[1]
+  #   updateSelectInput(session, "country_sel2", choices = countries, selected = new_country)
+  #   
+  #   # States
+  #   states <- isolate(available_states())
+  #   if (length(states)) {
+  #     new_state <- if (length(input$state_sel2) && input$state_sel2 %in% states) input$state_sel2 else states[1]
+  #     updateSelectInput(session, "state_sel2", choices = states, selected = new_state)
+  #     shinyjs::enable("state_sel2")
+  #   } else {
+  #     updateSelectInput(session, "state_sel2", choices = character(0), selected = character(0))
+  #     shinyjs::disable("state_sel2")
+  #   }
+  #   
+  #   # Years (pickerInput)
+  #   yrs <- available_years_scoped()
+  #   old_sel <- isolate(input$years)
+  #   new_sel <- if (length(old_sel) && all(old_sel %in% yrs)) old_sel else yrs
+  #   shinyWidgets::updatePickerInput(session, "years", choices = yrs, selected = new_sel)
+  #   
+  #   shinyjs::enable("country_sel2"); shinyjs::enable("years")
+  # })
+  # 
+  # # Refresh states when country changes (Data Tab)
+  # observeEvent(input$country_sel2, {
+  #   req(current_tab() == "data_tab")
+  #   shinyjs::disable("state_sel2")
+  #   states <- available_states()
+  #   if (length(states)) {
+  #     new_state <- if (length(input$state_sel2) && input$state_sel2 %in% states) input$state_sel2 else states[1]
+  #     updateSelectInput(session, "state_sel2", choices = states, selected = new_state)
+  #     shinyjs::enable("state_sel2")
+  #   } else {
+  #     updateSelectInput(session, "state_sel2", choices = character(0), selected = character(0))
+  #   }
+  # }, ignoreInit = TRUE)
+  # 
+  # # Refresh years (Data Tab) on dataset/country/state changes
+  # observeEvent(list(active_df(), input$country_sel2, input$state_sel2), {
+  #   req(current_tab() == "data_tab")
+  #   yrs <- available_years_scoped()
+  #   old_sel <- isolate(input$years)
+  #   new_sel <- if (length(old_sel) && all(old_sel %in% yrs)) old_sel else yrs
+  #   shinyjs::disable("years")
+  #   shinyWidgets::updatePickerInput(session, "years", choices = yrs, selected = new_sel)
+  #   shinyjs::enable("years")
+  # }, ignoreInit = TRUE)
+  # 
+  # 
+  # # ==== 1.2) FILTERED DATA FOR TABLE MODULE (outside module) =================
+  # data_filtered <- reactive({
+  #   df <- active_df()
+  #   if (has_col(df, "country_name") && length(input$country_sel2)) {
+  #     df <- df[df$country_name == input$country_sel2, , drop = FALSE]
+  #   }
+  #   if (has_col(df, "state_name") && length(input$state_sel2)) {
+  #     df <- df[df$state_name == input$state_sel2, , drop = FALSE]
+  #   }
+  #   if (has_col(df, "year") && length(input$years)) {
+  #     df <- df[df$year %in% input$years, , drop = FALSE]  # pickerInput → membership
+  #   }
+  #   df
+  # })
   
   
   # ==== 1.3) CAMERA TAB SELECTORS (SLED-driven) ==============================
@@ -471,11 +465,11 @@ server <- function(input, output, session) {
   })
   
   # -- 4.2) Dataset selector (data_tab) --------------------------------------
-  output$db_selector <- renderUI({
-    selectInput("db_sel", label = "Select a database to view:",
-                choices = c("NED", "SED", "SEED", "SLED", "CFTDFLD"))
-  })
-  
+  # output$db_selector <- renderUI({
+  #   selectInput("db_sel", label = "Select a database to view:",
+  #               choices = c("NED", "SED", "SEED", "SLED", "CFTDFLD"))
+  # })
+  # 
 
   # -- 4.4) Country/Year selectors (map_tab) ---------------------------------
   output$country_selector <- renderUI({
@@ -485,12 +479,26 @@ server <- function(input, output, session) {
                 selected = "MEXICO")
   })
   output$year_selector <- renderUI({
+    req(input$country_sel)
+    
+    # Define the start year based on selected country
+    start_year <- switch(input$country_sel,
+                         "MEXICO" = 1986,
+                         "BRAZIL" = 1999,
+                         "ARGENTINA" = 1983,
+                         1983)  # default if none selected
+    
     shinyWidgets::sliderTextInput(
-      inputId  = "year_sel", label = "Year",
-      choices  = as.character(seq(1983, 2024, 1)),
-      grid     = TRUE, width = "90%", animate = TRUE, selected = 1999
+      inputId  = "year_sel",
+      label    = "Year",
+      choices  = as.character(seq(start_year, 2024, 1)),
+      grid     = TRUE,
+      width    = "90%",
+      animate  = TRUE,
+      selected = 1999  # select the first year automatically
     )
   })
+  
   
   # -- 4.5) Camera year selector (UI; updated above) -------------------------
   output$year_selector_camera <- renderUI({
@@ -529,7 +537,7 @@ server <- function(input, output, session) {
     "country_selector","var_sel","var_description_map","var_description_graph","jstree_container",
     "state_selector","jstree_vars_container","jstree_vars_container_graph",
     # data-tab selectors
-    "country_sel2","state_sel2","db_selector","years",
+    #"country_sel2","state_sel2","db_selector","years",
     # legacy camera selector
     "camera_selector",
     # camera-tab selectors (SLED driven)
@@ -541,7 +549,7 @@ server <- function(input, output, session) {
     switch(tab,
            "map_tab"   = c("country_selector","var_sel","var_description_map","jstree_vars_container"),
            "graph_tab" = c("var_description_graph","state_selector","jstree_container","jstree_vars_container_graph"),
-           "data_tab"  = c("country_sel2","state_sel2","db_selector","years"),
+           #"data_tab"  = c("country_sel2","state_sel2","db_selector","years"),
            "camera"    = c("country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera"),
            character(0)
     )
@@ -614,7 +622,7 @@ server <- function(input, output, session) {
     elec_system    <- map_system(df$electoral_system_sub_leg)
     n_parties_cont <- first_or_summary(df$num_parties_election_contest_sub_leg)
     
-    enp_vals <- sort(unique(na.omit(as.numeric(df$enp_leg_sub))))
+    enp_vals <- sort(unique(na.omit(as.numeric(df$enp_sub_leg))))
     enp_txt <- if (!length(enp_vals)) {
       "—"
     } else if (length(enp_vals) == 1) {
@@ -753,12 +761,12 @@ server <- function(input, output, session) {
     active_tab = current_tab
   )
   
-  tableModuleServer(
-    id          = "sub_table",
-    data_r      = data_filtered,
-    active_tab  = current_tab,
-    force_styles = TRUE
-  )
+  # tableModuleServer(
+  #   id          = "sub_table",
+  #   data_r      = data_filtered,
+  #   active_tab  = current_tab,
+  #   force_styles = TRUE
+  # )
   
   # Hemicycle: still using original module (with inputs), now pointing to camera-only selectors.
   camaraServer(
@@ -779,26 +787,28 @@ server <- function(input, output, session) {
 
   sppAboutModuleServer("about")
   
+  spp_mvp_server("spp1", current_tab = current_tab)
+  
   
   # ==== 10) DOWNLOADS =======================================================
-  output$download_data <- downloadHandler(
-    filename = function() {
-      ext <- if (identical(input$file_format, "csv")) "csv" else "xlsx"
-      paste0(input$db_sel, "_", Sys.Date(), ".", ext)
-    },
-    content = function(file) {
-      req(input$db_sel, input$file_format)
-      if (!exists(input$db_sel, envir = .GlobalEnv)) {
-        stop("Selected dataset does not exist in the global environment.")
-      }
-      data_to_download <- get(input$db_sel, envir = .GlobalEnv)
-      if (identical(input$file_format, "csv")) {
-        write.csv(data_to_download, file, row.names = FALSE, fileEncoding = "UTF-8")
-      } else {
-        openxlsx::write.xlsx(data_to_download, file)
-      }
-    }
-  )
+  # output$download_data <- downloadHandler(
+  #   filename = function() {
+  #     ext <- if (identical(input$file_format, "csv")) "csv" else "xlsx"
+  #     paste0(input$db_sel, "_", Sys.Date(), ".", ext)
+  #   },
+  #   content = function(file) {
+  #     req(input$db_sel, input$file_format)
+  #     if (!exists(input$db_sel, envir = .GlobalEnv)) {
+  #       stop("Selected dataset does not exist in the global environment.")
+  #     }
+  #     data_to_download <- get(input$db_sel, envir = .GlobalEnv)
+  #     if (identical(input$file_format, "csv")) {
+  #       write.csv(data_to_download, file, row.names = FALSE, fileEncoding = "UTF-8")
+  #     } else {
+  #       openxlsx::write.xlsx(data_to_download, file)
+  #     }
+  #   }
+  # )
   
   # output$download_geom <- downloadHandler(
   #   filename = function() paste0("countries_geom_", Sys.Date(), ".geojson"),

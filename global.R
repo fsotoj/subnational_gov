@@ -22,14 +22,15 @@ source("map_module.R")
 source("line_module.R")
 source("get_jstree_data.R")
 source("get_jstree_data_vars.R")
-source("tableModule.R")
+#source("tableModule.R")
 source("camera_module.R")
 source("about_spp_module.R")
-source("dataBaseInfo.R")
+source("spp_list_module.R")
+#source("dataBaseInfo.R")
 
 
 data_info <- read.xlsx("data/dict_new.xlsx") %>% 
-  select(Category= category, Variable = variable, Description = description)
+  select(Category= category, Variable = variable, Description = description_for_ui)
 dict <- read.xlsx("data/dict_new.xlsx") %>% filter(scope == "subnational")
 
 sled_names <- dict %>% 

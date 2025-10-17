@@ -42,8 +42,8 @@ get_jstree_data_vars <- function(dict, chamber_structure = TRUE) {
     
       if (chamber_structure) {
         chamber_node <- list(
-          id = "Legislative Elections-Chamber Structure",
-          text = "Chamber Structure"
+          id = "Legislative Elections-Type of Chamber",
+          text = "Type of Chamber"
         )
         
         ds_node$children <- append(ds_node$children,
