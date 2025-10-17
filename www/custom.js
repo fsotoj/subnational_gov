@@ -16,6 +16,7 @@ $(document).ready(function () {
       },
       plugins: ["checkbox", "wholerow"]
     });
+  });
 
     $('#jstree_demo')
       .on('ready.jstree', function () {
@@ -27,36 +28,45 @@ $(document).ready(function () {
         // Push initial checked ids
         Shiny.setInputValue("selected_nodes", JSON.stringify(tree.get_checked()));
       })
+      Shiny.setInputValue("selected_nodes", JSON.stringify(tree.get_checked()));
+    })
 
-      // Country checkbox acts as "deselect all states" within that country
-      .on('check_node.jstree', function (e, data) {
-        const tree = $(this).jstree(true);
-        const node = data.node;
+    // Parent acts as "select all children" within that parent
+    .on('check_node.jstree', function (e, data) {
+      const tree = $(this).jstree(true);
+      const node = data.node;
+      const isTopLevel = node.parent === '#'; // treat top-level as "country"
 
-        const isCountry = node.parent === '#'; // top-level nodes = countries
-        if (isCountry) {
-          // Uncheck all descendants (states) and uncheck the country itself
-          if (node.children_d && node.children_d.length) {
-            tree.uncheck_node(node.children_d);
-          }
-          tree.uncheck_node(node); // keep country unchecked after the action
-        }
+      if (isTopLevel && node.children_d && node.children_d.length) {
+        // check all descendants
+        tree.check_node(node.children_d);
+      }
 
-        // Send current checked IDs (states only, since countries end up unchecked)
-        Shiny.setInputValue("selected_nodes", JSON.stringify(tree.get_checked()));
-      })
+      Shiny.setInputValue("selected_nodes", JSON.stringify(tree.get_checked()));
+    })
 
-      // Keep Shiny in sync when states are (un)checked individually
-      .on('uncheck_node.jstree', function () {
-        const tree = $(this).jstree(true);
-        Shiny.setInputValue("selected_nodes", JSON.stringify(tree.get_checked()));
-      })
-      .on('changed.jstree', function () {
-        // Optional: if other interactions change checks, keep Shiny updated
-        const tree = $(this).jstree(true);
-        Shiny.setInputValue("selected_nodes", JSON.stringify(tree.get_checked()));
-      });
-  });
+    // Parent uncheck acts as "deselect all children"
+    .on('uncheck_node.jstree', function (e, data) {
+      const tree = $(this).jstree(true);
+      const node = data.node;
+      const isTopLevel = node.parent === '#';
+
+      if (isTopLevel && node.children_d && node.children_d.length) {
+        tree.uncheck_node(node.children_d);
+      }
+
+      Shiny.setInputValue("selected_nodes", JSON.stringify(tree.get_checked()));
+    })
+
+    // Keep Shiny in sync for any other changes
+    .on('changed.jstree', function () {
+      const tree = $(this).jstree(true);
+      Shiny.setInputValue("selected_nodes", JSON.stringify(tree.get_checked()));
+    });
+});
+
+
+
 
 
   // --- VARIABLES TREE -----------------------------------------------------
@@ -106,6 +116,8 @@ $(document).ready(function () {
   });
   
   
+
+  
   Shiny.addCustomMessageHandler('jstree_vars_data_graph', function (message) {
     var $el = $('#jstree_vars_demo_graph');
     if ($el.data('jstree')) { $el.jstree(true).destroy(); }
@@ -149,6 +161,8 @@ $(document).ready(function () {
           JSON.stringify(tree.get_selected()));
       });
   });
+  
+
 
 
 });
