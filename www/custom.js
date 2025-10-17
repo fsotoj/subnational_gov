@@ -1,33 +1,32 @@
 $(document).ready(function () {
+  
 
   // --- STATES TREE --------------------------------------------------------
   Shiny.addCustomMessageHandler('jstree_data', function (message) {
-    $('#jstree_demo').jstree({
-      core: {
-        data: message.data,
-        themes: { icons: false, dots: false },
-        multiple: true
-      },
-      checkbox: {
-        three_state: false,       // no auto cascade up/down
-        cascade: 'undetermined',  // don't check/uncheck descendants automatically
-        tie_selection: false,
-        whole_node: false
-      },
-      plugins: ["checkbox", "wholerow"]
-    });
+  $('#jstree_demo').jstree({
+    core: {
+      animation: 0,  
+      data: message.data,
+      themes: { icons: false, dots: false },
+      multiple: true
+    },
+    checkbox: {
+      three_state: false,      // no auto up-propagation
+      cascade: 'down',         // parent -> children only
+      tie_selection: false,
+      whole_node: false
+    },
+    plugins: ["checkbox", "wholerow"]
   });
 
-    $('#jstree_demo')
-      .on('ready.jstree', function () {
-        const tree = $(this).jstree(true);
-        if (message.default_selected && message.default_selected.length > 0) {
-          tree.check_node(message.default_selected); // check (states) by id
-        }
-        tree.close_all();
-        // Push initial checked ids
-        Shiny.setInputValue("selected_nodes", JSON.stringify(tree.get_checked()));
-      })
+  $('#jstree_demo')
+    .on('ready.jstree', function () {
+      const tree = $(this).jstree(true);
+      if (message.default_selected && message.default_selected.length > 0) {
+        // will also cascade down from any parents you pass here
+        tree.check_node(message.default_selected);
+      }
+      tree.close_all();
       Shiny.setInputValue("selected_nodes", JSON.stringify(tree.get_checked()));
     })
 
