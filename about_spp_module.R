@@ -1,36 +1,3 @@
-# ---- SPP Unified About Module — 4 collapsible sections ---------------------
-# Sections:
-#   1) About SPP (expanded by default)
-#   2) References
-#   3) People Behind SPP
-#   4) About Databases (Databases’ Structure + Variable Information)
-#
-# Params:
-#   - title:      kicker at the top
-#   - max_width:  container width in pixels
-#   - open_sections: character vector of sections to start open.
-#                    valid keys: "about", "refs", "people", "databases"
-#
-# Assets expected in www/:
-#   agustina.jpg, francisco.jpg, sergio.jpg, guadalupe.jpg, felipe.jpg,
-#   databases_spp.jpg, variables_database.jpg
-#
-# Usage (in your About tab):
-#   tabItem(
-#     tabName = "about",
-#     fluidRow(
-#       column(
-#         12,
-#         sppAboutModuleUI(
-#           "about_all",
-#           title = "Subnational Politics Project",
-#           max_width = 1000,
-#           open_sections = c("about")  # only About SPP expanded
-#         )
-#       )
-#     )
-#   )
-#   sppAboutModuleServer("about_all")
 
 sppAboutModuleUI <- function(id,
                              title = "Subnational Politics Project",
@@ -74,6 +41,7 @@ sppAboutModuleUI <- function(id,
     "#", root_id, " .badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; vertical-align:middle; margin-right:6px; }\n",
     "#", root_id, " .badge-pi { background:var(--orange, #FFA92A); color:#111; }\n",
     "#", root_id, " .badge-collab { background:rgba(114,36,100,0.12); color:var(--purple, #722464); border:1px solid rgba(114,36,100,0.35); }\n",
+    "#", root_id, " .badge-r_assist { background:rgba(33,150,243,0.12); color:#1565C0; border:1px solid rgba(33,150,243,0.35); }\n",
     "#", root_id, " .lnk-btn { display:inline-block; width:20px; height:20px; line-height:20px; text-align:center; border-radius:50%; background:#0A66C2; color:#fff; text-decoration:none; font-weight:700; font-family:Arial, Helvetica, sans-serif; font-size:11px; transition:filter .15s ease; vertical-align:middle; }\n",
     "#", root_id, " .lnk-btn:hover { filter:brightness(1.15); }\n",
     
@@ -178,23 +146,6 @@ sppAboutModuleUI <- function(id,
                 tags$p(class = "pi-affil", "Universidad Católica de Chile")
               ),
               
-              # Sergio
-              tags$div(
-                class = "team-card",
-                tags$a(
-                  href   = "https://serhuertas.github.io/",
-                  target = "_blank",
-                  class  = "avatar-link",
-                  tags$img(src = "sergio.jpg", alt = "Sergio Huertas Hernández", class = "team-avatar"),
-                  tags$span(class = "tooltip-text", "Go to my webpage")
-                ),
-                tags$p(class = "collab-name", "Sergio Huertas Hernández"),
-                tags$div(
-                  tags$span(class = "badge badge-collab", "Collaborator"),
-                  tags$a(href = "https://www.linkedin.com/in/sergio-huertas-hern%C3%A1ndez/", target = "_blank", class = "lnk-btn", "in")
-                ),
-                tags$p(class = "pi-affil", "Universidad Católica de Chile")
-              ),
               
               # Guadalupe
               tags$div(
@@ -228,7 +179,27 @@ sppAboutModuleUI <- function(id,
                   tags$a(href = "https://www.linkedin.com/in/felipesotojorquera/", target = "_blank", class = "lnk-btn", "in")
                 ),
                 tags$p(class = "pi-affil", "Hertie School, Berlin")
-              )
+              ),
+              
+              # Sergio
+              tags$div(
+                class = "team-card",
+                tags$a(
+                  href   = "https://serhuertas.github.io/",
+                  target = "_blank",
+                  class  = "avatar-link",
+                  tags$img(src = "sergio.jpg", alt = "Sergio Huertas Hernández", class = "team-avatar"),
+                  tags$span(class = "tooltip-text", "Go to my webpage")
+                ),
+                tags$p(class = "collab-name", "Sergio Huertas Hernández"),
+                tags$div(
+                  tags$span(class = "badge badge-r_assist", "Research Assistant"),
+                  tags$a(href = "https://www.linkedin.com/in/sergio-huertas-hern%C3%A1ndez/", target = "_blank", class = "lnk-btn", "in")
+                ),
+                tags$p(class = "pi-affil", "Universidad Católica de Chile")
+              ),
+              
+              
             )
           )
         ),
@@ -238,7 +209,7 @@ sppAboutModuleUI <- function(id,
           class = "card",
           open  = open_attr("databases", open_sections),   # <- sticks reliably
           tags$summary(
-            tags$span(class = "card-title", "About Databases"),
+            tags$span(class = "card-title", "About SPP Databases"),
             icon("chevron-down", class = "chev")
           ),
           tags$div(
@@ -247,12 +218,13 @@ sppAboutModuleUI <- function(id,
             tags$p(class = "spp-text", tags$strong("Databases’ Structure")),
             tags$p(
               class = "spp-text",
-              "As Figure 1 shows, the Subnational Politics Project (SPP) is made up of different databases. Each database employs a country–state–year structure, with observations at the subnational unit level for each electoral year. Each observation represents a subnational unit (province/state) in a given year."
+              "The Subnational Politics Project (SPP) is made up of different databases. Each database employs a country–state–year structure, with observations at the subnational unit level for each electoral year. Each observation represents a subnational unit (province/state) in a given year."
             ),
             tags$div(
               class = "figure",
-              tags$img(src = "databases_spp.svg", alt = "Figure 1. SPP Databases"),
-              tags$div(class = "caption", "Figure 1. Databases that comprise the Subnational Politics Project (SPP).")
+              tags$img(src = "databases_spp.svg", alt = "Figure 1. SPP Databases")
+              # ,
+              # tags$div(class = "caption", "Figure 1. Databases that comprise the Subnational Politics Project (SPP).")
             ),
             tags$hr(class = "spp-hr"),
             
@@ -260,12 +232,7 @@ sppAboutModuleUI <- function(id,
             tags$p(class = "spp-text", tags$strong("Variable Information")),
             tags$p(
               class = "spp-text",
-              "As shown in Figure 2, the databases in the Subnational Politics Project divide variables into the following types:"
-            ),
-            tags$div(
-              class = "figure",
-              tags$img(src = "variables_database.svg", alt = "Figure 2. Variable Types in SPP"),
-              tags$div(class = "caption", "Figure 2. Variable types in the SPP databases.")
+              "The databases in the Subnational Politics Project divide variables into the following types:"
             ),
             tags$ol(
               class = "vars",
@@ -273,7 +240,14 @@ sppAboutModuleUI <- function(id,
               tags$li(tags$b("Executive Branch Variables:"), " Data on national and subnational executive branches, such as length of term, incumbent party, cumulative years of president/governor in office, etc."),
               tags$li(tags$b("Electoral Variables:"), " Data on subnational executive and subnational legislative elections, including legislatures’ composition."),
               tags$li(tags$b("Indices:"), " Data generated by adding and combining variables, or creating cumulative scales.")
+            ),
+            tags$div(
+              class = "figure",
+              tags$img(src = "variables_database.svg", alt = "Figure 2. Variable Types in SPP")
+              # ,
+              # tags$div(class = "caption", "Figure 2. Variable types in the SPP databases.")
             )
+            
           )
         ),
         

@@ -495,7 +495,7 @@ server <- function(input, output, session) {
       grid     = TRUE,
       width    = "90%",
       animate  = TRUE,
-      selected = 1999  # select the first year automatically
+      selected = 2010  # select the first year automatically
     )
   })
   
@@ -819,7 +819,7 @@ server <- function(input, output, session) {
   
   # ==== 11) PDF VIEWER ======================================================
   output$pdf_visor <- renderUI({
-    tags$iframe(style = "height:800px; width:100%;", src = "codebook.pdf")
+    tags$iframe(style = "height:800px; width:100%;", src = "SPP_codebook.pdf")
   })
 }
 
