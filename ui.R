@@ -5,8 +5,22 @@ ui <- dashboardPage(
     class = "app-header-logo",
     tags$img(src = "spp_logo_v5.svg", height = "50px")
     ),
-     titleWidth = 390
-    ),
+     titleWidth = 390,
+    tags$li(
+      class = "dropdown",
+      # mailto can include prefilled subject/body if you like
+      tags$a(
+        id = "contact-email",
+        href = "mailto:subnationalpoliticsproject@gmail.com?subject=SPP%20contact&body=Hi%20SPP%20team%2C%0D%0A",
+        target = "_blank",
+        `aria-label` = "Email contact",
+        icon("envelope"),
+        # show label on desktop, hide on very small screens
+        span(class = "hidden-xs", " Contact")
+      )
+    )
+    # --- /NEW ---
+  ),
   title = "SPP-Subnational Politics Project",   # <-- this sets <title>
   dashboardSidebar(
     width = 390,
@@ -18,7 +32,7 @@ ui <- dashboardPage(
                   menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
                   menuItem("Camera Viz tool", tabName = "camera", icon = icon("landmark")),
                   menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
-                  menuItem("Datasets", tabName = "data_tab", icon = icon("table"))
+                  menuItem("Databases", tabName = "data_tab", icon = icon("table"))
                   
       ),
       hidden(uiOutput("db_selector")),
@@ -182,6 +196,38 @@ ui <- dashboardPage(
         )
       ),
       
+      # tabItem(
+      #   tabName = "graph_tab",  # Este va directamente dentro de tabItem()
+      #   fluidRow(
+      #     column(9,
+      #            linePlotModuleUI("lp")
+      #     ),
+      #     column(3,
+      #            box(
+      #              #title = "Variable description", 
+      #              solidHeader = F,
+      #              collapsible = FALSE, 
+      #              collapsed = FALSE,
+      #              width = NULL,
+      #              closable = TRUE,
+      #              uiOutput("var_description_graph")
+      #            ),
+      #            box(
+      #              #title = "States:", 
+      #              #solidHeader = F,
+      #              width = NULL,
+      #              height = NULL,
+      #              linePlotLegendUI("lp")),
+      #            box(width = NULL,
+      #                height = NULL,
+      #                checkboxInput("force_y0", "Y-axis starts at 0", value = FALSE, ))
+      #            ),
+      #     
+      #   )
+      # ),
+      
+      
+      
       tabItem(
         tabName = "graph_tab",  # Este va directamente dentro de tabItem()
         fluidRow(
@@ -207,10 +253,11 @@ ui <- dashboardPage(
                  box(width = NULL,
                      height = NULL,
                      checkboxInput("force_y0", "Y-axis starts at 0", value = FALSE, ))
-                 ),
+          ),
           
         )
       ),
+      
       
       tabItem(tabName = "camera",
 
