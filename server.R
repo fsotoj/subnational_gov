@@ -478,24 +478,86 @@ server <- function(input, output, session) {
                 choices = unique(data$country_name),
                 selected = "MEXICO")
   })
+  
+  # 
+  # output$year_selector <- renderUI({
+  #   req(input$country_sel)
+  #   
+  #   # Define the start year based on selected country
+  #   start_year <- switch(input$country_sel,
+  #                        "MEXICO" = 1986,
+  #                        "BRAZIL" = 1999,
+  #                        "ARGENTINA" = 1983,
+  #                        1983)  # default if none selected
+  #   
+  #   shinyWidgets::sliderTextInput(
+  #     inputId  = "year_sel",
+  #     label    = "Year",
+  #     choices  = as.character(seq(start_year, 2024, 1)),
+  #     grid     = TRUE,
+  #     width    = "90%",
+  #     animate  = TRUE,
+  #     selected = 2010  # select the first year automatically
+  #   )
+  # })
+  
+  
   output$year_selector <- renderUI({
-    req(input$country_sel)
+    req(current_tab() == "map_tab", input$country_sel, selected_vars_vector())
     
-    # Define the start year based on selected country
-    start_year <- switch(input$country_sel,
-                         "MEXICO" = 1986,
-                         "BRAZIL" = 1999,
-                         "ARGENTINA" = 1983,
-                         1983)  # default if none selected
+    # Static dataset
+    df <- data
+    
+    # Core column names (adjust if needed)
+    country_col <- "country_name"
+    year_col    <- "year"
+    
+    # Selected variable (single column name as string)
+    var_name <- selected_vars_vector()
+    if (length(var_name) > 1) var_name <- var_name[[1]]
+    req(is.character(var_name), var_name %in% names(df))
+    
+    # --- Filter early to minimize data in memory ---
+    df_filtered <- df |>
+      dplyr::filter(.data[[country_col]] == input$country_sel) |>
+      dplyr::select(dplyr::all_of(c(country_col, year_col, var_name)))
+    
+    # Determine the first non-NA year for the selected variable
+    y_min <- if (nrow(df_filtered) == 0) {
+      1983L
+    } else {
+      valid_years <- df_filtered |>
+        dplyr::filter(!is.na(.data[[var_name]])) |>
+        dplyr::pull(.data[[year_col]])
+      
+      if (length(valid_years) > 0) {
+        min(valid_years, na.rm = TRUE)
+      } else {
+        min(df_filtered[[year_col]], na.rm = TRUE)
+      }
+    }
+    
+    # Determine the latest available year (country-specific)
+    y_max <- if (nrow(df_filtered) > 0) {
+      max(df_filtered[[year_col]], na.rm = TRUE)
+    } else {
+      max(df[[year_col]], na.rm = TRUE)
+    }
+    
+    # Safety fallback
+    if (!is.finite(y_min) || !is.finite(y_max) || y_min > y_max) {
+      y_min <- 1983L
+      y_max <- 2024L
+    }
     
     shinyWidgets::sliderTextInput(
       inputId  = "year_sel",
       label    = "Year",
-      choices  = as.character(seq(start_year, 2024, 1)),
+      choices  = as.character(seq(y_min, y_max, by = 1)),
       grid     = TRUE,
       width    = "90%",
       animate  = TRUE,
-      selected = 2010  # select the first year automatically
+      selected = 2005
     )
   })
   
@@ -565,19 +627,19 @@ server <- function(input, output, session) {
   
   # ==== 6) TEXT BLOCKS (DB & CAMERA) ========================================
   # -- 6.1) Database info text (data_tab) ------------------------------------
-  output$texto_db <- renderUI({ 
-    req(input$db_sel) 
-    texto <- switch(
-      input$db_sel, 
-      "NED"  = "<b>National Executive Databse:</b> Data on national executive branches per country.",
-      "SED"  = "<b>Subnational Executive Database:</b> Data on subnational executive branches per state/province, per country.",
-      "SEED" = "<b>Subnational Executive Elections Database:</b> Data on electoral results for executive branch.",
-      "SLED" = "<b>Subnational Legislative Elections Database:</b> Data on subnational executive elections by state/province and country. It also includes institutional and electoral information on state- or provincial-level legislatures.",
-      "No data"
-    ) 
-    HTML(texto) 
-  })
-  
+  # output$texto_db <- renderUI({ 
+  #   req(input$db_sel) 
+  #   texto <- switch(
+  #     input$db_sel, 
+  #     "NED"  = "<b>National Executive Databse:</b> Data on national executive branches per country.",
+  #     "SED"  = "<b>Subnational Executive Database:</b> Data on subnational executive branches per state/province, per country.",
+  #     "SEED" = "<b>Subnational Executive Elections Database:</b> Data on electoral results for executive branch.",
+  #     "SLED" = "<b>Subnational Legislative Elections Database:</b> Data on subnational executive elections by state/province and country. It also includes institutional and electoral information on state- or provincial-level legislatures.",
+  #     "No data"
+  #   ) 
+  #   HTML(texto) 
+  # })
+  # 
   # -- 6.2) Camera info text (camera tab) ------------------------------------
   output$text_camera <- renderUI({
     req(current_tab() == "camera", sled_cam_filtered(), input$state_sel_camera)
@@ -789,34 +851,7 @@ server <- function(input, output, session) {
   
   spp_mvp_server("spp1", current_tab = current_tab)
   
-  
-  # ==== 10) DOWNLOADS =======================================================
-  # output$download_data <- downloadHandler(
-  #   filename = function() {
-  #     ext <- if (identical(input$file_format, "csv")) "csv" else "xlsx"
-  #     paste0(input$db_sel, "_", Sys.Date(), ".", ext)
-  #   },
-  #   content = function(file) {
-  #     req(input$db_sel, input$file_format)
-  #     if (!exists(input$db_sel, envir = .GlobalEnv)) {
-  #       stop("Selected dataset does not exist in the global environment.")
-  #     }
-  #     data_to_download <- get(input$db_sel, envir = .GlobalEnv)
-  #     if (identical(input$file_format, "csv")) {
-  #       write.csv(data_to_download, file, row.names = FALSE, fileEncoding = "UTF-8")
-  #     } else {
-  #       openxlsx::write.xlsx(data_to_download, file)
-  #     }
-  #   }
-  # )
-  
-  # output$download_geom <- downloadHandler(
-  #   filename = function() paste0("countries_geom_", Sys.Date(), ".geojson"),
-  #   content = function(file) sf::st_write(geom, file, append = FALSE),
-  #   contentType = "application/geo+json"
-  # )
-  
-  
+
   # ==== 11) PDF VIEWER ======================================================
   output$pdf_visor <- renderUI({
     tags$iframe(style = "height:800px; width:100%;", src = "SPP_codebook.pdf")

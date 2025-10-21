@@ -64,22 +64,6 @@ ui <- dashboardPage(
       #hidden(uiOutput("state_selector")),
       #hidden(selectInput("var_sel2", "Variable", choices = NULL)),
       hidden(selectInput("country_sel2", "Select a country:", choices = c(unique(data$country_name)), selected = "ARGENTINA")),
-      hidden( pickerInput(
-        inputId = "years",
-        label = "Select year(s):",
-        choices = 1983:2024,
-        selected = 1983:2024,          # todos seleccionados al inicio
-        multiple = TRUE,
-        options = pickerOptions(
-          actionsBox = TRUE,
-          #liveSearch = TRUE,
-          selectedTextFormat = "count",      # o "count > 0" si quieres que SIEMPRE muestre conteo
-          countSelectedText = "{0} years selected",
-          noneSelectedText = "Choose a year",
-          size = 5,
-          virtualScroll = 2
-        )
-      )),
       hidden(selectInput("state_sel2", "Select a state:", choices = NULL)),
       hidden(uiOutput("country_selector_camera")),
       hidden(uiOutput("state_selector_camera")),
@@ -195,38 +179,7 @@ ui <- dashboardPage(
           
         )
       ),
-      
-      # tabItem(
-      #   tabName = "graph_tab",  # Este va directamente dentro de tabItem()
-      #   fluidRow(
-      #     column(9,
-      #            linePlotModuleUI("lp")
-      #     ),
-      #     column(3,
-      #            box(
-      #              #title = "Variable description", 
-      #              solidHeader = F,
-      #              collapsible = FALSE, 
-      #              collapsed = FALSE,
-      #              width = NULL,
-      #              closable = TRUE,
-      #              uiOutput("var_description_graph")
-      #            ),
-      #            box(
-      #              #title = "States:", 
-      #              #solidHeader = F,
-      #              width = NULL,
-      #              height = NULL,
-      #              linePlotLegendUI("lp")),
-      #            box(width = NULL,
-      #                height = NULL,
-      #                checkboxInput("force_y0", "Y-axis starts at 0", value = FALSE, ))
-      #            ),
-      #     
-      #   )
-      # ),
-      
-      
+
       
       tabItem(
         tabName = "graph_tab",  # Este va directamente dentro de tabItem()
@@ -288,13 +241,6 @@ ui <- dashboardPage(
               )
 
       ),
-      
-      
-        
-        
-      
-      
-      
       
       
 
