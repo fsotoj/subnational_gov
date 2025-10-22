@@ -78,7 +78,7 @@ spp_mvp_ui <- function(id,
             class = "card-body",
             tags$p(
               class = "spp-text",
-              "Click a dataset name to open and download the corresponding data from Harvard Dataverse."
+              "Click a dataset to open and download the corresponding data from Harvard Dataverse."
             ),
             uiOutput(ns("datasets_panel"))
           )
