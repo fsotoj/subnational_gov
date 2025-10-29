@@ -86,6 +86,7 @@ ui <- dashboardPage(
     ",
       HTML("Tool developed by <strong><a href='https://www.linkedin.com/in/felipesotojorquera/' target='_blank' style='color:var(--magenta, #E5007D)'>Felipe Soto Jorquera.</a></strong>")
     ),
+    tags$head(includeHTML("ga.html")),
     tags$head(
       
       ## move the toggle
