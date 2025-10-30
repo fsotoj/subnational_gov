@@ -606,7 +606,8 @@ body.sidebar-collapse .download_map_btn {
   
     #var-desc-map {
     position: fixed !important;
-    bottom: 160px !important;               /* aligned with legend */
+    bottom: 160px !important;
+    left: calc(20% + 210px) !important; ;
     width: 70vw !important;                 /* same width as legend */
     
   }
