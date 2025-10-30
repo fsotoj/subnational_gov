@@ -260,7 +260,10 @@ ui <- dashboardPage(
       
       
     ),
-    skin = "blue"
+    tags$div(
+      id = "rotate-message",
+      "Please rotate your device to landscape to view this dashboard."
+    )
     
   )
 )
