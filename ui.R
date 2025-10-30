@@ -89,19 +89,6 @@ ui <- dashboardPage(
     ),
     
     tags$head(
-      tags$script(HTML("
-  window.addEventListener('orientationchange', function() {
-    setTimeout(function() {
-      var msg = document.getElementById('rotate-message');
-      if (msg) {
-        msg.style.display = 'none';
-        msg.style.background = 'none';
-      }
-      document.body.style.backgroundColor = getComputedStyle(document.documentElement)
-        .getPropertyValue('--bg-light') || '#ffffff';
-    }, 400);
-  });
-")),
       
       ## move the toggle
       tags$script(HTML("
@@ -273,10 +260,7 @@ ui <- dashboardPage(
       
       
     ),
-    tags$div(
-      id = "rotate-message",
-      "Please rotate your device to landscape to view this dashboard."
-    )
+    skin = "blue"
     
   )
 )
