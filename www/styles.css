@@ -331,15 +331,6 @@ button.download_map_btn i.fas.fa-camera {
   color: #fff !important;
 }
 
-/* =========================================================
-   10) DOWNLOAD BUTTON DISABLED
-   ========================================================= */
-#download_data {
-  pointer-events: none;
-  opacity: 0.5;
-  cursor: not-allowed;
-  text-decoration: none;
-}
 
 /* =========================================================
    11) FINAL JSTREE OVERRIDE — FULL CONTROL OF ROW COLORS
@@ -389,7 +380,7 @@ button.download_map_btn i.fas.fa-camera {
    ========================================================= */
 
 
-@media (max-width: 1200px), (max-height: 600px) {
+@media (max-width: 1200px), (max-height: 800px) {
   body {
     zoom: 0.90; /* 85% size for moderate screens */
   }
@@ -401,31 +392,62 @@ button.download_map_btn i.fas.fa-camera {
   }
 }
 
+
+
+@media (max-width: 1200px), (max-height: 800px) {
+  #year_selector,
+  .download_map_btn{
+    position: fixed !important;    /* fixed relative to viewport, not container */
+    bottom: 25px !important;       /* always stick to bottom */
+    left: 35% !important;          /* center horizontally */
+    right: 15% !important;          /* center horizontally */
+    /*transform: translateX(-50%) scale(0.9);  /* slight shrink + center alignment */
+    z-index: 2000 !important;
+  }
+
+  /* Avoid overlap between year selector and screenshot button */
+  .download_map_btn {
+    left: calc(35% + 120px) !important; /* move slightly to the right */
+    transform: translateX(-50%) scale(0.9);
+  }
+
+  
+}
+
 /* =========================================================
-   13) FORCE LANDSCAPE ORIENTATION ON SMALL DEVICES
+   13) FORCE LANDSCAPE ORIENTATION ON SMALL DEVICES — FIXED FULLSCREEN
    ========================================================= */
 
-/* When device is in portrait mode (taller than wide) */
+/* Portrait (taller than wide): show full overlay */
 @media screen and (orientation: portrait) {
-  body::before {
-    content: "Please rotate your device to landscape to view this dashboard.";
+
+  html, body {
+    overflow: hidden !important;
+  }
+
+  html::before {
+    content: "Please rotate your device to landscape for better experience.";
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: #111;
+    background: linear-gradient(to bottom, var(--orange), #000);
     color: #fff;
-    font-size: 1.2em;
+    font-size: 3em;
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     padding: 20px;
-    z-index: 9999;
+    z-index: 999999;
+    transform: none !important;
+    zoom: 1 !important;
   }
 
-  /* Hide everything else while message is shown */
+  /* Hide app content */
+  body > *,
   .wrapper,
   .main-header,
   .main-sidebar,
@@ -437,9 +459,104 @@ button.download_map_btn i.fas.fa-camera {
   }
 }
 
-/* When landscape mode is active (normal layout) */
+/* Landscape: normal layout */
 @media screen and (orientation: landscape) {
-  body::before {
-    display: none;
+  html::before {
+    display: none !important;
   }
+
+  html, body {
+    overflow: auto !important;
+  }
+
+  body > *,
+  .wrapper,
+  .main-header,
+  .main-sidebar,
+  .content-wrapper,
+  .right-side,
+  footer,
+  .main-footer {
+    display: block !important;
+  }
+}
+
+
+/* =========================================================
+   15) SIDEBAR ADJUSTS HEIGHT WHEN SCREEN SHRINKS
+   ========================================================= */
+
+@media (max-width: 1200px), (max-height: 800px) {
+
+  /* Let the sidebar grow taller as the screen shrinks */
+  .main-sidebar {
+    min-height: 100vh !important;     /* ensure full viewport height */
+    height: calc(100vh + 33vh) !important; /* slightly taller on small screens */
+    overflow-y: auto !important;      /* scroll if content exceeds viewport */
+  }
+
+  /* Make sure content wrapper matches */
+  .content-wrapper, .right-side {
+    min-height: calc(100vh + 33vh) !important;
+  }
+
+
+}
+
+
+/* =========================================================
+   16) SIDEBAR COLOR EXTENDS WITH SCROLLING CONTENT
+   ========================================================= */
+
+/* Force sidebar background to always fill page height */
+.main-sidebar {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background-color: var(--bg-muted) !important;
+  min-height: 100% !important;
+}
+
+/* Let the parent wrapper expand naturally */
+.wrapper {
+  min-height: 100% !important;
+}
+
+/* Make sure sidebar follows page height when content is taller */
+html, body {
+  background-color: var(--bg-muted) !important;
+  height: auto !important;
+  min-height: 100% !important;
+}
+
+/* Optional: for extremely long pages, make sidebar stretch dynamically */
+body:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  /*width: 390px; /* your sidebar width, adjust if responsive */
+  height: 100%;
+  background-color: var(--bg-muted);
+  z-index: -1; /* behind all other elements */
+}
+
+
+
+/* =========================================================
+   17) YEAR SELECTOR RESPONSIVE TO SIDEBAR STATE
+   ========================================================= */
+
+
+/* When the sidebar is collapsed or hidden */
+body.sidebar-collapse #year_selector {
+  left: 20% !important;   /* move closer to left edge */
+  /*right: 10%;              /* allow more space on the right */
+  /*max-width: 90vw;         /* expand width dynamically */
+}
+
+body.sidebar-collapse .download_map_btn {
+  left: calc(20% + 120px) !important; /* shift right when sidebar collapses */
+  transform: translateX(-50%) scale(0.9);
 }

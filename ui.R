@@ -164,11 +164,11 @@ ui <- dashboardPage(
             hidden(textOutput("no_data_message"))
           ),
           div(
-            style = "position: absolute; bottom: 30px; left: 30%; right: 30%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
+            style = "position: absolute; bottom: 30px; left: 40%; right: 20%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
             uiOutput("year_selector")
           ),
           div(
-            style = "position: absolute; bottom: 30px; left: 30%; margin-left: 71px; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
+            style = "position: absolute; bottom: 30px; left: 40%; margin-left: 71px; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
             hidden(
               actionButton(
                 "captureMapBtn",
