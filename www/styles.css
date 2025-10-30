@@ -556,7 +556,7 @@ body.sidebar-collapse .download_map_btn {
   .info.legend.leaflet-control {
     position: fixed !important;
     bottom: 150px !important;               /* stays above the year selector */
-    left: 20% !important;
+    left: 25% !important;
     transform: translateX(-50%) !important;
     width: 80vw !important;
     max-width: 200px !important;
@@ -570,7 +570,7 @@ body.sidebar-collapse .download_map_btn {
     z-index: 2100 !important;
 
     /* New scrolling behavior */
-    max-height: 15vh !important;            /* limit height to 40% of viewport */
+    max-height: 20vh !important;            /* limit height to 40% of viewport */
     overflow-y: auto !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;      /* smooth iOS scrolling */
@@ -607,8 +607,8 @@ body.sidebar-collapse .download_map_btn {
     #var-desc-map {
     position: fixed !important;
     bottom: 160px !important;
-    left: calc(20% + 150px) !important; ;
-    width: 70vw !important;                 /* same width as legend */
+    left: calc(25% + 125px) !important; ;
+    width: 65vw !important;                 /* same width as legend */
     
   }
 }
