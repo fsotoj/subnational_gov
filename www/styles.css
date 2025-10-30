@@ -462,13 +462,31 @@ button.download_map_btn i.fas.fa-camera {
 /* Landscape: normal layout */
 @media screen and (orientation: landscape) {
   html::before {
+    content: none !important;
     display: none !important;
+    background: none !important;
+    z-index: -1 !important;
+    position: static !important;
+    width: 0 !important;
+    height: 0 !important;
   }
 
   html, body {
+    background-color: var(--bg-light) !important; /* restore your theme background */
     overflow: auto !important;
-    background-color: var(--bg-light) !important;
-    animation: repaintFix 0.3s ease-out;
+    height: auto !important;
+    min-height: 100vh !important;
+  /*  -webkit-transform: translateZ(0);  /* force repaint on Safari */
+    /*transform: translateZ(0);*/
+  }
+  
+  body {
+    animation: forceRepaint 0.01s linear 1;
+  }
+  
+  @keyframes forceRepaint {
+    from { opacity: 0.999; }
+    to   { opacity: 1; }
   }
 
   body > *,
@@ -483,10 +501,6 @@ button.download_map_btn i.fas.fa-camera {
   }
 }
 
-@keyframes repaintFix {
-  0% { opacity: 0.99; }
-  100% { opacity: 1; }
-}
 
 
 /* =========================================================
