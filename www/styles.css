@@ -608,7 +608,5 @@ body.sidebar-collapse .download_map_btn {
     display: none !important;
   }
 
-  html, body {
-    background-color: var(--bg-light) !important;
-  }
+  
 }
