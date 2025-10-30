@@ -567,8 +567,7 @@ body.sidebar-collapse .download_map_btn {
    ========================================================= */
 
 /* Always hide the gray overlay and dialog unless Connect re-enables them explicitly */
-#ss-overlay,
-#ss-connect-dialog {
+#ss-overlay {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
