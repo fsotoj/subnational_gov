@@ -467,6 +467,8 @@ button.download_map_btn i.fas.fa-camera {
 
   html, body {
     overflow: auto !important;
+    background-color: var(--bg-light) !important;
+    animation: repaintFix 0.3s ease-out;
   }
 
   body > *,
@@ -479,6 +481,11 @@ button.download_map_btn i.fas.fa-camera {
   .main-footer {
     display: block !important;
   }
+}
+
+@keyframes repaintFix {
+  0% { opacity: 0.99; }
+  100% { opacity: 1; }
 }
 
 
