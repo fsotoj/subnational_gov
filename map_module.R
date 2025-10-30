@@ -355,13 +355,6 @@ mapModuleUI <- function(id) {
           padding: 0;
         }"
       ),
-      tags$style(
-        HTML(sprintf("
-          #%s .leaflet-control { max-width: 25vw !important; }
-          #%s .leaflet-control .leaflet-control-legend { max-width: 100%% !important; white-space: normal !important; word-wrap: break-word !important; overflow-wrap: break-word !important; }
-          #%s .leaflet-control .leaflet-control-legend div { white-space: normal !important; overflow-wrap: break-word !important; }
-        ", map_id, map_id, map_id))
-      ),
       leafletOutput(map_id, height = "100%")
     )
   )
