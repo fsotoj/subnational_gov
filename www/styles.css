@@ -414,73 +414,6 @@ button.download_map_btn i.fas.fa-camera {
   
 }
 
-/* =========================================================
-   13) FORCE LANDSCAPE ORIENTATION ON SMALL DEVICES — FIXED FULLSCREEN
-   ========================================================= */
-
-/* Portrait (taller than wide): show full overlay */
-@media screen and (orientation: portrait) {
-
-  html, body {
-    overflow: hidden !important;
-  }
-
-  html::before {
-    content: "Please rotate your device to landscape for better experience.";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: linear-gradient(to bottom, var(--orange), #000);
-    color: #fff;
-    font-size: 3em;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 20px;
-    z-index: 999999;
-    transform: none !important;
-    zoom: 1 !important;
-  }
-
-  /* Hide app content */
-  body > *,
-  .wrapper,
-  .main-header,
-  .main-sidebar,
-  .content-wrapper,
-  .right-side,
-  footer,
-  .main-footer {
-    display: none !important;
-  }
-}
-
-/* Landscape: normal layout */
-@media screen and (orientation: landscape) {
-  html::before {
-    display: none !important;
-  }
-
-  html, body {
-    overflow: auto !important;
-  }
-
-  body > *,
-  .wrapper,
-  .main-header,
-  .main-sidebar,
-  .content-wrapper,
-  .right-side,
-  footer,
-  .main-footer {
-    display: block !important;
-  }
-}
-
 
 /* =========================================================
    15) SIDEBAR ADJUSTS HEIGHT WHEN SCREEN SHRINKS
@@ -563,14 +496,27 @@ body.sidebar-collapse .download_map_btn {
 
 
 /* =========================================================
-   18) FIX POSIT CONNECT OVERLAY (ss-overlay)
+   20) PORTRAIT MODE — EXPAND YEAR SELECTOR AND DOWNLOAD BUTTON
    ========================================================= */
 
-/* Always hide the gray overlay and dialog unless Connect re-enables them explicitly */
-#ss-overlay,
-#ss-connect-dialog {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
+/* General layout for portrait orientation */
+@media screen and (orientation: portrait) {
+
+  /* Let the year selector stretch wider across the bottom */
+  #year_selector,
+  .download_map_btn{
+    /*position: fixed !important;    /* fixed relative to viewport, not container */
+    bottom: 25px !important;       /* always stick to bottom */
+    left: 5% !important;          /* center horizontally */
+    right: 15% !important;          /* center horizontally */
+    /*transform: translateX(-50%) scale(0.9);  /* slight shrink + center alignment */
+    z-index: 2000 !important;
+  }
+
+  /* Enlarge the download button and move it to the right edge */
+  .download_map_btn {
+    left: calc(5% + 120px) !important; /* shift right when sidebar collapses */
+      }
+
+  
 }
