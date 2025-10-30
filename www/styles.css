@@ -430,15 +430,9 @@ button.download_map_btn i.fas.fa-camera {
   }
 
   /* Hide app content */
-  body > *,
-  .wrapper,
-  .main-header,
-  .main-sidebar,
-  .content-wrapper,
-  .right-side,
-  footer,
-  .main-footer {
-    display: none !important;
+  /* Optional: slightly shrink if the screen is very narrow */
+  body {
+    zoom: 0.75;
   }
 }
 
