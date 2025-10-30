@@ -476,8 +476,8 @@ button.download_map_btn i.fas.fa-camera {
     overflow: auto !important;
     height: auto !important;
     min-height: 100vh !important;
-  /*  -webkit-transform: translateZ(0);  /* force repaint on Safari */
-    /*transform: translateZ(0);*/
+    -webkit-transform: translateZ(0);  /* force repaint on Safari */
+    transform: translateZ(0);*/
   }
   
   body {
