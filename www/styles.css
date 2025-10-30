@@ -610,3 +610,38 @@ body.sidebar-collapse .download_map_btn {
 
   
 }
+
+/* Hide or restyle the default Shiny connection / reconnect badge */
+#shiny-disconnected-overlay,
+#shiny-notification-panel,
+.shiny-busy,
+.shiny-output-error {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+#shiny-disconnected-overlay,
+#shiny-notification-panel {
+  display: none !important;
+}
+
+
+@media screen and (orientation: landscape) {
+  /* Force the browser to completely repaint the page */
+  html, body, .wrapper {
+    background-color: var(--bg-light) !important;
+    /*transform: translateZ(0);*/
+    /*will-change: transform;*/
+    backface-visibility: hidden;
+  }
+}
+
+/* Extra safety: briefly flash opacity to trigger repaint */
+@keyframes fullRepaintFix {
+  0% { opacity: 0.999; }
+  100% { opacity: 1; }
+}
+body {
+  animation: fullRepaintFix 0.2s linear;
+}
+
