@@ -313,32 +313,8 @@ mapModuleUI <- function(id) {
   bootstrapPage(
     tags$head(
       tags$script(src = "https://html2canvas.hertzen.com/dist/html2canvas.min.js"),
-      tags$script(HTML(sprintf("
-
-        Shiny.addCustomMessageHandler('captureMap%s', function(message) {
-          var mapElement = document.getElementById('%s');
-          if (!mapElement) {
-            console.error('Map element with ID %s not found.');
-            return;
-          }
-
-          html2canvas(mapElement, {
-            useCORS: true,
-            allowTaint: true,
-            scale: 2
-          }).then(function(canvas) {
-            var link = document.createElement('a');
-            link.download = message.filename || 'leaflet_map.png';
-            link.href = canvas.toDataURL('image/png');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          }).catch(function(error) {
-            console.error('Error capturing map with html2canvas:', error);
-            alert('Error capturing map for download. Please try again.');
-          });
-        });
-      ", id, map_id, map_id)))
+      tags$script(src = "capture-map.js")
+      
     ),
     
     div(
