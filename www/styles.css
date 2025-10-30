@@ -548,52 +548,66 @@ body.sidebar-collapse .download_map_btn {
    21E) FIXED-CENTERED HORIZONTAL LEGEND FOR PORTRAIT MODE
    ========================================================= */
 
-@media screen and (orientation: portrait) {
+/* =========================================================
+   21F) CLEAN TWO-LINE, GROUPED LEGEND FOR PORTRAIT
+   ========================================================= */
+@media screen and (orientation: portrait){
 
   .info.legend.leaflet-control {
     position: fixed !important;
-    bottom: 150px !important;      /* just above the year selector */
-    left: 50% !important;          /* center horizontally */
-    transform: translateX(-50%) !important;  /* center correction */
-    width: 92vw !important;        /* slight margins on both sides */
-    max-width: 92vw !important;
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    align-items: center !important;
-    text-align: center !important;
-    padding: 6px 10px !important;
+    bottom: 150px !important;               /* stays above the year selector */
+    left: 20% !important;
+    transform: translateX(-50%) !important;
+    width: 80vw !important;
+    max-width: 200px !important;
+    text-align: left !important;
+    background-color: rgba(255,255,255,0.95) !important;
+    padding: 8px 12px !important;
     border-radius: 8px;
-    background-color: rgba(255,255,255,0.9) !important;
     box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-    font-size: 12px !important;
-    line-height: 1.2;
+    font-size: 13px !important;
+    line-height: 1.3 !important;
     z-index: 2100 !important;
-    overflow: hidden !important;
+
+    /* New scrolling behavior */
+    max-height: 15vh !important;            /* limit height to 40% of viewport */
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;      /* smooth iOS scrolling */
+
+    /* Optional: visual cue for scrollable area */
+    scrollbar-width: thin;                  /* for Firefox */
+    scrollbar-color: rgba(0,0,0,0.4) rgba(255,255,255,0.2);
   }
 
-  /* Color squares */
+  /* Scrollbar style for WebKit browsers */
+  .info.legend.leaflet-control::-webkit-scrollbar {
+    width: 8px;
+  }
+  .info.legend.leaflet-control::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.35);
+    border-radius: 4px;
+  }
+  .info.legend.leaflet-control::-webkit-scrollbar-thumb:hover {
+    background: rgba(0,0,0,0.5);
+  }
+
   .info.legend.leaflet-control i {
-    width: 16px !important;
-    height: 16px !important;
-    margin: 0 4px !important;
-    display: inline-block !important;
     vertical-align: middle !important;
+    margin-right: 6px !important;
   }
 
-  /* Inline labels */
-  .info.legend.leaflet-control span,
-  .info.legend.leaflet-control label {
-    display: inline-block !important;
-    margin: 2px 6px !important;
-    white-space: nowrap !important;
+  .info.legend.leaflet-control strong {
+    display: block !important;
+    text-align: center !important;
+    margin-bottom: 6px !important;
   }
-
-  /* Remove <br> from Leaflet legends */
-  .info.legend.leaflet-control br {
-    display: none !important;
+  
+  
+    #var-desc-map {
+    position: fixed !important;
+    bottom: 160px !important;               /* aligned with legend */
+    width: 70vw !important;                 /* same width as legend */
+    
   }
 }
-
-

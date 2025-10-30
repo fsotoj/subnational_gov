@@ -147,6 +147,7 @@ ui <- dashboardPage(
             width = 300,
             draggable = F,
             div(class = "small-text-box",
+                id = "var-desc-map",
                 box(
                   #title = "Variable description", 
                   solidHeader = F,
