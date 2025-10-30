@@ -560,3 +560,17 @@ body.sidebar-collapse .download_map_btn {
   left: calc(20% + 120px) !important; /* shift right when sidebar collapses */
   transform: translateX(-50%) scale(0.9);
 }
+
+
+/* =========================================================
+   18) FIX POSIT CONNECT OVERLAY (ss-overlay)
+   ========================================================= */
+
+/* Always hide the gray overlay and dialog unless Connect re-enables them explicitly */
+#ss-overlay,
+#ss-connect-dialog {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
