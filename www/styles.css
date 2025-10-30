@@ -19,6 +19,12 @@
 
 
 /* =========================================================
+   22) FIX SCREENSHOT
+   ========================================================= */
+
+
+
+/* =========================================================
 GENERAL LABELS
 ========================================================= */
 label, .control-label, .shiny-input-container label, .form-group label {
@@ -543,10 +549,6 @@ body.sidebar-collapse .download_map_btn {
   overflow-wrap: break-word !important;
 }
 
-/* --- Portrait orientation (mobile / tablet) --- */
-/* =========================================================
-   21E) FIXED-CENTERED HORIZONTAL LEGEND FOR PORTRAIT MODE
-   ========================================================= */
 
 /* =========================================================
    21F) CLEAN TWO-LINE, GROUPED LEGEND FOR PORTRAIT
@@ -612,3 +614,13 @@ body.sidebar-collapse .download_map_btn {
     
   }
 }
+
+
+
+
+
+
+
+
+
+
