@@ -422,28 +422,11 @@ button.download_map_btn i.fas.fa-camera {
 @media screen and (orientation: portrait) {
 
   html, body {
-    overflow: hidden !important;
-  }
-
-  html::before {
-    content: "Please rotate your device to landscape for better experience.";
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(to bottom, var(--orange), #000);
-    color: #fff;
-    font-size: 3em;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 20px;
-    z-index: 999999;
-    transform: none !important;
-    zoom: 1 !important;
+    transform: rotate(0deg); /* no visual rotation */
+    transform-origin: center center;
+    overflow: auto !important;
   }
 
   /* Hide app content */
@@ -461,23 +444,9 @@ button.download_map_btn i.fas.fa-camera {
 
 /* Landscape: normal layout */
 @media screen and (orientation: landscape) {
-  html::before {
-    display: none !important;
-  }
-
-  html, body {
-    overflow: auto !important;
-  }
-
-  body > *,
-  .wrapper,
-  .main-header,
-  .main-sidebar,
-  .content-wrapper,
-  .right-side,
-  footer,
-  .main-footer {
-    display: block !important;
+  body {
+    zoom: 1;
+    transform: none;
   }
 }
 
@@ -561,15 +530,3 @@ body.sidebar-collapse .download_map_btn {
   transform: translateX(-50%) scale(0.9);
 }
 
-
-/* =========================================================
-   18) FIX POSIT CONNECT OVERLAY (ss-overlay)
-   ========================================================= */
-
-/* Always hide the gray overlay and dialog unless Connect re-enables them explicitly */
-#ss-overlay {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
