@@ -541,16 +541,11 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
             position = "bottomright",
             pal = pal()$pal,
             values = pal()$domain,
+            labFormat = function(type, cuts, p) { pal()$legend },
             opacity = 0.9,
-            title = paste0("<strong>", var_info()$pretty_name, "</strong>"),
-            labFormat = function(type, cuts, p) {
-              # Return labels as proper HTML block with line breaks
-              labels <- pal()$legend
-              paste0(labels, collapse = "<br>")
-            },
-            decreasing = if (var_info()$type == "gender") FALSE else TRUE
+            title = var_info()$pretty_name,
+            decreasing = if (var_info()$type=="gender") FALSE else TRUE
           )
-        
       }
       
       prev_domain(current_domain)
