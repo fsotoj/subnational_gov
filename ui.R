@@ -71,8 +71,27 @@ ui <- dashboardPage(
       )
   ),
   dashboardBody(
-    tags$meta(name = "viewport",
-              content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, orientation=landscape"),
+    tags$meta(
+      name = "viewport",
+      content = "width=1024, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    ),
+    tags$meta(
+      name = "mobile-web-app-capable",
+      content = "yes"
+    ),
+    tags$meta(
+      name = "apple-mobile-web-app-capable",
+      content = "yes"
+    ),
+    tags$meta(
+      name = "screen-orientation",
+      content = "landscape"
+    ),
+    tags$meta(
+      name = "x5-orientation",
+      content = "landscape"
+    ),
+    
     
     tags$head(includeHTML("ga.html")),
     tags$footer(
