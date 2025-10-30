@@ -388,81 +388,58 @@ button.download_map_btn i.fas.fa-camera {
    12) RESPONSIVE ADAPTATION (<=1200px width OR <=600px height)
    ========================================================= */
 
+
 @media (max-width: 1200px), (max-height: 600px) {
-
-  /* --- Sidebar & header --- */
-  .main-sidebar {
-    width: 200px !important;
-  }
-  .content-wrapper,
-  .right-side,
-  .main-footer {
-    margin-left: 200px !important;
-  }
-  .main-header .logo {
-    width: 200px !important;
-  }
-  .main-header .logo img {
-    max-height: 40px !important;
-    padding: 0 12px;
-  }
-  .main-header .navbar {
-    min-height: 42px;
-  }
-  .main-header .sidebar-toggle {
-    padding: 6px 10px;
-  }
-
-  /* --- Fonts & spacing --- */
   body {
-    font-size: 13px;
-  }
-  h1, h2, h3 { font-size: 90%; }
-  .box {
-    padding: 8px;
-    margin-bottom: 8px;
-  }
-  .box .box-title {
-    font-size: 14px;
-  }
-
-  /* --- Footer --- */
-  footer,
-  .main-footer {
-    position: static !important;
-    padding: 4px 10px !important;
-    font-size: 10px !important;
-  }
-
-  /* --- Prevent overflow --- */
-  .content-wrapper,
-  .right-side {
-    overflow-x: hidden !important;
-  }
-
-  /* --- Compact absolute / floating elements --- */
-  #year_selector,
-  #captureMapBtn,
-  #no_data_message {
-    transform: scale(0.85);
-    bottom: 15px !important;
-  }
-
-  /* --- Smaller interactive buttons --- */
-  .slider-animate-button,
-  .download_map_btn {
-    transform: scale(0.9);
-    font-size: 12px;
-    width: auto;
-    padding: 4px 8px !important;
-  }
-
-  /* --- jsTree widget --- */
-  #jstree_demo,
-  #jstree_vars_demo,
-  #jstree_vars_demo_graph {
-    max-height: 160px;
-    font-size: 12px;
+    zoom: 0.90; /* 85% size for moderate screens */
   }
 }
 
+@media (max-width: 1117px), (max-height: 500px) {
+  body {
+    zoom: 0.75; /* 75% for very small laptops */
+  }
+}
+
+/* =========================================================
+   13) FORCE LANDSCAPE ORIENTATION ON SMALL DEVICES
+   ========================================================= */
+
+/* When device is in portrait mode (taller than wide) */
+@media screen and (orientation: portrait) {
+  body::before {
+    content: "Please rotate your device to landscape to view this dashboard.";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #111;
+    color: #fff;
+    font-size: 1.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    z-index: 9999;
+  }
+
+  /* Hide everything else while message is shown */
+  .wrapper,
+  .main-header,
+  .main-sidebar,
+  .content-wrapper,
+  .right-side,
+  footer,
+  .main-footer {
+    display: none !important;
+  }
+}
+
+/* When landscape mode is active (normal layout) */
+@media screen and (orientation: landscape) {
+  body::before {
+    display: none;
+  }
+}
