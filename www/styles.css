@@ -437,9 +437,9 @@ button.download_map_btn i.fas.fa-camera {
 }
 
 /* Landscape: normal layout */
-@media screen and (orientation: landscape) {
+/*@media screen and (orientation: landscape) {
   body {
-    zoom: 1;
+    zoom: 0.75;
     transform: none;
   }
 }
