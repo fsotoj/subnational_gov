@@ -425,7 +425,8 @@ button.download_map_btn i.fas.fa-camera {
     width: 100vw;
     height: 100vh;
     transform: rotate(0deg); /* no visual rotation */
-    transform-origin: center center;
+    transform-origin: top left;
+    min-width: 640px;
     overflow: auto !important;
   }
 
