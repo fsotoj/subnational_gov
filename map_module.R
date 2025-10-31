@@ -312,8 +312,19 @@ mapModuleUI <- function(id) {
   
   bootstrapPage(
     tags$head(
-      tags$script(src = "https://html2canvas.hertzen.com/dist/html2canvas.min.js"),
-      tags$script(src = "capture-map.js")
+      tags$script(src = "https://unpkg.com/leaflet.browser.print/dist/leaflet.browser.print.min.js"),
+      tags$script(src = "https://unpkg.com/leaflet-easyprint@2.1.9/dist/bundle.js"),
+      tags$style(HTML("
+        .leaflet-control-easyPrint-button {
+          background-color: var(--orange) !important;
+          border-radius: 6px !important;
+          width: 38px !important;
+          height: 38px !important;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+      ")),
+      tags$script(src = "leaflet-export.js")
+      
       
     ),
     
@@ -393,6 +404,14 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           lat2 = country_bboxes[[input_country_sel()]]$lat2
         ) %>%
         addProviderTiles("CartoDB.PositronNoLabels") # clean white base, no labels
+    })
+    
+    observe({
+      # Wait until map exists
+      invalidateLater(1500, session)
+      
+      # Send message with the correct widget ID
+      session$sendCustomMessage("addExportButton", list(mapId = paste0(id, "-map")))
     })
     
     observe({
