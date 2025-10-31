@@ -109,6 +109,7 @@ ui <- dashboardPage(
     ")),
       tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/jstree.min.js"),
       tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/themes/default/style.min.css"),
+      tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"),
       tags$link(id = "theme-css", rel = "stylesheet", type = "text/css", href = "styles.css"),
       tags$script(src = "custom.js")
       
@@ -168,16 +169,16 @@ ui <- dashboardPage(
             style = "position: absolute; bottom: 30px; left: 40%; right: 20%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
             uiOutput("year_selector")
           ),
-          div(
-            style = "position: absolute; bottom: 30px; left: 40%; margin-left: 71px; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
-            hidden(
-              actionButton(
-                "captureMapBtn",
-                label = tagList(icon("camera"), "Screenshot"),
-                class = "download_map_btn"
-              )
-            )
-          )
+          # div(
+          #   style = "position: absolute; bottom: 30px; left: 40%; margin-left: 71px; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
+          #   hidden(
+          #     actionButton(
+          #       "captureMapBtn",
+          #       label = tagList(icon("camera"), "Screenshot"),
+          #       class = "download_map_btn"
+          #     )
+          #   )
+          # )
           
           
         )

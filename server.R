@@ -803,6 +803,7 @@ server <- function(input, output, session) {
   
   
   # ==== 9) MODULES (map / lines / table / camera) ===========================
+  
   mapModuleServer(
     id = "map1",
     data_map = data_map,
