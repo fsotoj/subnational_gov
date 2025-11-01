@@ -538,7 +538,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
       # --- after polygons and legend updates ---
       later::later(function() {
         session$sendCustomMessage("addExportButton", list(mapId = paste0(id, "-map")))
-      }, 0.1)
+      }, 0.0000001)
     })
     
     

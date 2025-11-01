@@ -13,7 +13,7 @@ Shiny.addCustomMessageHandler("addExportButton", function (message) {
     return;
   }
 
-  // 🧹 CLEANUP: Remove any old EasyPrint wrapper or control
+  // CLEANUP: Remove any old EasyPrint wrapper or control
   const oldWrapper = document.querySelector("#custom-easyprint-wrapper");
   if (oldWrapper) oldWrapper.remove();
   if (map._easyPrintControl) {
@@ -25,7 +25,7 @@ Shiny.addCustomMessageHandler("addExportButton", function (message) {
     map._easyPrintControl = null;
   }
 
-  // ✅ Create EasyPrint control
+  // Create EasyPrint control
   map._easyPrintControl = L.easyPrint({
     title: "Download map",
     position: "bottomright",
@@ -34,8 +34,8 @@ Shiny.addCustomMessageHandler("addExportButton", function (message) {
     hideControlContainer: false,
     sizeModes: ["A4Landscape"]
   }).addTo(map);
-
-  // --- 🧩 Move EasyPrint button right beside the Play/Pause button (same corner)
+  
+  // ---  Move EasyPrint button right beside the Play/Pause button (same corner)
   const ctrl = map.getContainer().querySelector(".leaflet-control-easyPrint");
   
   function moveButtonNextToPlay() {
@@ -50,15 +50,13 @@ Shiny.addCustomMessageHandler("addExportButton", function (message) {
       wrapper.id = "custom-easyprint-wrapper";
       Object.assign(wrapper.style, {
         display: "inline-block",
-        marginTop: "55px",
-       // verticalAlign: "middle",
+        //marginTop: "55px",
+        verticalAlign: "middle",
       });
   
-      // ✅ insert right after the Play button
+      // insert right after the Play button
       playBtn.parentNode.insertBefore(wrapper, playBtn.nextSibling);
       wrapper.appendChild(ctrl);
-  
-      console.log("✅ EasyPrint button inserted next to Play/Pause");
   
       // stop observing once placed
       observer.disconnect();
@@ -81,6 +79,14 @@ Shiny.addCustomMessageHandler("addExportButton", function (message) {
       ctrl.style.visibility = "hidden";
       ctrl.style.opacity = "0";
     }
+    
+    
+    
+    const legend = map.getContainer().querySelector(".info.legend.leaflet-control");
+    if (legend) {
+        //legend.style.width = rect.width + "px"; // fijar ancho actual
+      legend.style.whiteSpace = "nowrap";     // evita quiebre de líneas
+    }
 
     const textOverlay = document.createElement("div");
     textOverlay.id = "map-print-text";
@@ -102,6 +108,8 @@ Shiny.addCustomMessageHandler("addExportButton", function (message) {
   });
 
   map.on("easyPrint-finished", function () {
+    const legend = map.getContainer().querySelector(".info.legend.leaflet-control");
+    legend.style.whiteSpace = "normal";     // evita quiebre de líneas
     const textOverlay = document.getElementById("map-print-text");
     if (textOverlay) textOverlay.remove();
 
@@ -110,9 +118,8 @@ Shiny.addCustomMessageHandler("addExportButton", function (message) {
       setTimeout(() => {
         ctrl.style.visibility = "visible";
         ctrl.style.opacity = "1";
-      }, 300);
+      }, 100);
     }
   });
 
-  console.log("✅ EasyPrint button added once to", selector);
 });
