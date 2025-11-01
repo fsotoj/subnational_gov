@@ -598,6 +598,21 @@ body.sidebar-collapse .download_map_btn {
   display: none !important;
 }
 
+
+
+#custom-easyprint-wrapper {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+}
+
+
+
 /* Make sure the container is visible */
 .easyPrintHolder {
   display: block !important;
@@ -623,7 +638,10 @@ body.sidebar-collapse .download_map_btn {
 
 /* --- STYLE THE BUTTON --- */
 .easyPrintHolder .A4Landscape.page {
+  position: relative !important;
+  top: 28px !important;
   font-size: 14px; 
+  
   font-weight: bold;
   background-color: var(--orange) !important;
   color: #111 !important;
@@ -633,11 +651,10 @@ body.sidebar-collapse .download_map_btn {
   cursor: pointer !important;
   text-align: center !important;
   
-  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out !important;
 
   /* fixes the weird vertical square */
   height: auto !important;
-  line-height: 1.4 !important;
+  line-height: 1.5 !important;
   background-image: none !important;
   background-size: unset !important;
   background-repeat: no-repeat !important;
@@ -677,11 +694,12 @@ background-color: var(--purple) !important; color: #fff !important;
  
 }
 
-/* Optional: tighten spacing and remove margins inside buttons */
-.slider-animate-container .leaflet-control-easyPrint {
-  margin: 0 !important;
+
+/* Oculta los mapas clonados que leaflet-easyPrint crea temporalmente */
+.epHolder {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
 }
-
-
 
 
