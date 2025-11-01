@@ -148,27 +148,7 @@ a:hover, a:focus {
 
 .slider-animate-button:hover { background-color: var(--purple) !important; color: #fff !important; }
 
-.download_map_btn { 
-  font-size: 14px; 
-  background-color: var(--orange) !important;
-  color: #111 !important;
-  height: auto !important; 
-  border: none !important; 
-  border-radius: 6px; 
-  font-weight: bold; 
-  cursor: pointer; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  width: 110px; 
-  padding: 0px 0px !important; 
-  opacity: 0.8; 
-  box-sizing: border-box; 
-} 
 
-button.download_map_btn i.fas.fa-camera { 
-  margin-right: 8px !important; 
-}
 
 /* =========================================================
    5) MODALES
@@ -622,6 +602,8 @@ body.sidebar-collapse .download_map_btn {
 .easyPrintHolder {
   display: block !important;
   position: relative !important;
+  margin-left: 0 !important;        /* no internal offset */
+
 }
 
 /* --- FIX ROTATION --- */
@@ -637,22 +619,23 @@ body.sidebar-collapse .download_map_btn {
   border: none !important;
 }
 
+
+
 /* --- STYLE THE BUTTON --- */
 .easyPrintHolder .A4Landscape.page {
-  background-color: #222 !important;
-  color: #fff !important;
+  font-size: 14px; 
+  font-weight: bold;
+  background-color: var(--orange) !important;
+  color: #111 !important;
   border: none !important;
   border-radius: 6px !important;
-  padding: 0 30px !important;*/
-  font-size: 14px !important;
-  font-family: Inter, system-ui, sans-serif !important;
+  /*padding: 0 30px !important;*/
   cursor: pointer !important;
   text-align: center !important;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) !important;
+  
   transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out !important;
 
   /* fixes the weird vertical square */
-  width: auto !important;
   height: auto !important;
   line-height: 1.4 !important;
   background-image: none !important;
@@ -662,24 +645,34 @@ body.sidebar-collapse .download_map_btn {
   align-items: center !important;
   justify-content: center !important;
   transform: none !important;
+  width: 120px; 
+  opacity: 0.8; 
+  box-sizing: border-box; 
+  
 }
 
 /* Replace the icon with plain text */
 .easyPrintHolder .A4Landscape.page::before {
-  content: "Download map" !important;
-  font-weight: 500 !important;
-  background: none !important;
+  content: "\f030";  /* camera */
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Solid", "Font Awesome";
+  margin-right: 6px;
+}
+
+.easyPrintHolder .A4Landscape.page::after {
+  content: "Screenshot";
+  font-family: sans-serif;      /* regular font */
 }
 
 /* Hover effect */
 .easyPrintHolder .A4Landscape.page:hover {
-  background-color: #444 !important;
-  transform: translateY(-1px);
+background-color: var(--purple) !important; color: #fff !important;
+
 }
 
 .slider-animate-container {
   display: inline-flex !important;
   align-items: center;
+  gap: 5px !important;
   justify-content: flex-start !important;
  
 }
