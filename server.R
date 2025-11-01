@@ -413,22 +413,22 @@ server <- function(input, output, session) {
   
   
   # ==== 3) MAP CAPTURE CONTROLS =============================================
-  observeEvent(input$captureMapBtn, {
-    session$sendCustomMessage(
-      type = paste0("captureMap", "map1"),
-      message = list(
-        filename = paste0("map_", input$country_sel, input$year_sel, "_", selected_vars_vector(), ".png"),
-        scale = 2
-      )
-    )
-  })
-  observe({
-    if (current_tab() == "map_tab") {
-      shinyjs::show("captureMapBtn")
-    } else {
-      shinyjs::hide("captureMapBtn")
-    }
-  })
+  # observeEvent(input$captureMapBtn, {
+  #   session$sendCustomMessage(
+  #     type = paste0("captureMap", "map1"),
+  #     message = list(
+  #       filename = paste0("map_", input$country_sel, input$year_sel, "_", selected_vars_vector(), ".png"),
+  #       scale = 2
+  #     )
+  #   )
+  # })
+  # observe({
+  #   if (current_tab() == "map_tab") {
+  #     shinyjs::show("captureMapBtn")
+  #   } else {
+  #     shinyjs::hide("captureMapBtn")
+  #   }
+  # })
   
   
   # ==== 4) DYNAMIC UI (SELECTORS) ===========================================
@@ -804,14 +804,7 @@ server <- function(input, output, session) {
   
   # ==== 9) MODULES (map / lines / table / camera) ===========================
   
-  # observe({
-  #   session$sendCustomMessage("addExportButton", list(mapId = paste0("map1", "-map")))
-  # })
-  # 
-  # # Trigger print via Shiny button
-  # observeEvent(input$print_map, {
-  #   session$sendCustomMessage("triggerMapExport", list(mapId = paste0("map1", "-map")))
-  # })
+
   
   mapModuleServer(
     id = "map1",
@@ -833,13 +826,7 @@ server <- function(input, output, session) {
     active_tab = current_tab
   )
   
-  # tableModuleServer(
-  #   id          = "sub_table",
-  #   data_r      = data_filtered,
-  #   active_tab  = current_tab,
-  #   force_styles = TRUE
-  # )
-  
+
   # Hemicycle: still using original module (with inputs), now pointing to camera-only selectors.
   camaraServer(
     id = "cam",

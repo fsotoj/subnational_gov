@@ -417,10 +417,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
         proxy %>%
           clearShapes() %>%
           clearControls()
-        # %>%
-        #   addControl("⚠ No data available for this country, variable and year.",
-        #              position = "topright",
-        #              className = "leaflet-control-warning")
+
         
         prev_domain(NULL)
         prev_country(NULL)

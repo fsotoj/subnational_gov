@@ -50,7 +50,7 @@ Shiny.addCustomMessageHandler("addExportButton", function (message) {
       wrapper.id = "custom-easyprint-wrapper";
       Object.assign(wrapper.style, {
         display: "inline-block",
-        marginTop: "53px",
+        marginTop: "55px",
        // verticalAlign: "middle",
       });
   
