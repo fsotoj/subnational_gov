@@ -643,7 +643,7 @@ body.sidebar-collapse .download_map_btn {
   color: #fff !important;
   border: none !important;
   border-radius: 6px !important;
-  padding: 8px 18px !important;
+  padding: 0 30px !important;*/
   font-size: 14px !important;
   font-family: Inter, system-ui, sans-serif !important;
   cursor: pointer !important;
@@ -677,7 +677,17 @@ body.sidebar-collapse .download_map_btn {
   transform: translateY(-1px);
 }
 
+.slider-animate-container {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: flex-start !important;
+ 
+}
 
+/* Optional: tighten spacing and remove margins inside buttons */
+.slider-animate-container .leaflet-control-easyPrint {
+  margin: 0 !important;
+}
 
 
 

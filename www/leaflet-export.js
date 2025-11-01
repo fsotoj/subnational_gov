@@ -1,9 +1,7 @@
-// leaflet-export.js — enhanced with text overlay on print
 Shiny.addCustomMessageHandler("addExportButton", function (message) {
   const selector = "#" + message.mapId;
-
-  // Try to find the Leaflet widget created by htmlwidgets
   const widget = HTMLWidgets.find(selector);
+
   if (!widget || typeof widget.getMap !== "function") {
     console.warn("EasyPrint: Leaflet widget not found for", selector);
     return;
@@ -15,35 +13,79 @@ Shiny.addCustomMessageHandler("addExportButton", function (message) {
     return;
   }
 
-  // Avoid duplicates
+  // 🧹 CLEANUP: Remove any old EasyPrint wrapper or control
+  const oldWrapper = document.querySelector("#custom-easyprint-wrapper");
+  if (oldWrapper) oldWrapper.remove();
   if (map._easyPrintControl) {
-    return;
+    try {
+      map.removeControl(map._easyPrintControl);
+    } catch (e) {
+      console.warn("EasyPrint cleanup warning:", e);
+    }
+    map._easyPrintControl = null;
   }
 
-  // Add EasyPrint control
+  // ✅ Create EasyPrint control
   map._easyPrintControl = L.easyPrint({
     title: "Download map",
     position: "bottomright",
     filename: "spp_map",
     exportOnly: true,
     hideControlContainer: false,
-    sizeModes: ["A4Landscape"],
+    sizeModes: ["A4Landscape"]
   }).addTo(map);
 
-  // Add print event hooks to overlay text
-  map.on("easyPrint-start", function () {
-    
-    const ctrl = map.getContainer().querySelector(".leaflet-control-easyPrint");
-      if (ctrl) {
-        ctrl.dataset.wasVisible = "true";
-        ctrl.style.visibility = "hidden";   // visibility works better with html2canvas
-        ctrl.style.opacity = "0";
-      }
+  // --- 🧩 Move EasyPrint button right beside the Play/Pause button (same corner)
+  const ctrl = map.getContainer().querySelector(".leaflet-control-easyPrint");
+  
+  function moveButtonNextToPlay() {
+    const playBtn = document.querySelector(".slider-animate-button");
+    if (playBtn && ctrl) {
+      // cleanup any old wrapper
+      const oldWrapper = document.querySelector("#custom-easyprint-wrapper");
+      if (oldWrapper) oldWrapper.remove();
+  
+      // small inline wrapper to keep spacing and alignment
+      const wrapper = document.createElement("span");
+      wrapper.id = "custom-easyprint-wrapper";
+      Object.assign(wrapper.style, {
+        display: "inline-block",
+        marginTop: "53px",
+       // verticalAlign: "middle",
+      });
+  
+      // ✅ insert right after the Play button
+      playBtn.parentNode.insertBefore(wrapper, playBtn.nextSibling);
+      wrapper.appendChild(ctrl);
+  
+      console.log("✅ EasyPrint button inserted next to Play/Pause");
+  
+      // stop observing once placed
+      observer.disconnect();
+    }
+  }
+  
+  // Wait until Play button appears
+  const observer = new MutationObserver(moveButtonNextToPlay);
+  observer.observe(document.body, { childList: true, subtree: true });
+  
+  // Try immediately in case it already exists
+  moveButtonNextToPlay();
+  
 
-    // Create a watermark / label element
+
+  // ✅ Add print events
+  map.on("easyPrint-start", function () {
+    const ctrl = document.querySelector(".leaflet-control-easyPrint");
+    if (ctrl) {
+      ctrl.style.visibility = "hidden";
+      ctrl.style.opacity = "0";
+    }
+
     const textOverlay = document.createElement("div");
     textOverlay.id = "map-print-text";
-    textOverlay.textContent = message.printText || "Source: Subnational Politics Project."; // custom text
+    textOverlay.textContent =
+      message.printText || "Source: Subnational Politics Project.";
     Object.assign(textOverlay.style, {
       position: "absolute",
       bottom: "15px",
@@ -54,40 +96,23 @@ Shiny.addCustomMessageHandler("addExportButton", function (message) {
       fontSize: "12px",
       borderRadius: "4px",
       fontFamily: "sans-serif",
-      zIndex: "99999",
+      zIndex: "99999"
     });
-
-    // Attach to the map container
     map.getContainer().appendChild(textOverlay);
   });
 
   map.on("easyPrint-finished", function () {
     const textOverlay = document.getElementById("map-print-text");
     if (textOverlay) textOverlay.remove();
-  
-    // Function to safely restore the EasyPrint control
-    const restoreButton = () => {
-      const ctrl = map.getContainer().querySelector(".leaflet-control-easyPrint");
-      if (ctrl) {
+
+    const ctrl = document.querySelector(".leaflet-control-easyPrint");
+    if (ctrl) {
+      setTimeout(() => {
         ctrl.style.visibility = "visible";
         ctrl.style.opacity = "1";
-        ctrl.style.display = "block";
-        console.log("🔁 EasyPrint button restored");
-        return true;
-      }
-      return false;
-    };
-  
-    // Try immediately
-    if (!restoreButton()) {
-      // If the map re-renders slower, retry a few times
-      let attempts = 0;
-      const interval = setInterval(() => {
-        attempts++;
-        if (restoreButton() || attempts > 10) clearInterval(interval);
-      }, 200);
+      }, 300);
     }
   });
 
-  console.log("✅ EasyPrint button added to", selector);
+  console.log("✅ EasyPrint button added once to", selector);
 });
