@@ -1,68 +1,93 @@
+// leaflet-export.js — enhanced with text overlay on print
 Shiny.addCustomMessageHandler("addExportButton", function (message) {
   const selector = "#" + message.mapId;
-  console.log("🔍 Looking for Leaflet widget:", selector);
 
+  // Try to find the Leaflet widget created by htmlwidgets
   const widget = HTMLWidgets.find(selector);
   if (!widget || typeof widget.getMap !== "function") {
-    console.warn("❌ Leaflet widget not found or not ready:", selector);
+    console.warn("EasyPrint: Leaflet widget not found for", selector);
     return;
   }
 
   const map = widget.getMap();
   if (!map || typeof L === "undefined") {
-    console.warn("❌ Leaflet library not ready for:", selector);
+    console.warn("EasyPrint: Leaflet library not ready for", selector);
     return;
   }
 
   // Avoid duplicates
   if (map._easyPrintControl) {
-    console.log("ℹ️ EasyPrint already exists on", selector);
     return;
   }
 
-  // Add EasyPrint button
+  // Add EasyPrint control
   map._easyPrintControl = L.easyPrint({
     title: "Download map",
-    position: "topright",
+    position: "bottomright",
     filename: "spp_map",
     exportOnly: true,
     hideControlContainer: false,
-    sizeModes: ["A4Landscape"], // only reliable mode
+    sizeModes: ["A4Landscape"],
   }).addTo(map);
 
-  console.log("✅ EasyPrint button added to", selector);
+  // Add print event hooks to overlay text
+  map.on("easyPrint-start", function () {
+    
+    const ctrl = map.getContainer().querySelector(".leaflet-control-easyPrint");
+      if (ctrl) {
+        ctrl.dataset.wasVisible = "true";
+        ctrl.style.visibility = "hidden";   // visibility works better with html2canvas
+        ctrl.style.opacity = "0";
+      }
 
-  // ✅ Wait for the DOM element to exist, then restyle it
-  const tryStyleButton = () => {
-    const btn = document.querySelector(".leaflet-control-easyPrint-button");
-    if (!btn) {
-      setTimeout(tryStyleButton, 300); // retry until found
-      return;
+    // Create a watermark / label element
+    const textOverlay = document.createElement("div");
+    textOverlay.id = "map-print-text";
+    textOverlay.textContent = message.printText || "Source: Subnational Politics Project."; // custom text
+    Object.assign(textOverlay.style, {
+      position: "absolute",
+      bottom: "15px",
+      left: "15px",
+      color: "#222",
+      backgroundColor: "rgba(255,255,255,0.8)",
+      padding: "3px 8px",
+      fontSize: "12px",
+      borderRadius: "4px",
+      fontFamily: "sans-serif",
+      zIndex: "99999",
+    });
+
+    // Attach to the map container
+    map.getContainer().appendChild(textOverlay);
+  });
+
+  map.on("easyPrint-finished", function () {
+    const textOverlay = document.getElementById("map-print-text");
+    if (textOverlay) textOverlay.remove();
+  
+    // Function to safely restore the EasyPrint control
+    const restoreButton = () => {
+      const ctrl = map.getContainer().querySelector(".leaflet-control-easyPrint");
+      if (ctrl) {
+        ctrl.style.visibility = "visible";
+        ctrl.style.opacity = "1";
+        ctrl.style.display = "block";
+        console.log("🔁 EasyPrint button restored");
+        return true;
+      }
+      return false;
+    };
+  
+    // Try immediately
+    if (!restoreButton()) {
+      // If the map re-renders slower, retry a few times
+      let attempts = 0;
+      const interval = setInterval(() => {
+        attempts++;
+        if (restoreButton() || attempts > 10) clearInterval(interval);
+      }, 200);
     }
+  });
 
-    btn.innerHTML = '<i class="fa fa-camera"></i>';
-    btn.style.background = "var(--orange)";
-    btn.style.borderRadius = "50%";
-    btn.style.width = "42px";
-    btn.style.height = "42px";
-    btn.style.boxShadow = "0 2px 6px rgba(0,0,0,0.25)";
-    btn.style.color = "#111";
-    btn.style.fontSize = "18px";
-    btn.style.display = "flex";
-    btn.style.alignItems = "center";
-    btn.style.justifyContent = "center";
-    btn.style.cursor = "pointer";
-    btn.style.border = "none";
-
-    btn.addEventListener("mouseenter", () => {
-      btn.style.background = "var(--purple)";
-      btn.style.color = "#fff";
-    });
-    btn.addEventListener("mouseleave", () => {
-      btn.style.background = "var(--orange)";
-      btn.style.color = "#111";
-    });
-  };
-
-  tryStyleButton(); // trigger the styling loop
+  console.log("✅ EasyPrint button added to", selector);
 });
