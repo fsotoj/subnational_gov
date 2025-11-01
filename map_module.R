@@ -312,18 +312,10 @@ mapModuleUI <- function(id) {
   
   bootstrapPage(
     tags$head(
-      tags$script(src = "https://unpkg.com/leaflet.browser.print/dist/leaflet.browser.print.min.js"),
-      tags$script(src = "https://unpkg.com/leaflet-easyprint@2.1.9/dist/bundle.js"),
-      tags$style(HTML("
-        .leaflet-control-easyPrint-button {
-          background-color: var(--orange) !important;
-          border-radius: 6px !important;
-          width: 38px !important;
-          height: 38px !important;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-        }
-      ")),
-      tags$script(src = "leaflet-export.js")
+      tags$head(
+        tags$script(src = "https://unpkg.com/leaflet-easyprint@2.1.9/dist/bundle.js"),
+        tags$script(src = "leaflet-export.js")
+      )
       
       
     ),
@@ -406,13 +398,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
         addProviderTiles("CartoDB.PositronNoLabels") # clean white base, no labels
     })
     
-    observe({
-      # Wait until map exists
-      invalidateLater(1500, session)
-      
-      # Send message with the correct widget ID
-      session$sendCustomMessage("addExportButton", list(mapId = paste0(id, "-map")))
-    })
+
     
     observe({
       # Detecta cambio de tab primero, sin req que bloquee
@@ -528,6 +514,7 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
             )
         )
       
+      
       # Incluye tab_changed en la condición para re-renderizar la leyenda
       if (domain_changed || country_changed || var_changed || tab_changed) {
         proxy %>%
@@ -543,9 +530,18 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
           )
       }
       
+
+      
+      
       prev_domain(current_domain)
       prev_country(input_country_sel())
       prev_var(input_var_sel())
+      
+      
+      # --- after polygons and legend updates ---
+      later::later(function() {
+        session$sendCustomMessage("addExportButton", list(mapId = paste0(id, "-map")))
+      }, 0.1)
     })
     
     

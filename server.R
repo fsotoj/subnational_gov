@@ -804,6 +804,15 @@ server <- function(input, output, session) {
   
   # ==== 9) MODULES (map / lines / table / camera) ===========================
   
+  # observe({
+  #   session$sendCustomMessage("addExportButton", list(mapId = paste0("map1", "-map")))
+  # })
+  # 
+  # # Trigger print via Shiny button
+  # observeEvent(input$print_map, {
+  #   session$sendCustomMessage("triggerMapExport", list(mapId = paste0("map1", "-map")))
+  # })
+  
   mapModuleServer(
     id = "map1",
     data_map = data_map,
