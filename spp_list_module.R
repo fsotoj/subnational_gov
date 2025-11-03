@@ -34,14 +34,15 @@ cb_time_left <- function() max(0, round(.cb$opened_until - now_sec()))
 
 # --- Citations dictionary (abbr -> citation + DOI) ----------------------------
 spp_citations <- data.frame(
-  abbr  = c("SED","SEED","SLED","SDI","CFTDFLD","NED"),
+  abbr  = c("SED","SEED","SLED","SDI","CFTDFLD","NED","Codebook"),
   title = c(
     "Subnational Executive Database",
     "Subnational Executive Elections Database",
     "Subnational Legislative Elections Database",
     "Subnational Democracy Indices",
     "Capital Federal & Tierra del Fuego Legislatures Database",
-    "National Executive Database"
+    "National Executive Database",
+    "Codebook:Subnational Politics Prpoject (SPP)"
   ),
   citation_text = c(
     "Giraudy, Agustina, Guadalupe Andrea Gonzalez, Sergio Huertas-Hern\u00E1ndez, and Francisco Urdinez. 2025. \u201CSubnational Executive Database (SED) (v. 1).\u201D Subnational Politics Project. ",
@@ -49,7 +50,8 @@ spp_citations <- data.frame(
     "Giraudy, Agustina, and Guadalupe Andrea Gonzalez. 2025. \u201CSubnational Legislative Elections Database (SLED) (v. 1).\u201D Subnational Politics Project. ",
     "Giraudy, Agustina. 2025. \u201CSubnational Democracy Indices (SDI) (v. 1).\u201D Subnational Politics Project. ",
     "Giraudy, Agustina, and Guadalupe Andrea Gonzalez. 2025. \u201CCapital Federal & Tierra Del Fuego Legislatures Database (CFTDFLD) (v. 1).\u201D Subnational Politics Project. ",
-    "Giraudy, Agustina, Guadalupe Andrea Gonzalez, Sergio Huertas-Hern\u00E1ndez, and Francisco Urdinez. 2025. \u201CNational Executive Database (NED) (v. 1).\u201D Subnational Politics Project. "
+    "Giraudy, Agustina, Guadalupe Andrea Gonzalez, Sergio Huertas-Hern\u00E1ndez, and Francisco Urdinez. 2025. \u201CNational Executive Database (NED) (v. 1).\u201D Subnational Politics Project. ",
+    "Giraudy, Agustina; Gonzalez, Guadalupe Andrea; Urdinez, Francisco, 2025, “Codebook: Subnational Politics Project (SPP) (v. 1)”. "
   ),
   doi  = c(
     "10.7910/DVN/1D3P3J",
@@ -57,7 +59,8 @@ spp_citations <- data.frame(
     "10.7910/DVN/084FXF",
     "10.7910/DVN/7TNLBW",
     "10.7910/DVN/AJJLHX",
-    "10.7910/DVN/HNKQUH"
+    "10.7910/DVN/HNKQUH",
+    "10.7910/DVN/IBSJO2"
   ),
   stringsAsFactors = FALSE
 )

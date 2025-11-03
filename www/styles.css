@@ -252,7 +252,8 @@ a:hover, a:focus {
 /* =========================================================
    8) MODAL ABOUT
    ========================================================= */
-#aboutSPPModal .modal-header {
+#aboutSPPModal .modal-header,
+#devNoticeModal .modal-header,{
   background-color: var(--orange) !important;
   display: flex;
   align-items: center;
@@ -262,7 +263,8 @@ a:hover, a:focus {
   overflow: hidden;
 }
 
-#aboutSPPModal .modal-header .modal-title {
+#aboutSPPModal .modal-header .modal-title,
+#devNoticeModal .modal-header .modal-title{
   flex: 0 0 auto;
   display: flex;
   align-items: center;
@@ -272,7 +274,8 @@ a:hover, a:focus {
   line-height: 0;
 }
 
-#aboutSPPModal .modal-header .modal-title img {
+#aboutSPPModal .modal-header .modal-title img,
+#devNoticeModal .modal-header .modal-title img{
   display: block;
   max-height: 80px;
   height: auto;
@@ -703,3 +706,18 @@ background-color: var(--purple) !important; color: #fff !important;
 }
 
 
+  /* Contact button styling in the navbar */
+  #contact-left > a {
+    color: var(--magenta, #E5007D) !important;
+    font-weight: 600;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    transition: all 0.2s ease;
+  }
+  #contact-left > a:hover {
+    background-color: var(--magenta, #E5007D) !important;
+    color: white !important;
+  }
+  #contact-left .fa {
+    margin-right: 6px;
+  }
