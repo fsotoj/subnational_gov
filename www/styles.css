@@ -705,19 +705,12 @@ background-color: var(--purple) !important; color: #fff !important;
   opacity: 0 !important;
 }
 
+.main-header .navbar .nav > li.tec-logo > a {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
 
-  /* Contact button styling in the navbar */
-  #contact-left > a {
-    color: var(--magenta, #E5007D) !important;
-    font-weight: 600;
-    padding-top: 14px;
-    padding-bottom: 14px;
-    transition: all 0.2s ease;
-  }
-  #contact-left > a:hover {
-    background-color: var(--magenta, #E5007D) !important;
-    color: white !important;
-  }
-  #contact-left .fa {
-    margin-right: 6px;
-  }
+.main-header .navbar .nav > li.tec-logo img {
+  margin-top: 5px; /* tweak or remove if not needed */
+  margin-bottom: 5px;
+}
