@@ -405,6 +405,38 @@ server <- function(input, output, session) {
     )))
   })
   
+  observe({
+    if (current_tab() == "camera") {
+      showModal(
+        tags$div(
+          id = "devNoticeModal",
+          modalDialog(
+            title = HTML("
+            <div style='display:flex; align-items:center; justify-content:center;'>
+              <img src='spp_logo_v5.svg' height='60'/>
+            </div>
+          "),
+            HTML("
+            <div style='color:#111; font-size: 1em; text-align:justify;'>
+              <p>
+                This tool is currently <strong>under development</strong>, even though you are welcome to explore it.
+              </p>
+              <p>
+                Some features may not yet be fully functional, and the displayed data or visualizations may change in future updates.
+              </p>
+              <p>
+                Thank you for your interest and feedback while we continue improving this section!
+              </p>
+            </div>
+          "),
+            easyClose = TRUE,
+            size = "m",
+            footer = modalButton("Close")
+          )
+        )
+      )
+    }
+  })
   
   
   
