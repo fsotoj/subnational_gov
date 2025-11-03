@@ -7,6 +7,19 @@ ui <- dashboardPage(
     ),
      titleWidth = 390,
     tags$li(
+      class = "dropdown app-header-logo tec-logo",
+      tags$a(
+        href = "https://egobiernoytp.tec.mx/es/escuela-de-ciencias-sociales-y-gobierno",
+        target = "_blank",
+        tags$img(src = "EscuelaCienciasSocialesyGobierno_Horizontal_Blanco.png",
+                 height = "40px",
+                 style = "vertical-align: middle;"
+                 
+                 #style = "max-height: 70px; padding: 0;"
+        )
+      )
+    ),
+    tags$li(
       class = "dropdown",
       # mailto can include prefilled subject/body if you like
       tags$a(
@@ -16,9 +29,10 @@ ui <- dashboardPage(
         `aria-label` = "Email contact",
         icon("envelope"),
         # show label on desktop, hide on very small screens
-        span(class = "hidden-xs", " Contact")
+        span(class = "hidden-xs", " Contact SPP")
       )
     )
+    
     # --- /NEW ---
   ),
   title = "SPP-Subnational Politics Project",   # <-- this sets <title>
