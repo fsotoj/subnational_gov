@@ -6,6 +6,21 @@ ui <- dashboardPage(
     tags$img(src = "spp_logo_v5.svg", height = "50px")
     ),
      titleWidth = 390,
+    
+    tags$li(
+      class = "dropdown",
+      # mailto can include prefilled subject/body if you like
+      tags$a(
+        id = "contact-email",
+        href = "mailto:subnationalpoliticsproject@gmail.com?subject=SPP%20contact&body=Hi%20SPP%20team%2C%0D%0A",
+        target = "_blank",
+        `aria-label` = "Email contact",
+        icon("envelope"),
+        # show label on desktop, hide on very small screens
+        span(class = "hidden-xs")
+      )
+    ),
+    
     tags$li(
       class = "dropdown app-header-logo tec-logo",
       tags$a(
@@ -18,20 +33,8 @@ ui <- dashboardPage(
                  #style = "max-height: 70px; padding: 0;"
         )
       )
-    ),
-    tags$li(
-      class = "dropdown",
-      # mailto can include prefilled subject/body if you like
-      tags$a(
-        id = "contact-email",
-        href = "mailto:subnationalpoliticsproject@gmail.com?subject=SPP%20contact&body=Hi%20SPP%20team%2C%0D%0A",
-        target = "_blank",
-        `aria-label` = "Email contact",
-        icon("envelope"),
-        # show label on desktop, hide on very small screens
-        span(class = "hidden-xs", " Contact SPP")
-      )
     )
+
     
     # --- /NEW ---
   ),
