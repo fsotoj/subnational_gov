@@ -445,7 +445,103 @@ server <- function(input, output, session) {
     }
   })
   
+  # ==== HOW-TO MODAL ======================================================
+observeEvent(input$btn_howto, {
   
+  # Pick the right explanation based on the current tab
+  tab_name <- current_tab()
+  
+  howto_html <- switch(
+    tab_name,
+    
+    "map_tab" = "
+      <h4><i class='fa fa-map'></i> Mapping tool</h4>
+      <p>
+        Explore subnational data visually on an interactive map.
+        Use the variable tree on the left to select an indicator, 
+        choose a country, and move the year slider to see how it changes over time.
+      </p>
+      <p>
+        Hover over regions for details or play the animation to view trends.
+      </p>
+    ",
+    
+    "graph_tab" = "
+      <h4><i class='fa fa-chart-line'></i> Graphing tool</h4>
+      <p>
+        Create time-series plots comparing subnational indicators.
+        Select one or more states from different countries and choose a variable.
+        The graph updates dynamically to show trends across time.
+      </p>
+      <p>
+        Use the legend box to toggle series visibility.
+      </p>
+    ",
+    
+    "camera" = "
+      <h4><i class='fa fa-landmark'></i> Camera Viz tool</h4>
+      <p>
+        Visualize the composition of subnational legislatures.
+        Select a country, state, and chamber (lower or upper house) to view
+        party seat distributions for each election year.
+      </p>
+
+    ",
+    
+    "codebook" = "
+      <h4><i class='fa fa-book-open'></i> Codebook</h4>
+      <p>
+        The codebook provides full definitions and sources for all variables
+        included in the Subnational Politics Project datasets.
+      </p>
+      <p>
+        Use it to understand variable meanings, coding schemes, and references.
+      </p>
+    ",
+    
+    "data_tab" = "
+      <h4><i class='fa fa-table'></i> Databases</h4>
+      <p>
+        Access and download the SPP databases through the Harvard Fataverse repository.
+      </p>
+    ",
+    
+    "about" = "
+      <h4><i class='fa fa-circle-info'></i> About</h4>
+      <p>
+        Learn about the Subnational Politics Project (SPP): 
+        its mission, team, and data infrastructure for the study of subnational politics in Latin America.
+      </p>
+    ",
+    
+    # default fallback
+    "
+      <h4><i class='fa fa-circle-question'></i> Welcome to SPP</h4>
+      <p>
+        Use the sidebar or the top navigation tabs to explore the different sections of the app.
+      </p>
+    "
+  )
+  
+  
+    showModal(
+      tags$div(
+        id = "howToModal",
+        modalDialog(
+        title = HTML("
+              <div style='display:flex; align-items:center; justify-content:center;'>
+                <img src='spp_logo_v5.svg' height='60'/>
+              </div>
+            "),
+      easyClose = TRUE,
+      size = "m",
+      footer = modalButton("Close"),
+      HTML(howto_html)
+    )
+  )
+  )
+})
+
   
   # “No data” message (map)
   output$no_data_message <- renderText("⚠ No data available for this country, variable and year.")
@@ -903,7 +999,34 @@ server <- function(input, output, session) {
   observeEvent(input$tab_data, { updateTabItems(session, "tabs", "data_tab") })
   
   
+ 
   
+  
+  
+  
+  session$sendCustomMessage("fancytree_vars_data", list(
+    data = list(
+      list(title = "Democracy Indices", key = "Democracy Indices", folder = TRUE, children = list(
+        list(title = "SUR Index Giraudy (2015) te das cuenta de lo largo que es este nombre", key = "SUR Index Giraudy (2015)"),
+        list(title = "Contestation Legislative", key = "Contestation Legislative")
+      ))
+    )
+  ))
+  
+  observeEvent(input$selected_nodes_vars2, {
+    # Convert JSON from JS into an R vector
+    selected <- jsonlite::fromJSON(input$selected_nodes_vars2)
+    
+    # Print to console (useful for debugging)
+    cat("Selected node key:", selected, "\n")
+    
+    # Optional: display it in the UI
+    output$selected_node_text <- renderText({
+      paste("You selected:", selected)
+    })
+  })
+  
+   
   
   
 }

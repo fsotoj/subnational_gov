@@ -253,7 +253,8 @@ a:hover, a:focus {
    8) MODAL ABOUT
    ========================================================= */
 #aboutSPPModal .modal-header,
-#devNoticeModal .modal-header,{
+#devNoticeModal .modal-header,
+#howToModal .modal-header{
   background-color: var(--orange) !important;
   display: flex;
   align-items: center;
@@ -264,7 +265,8 @@ a:hover, a:focus {
 }
 
 #aboutSPPModal .modal-header .modal-title,
-#devNoticeModal .modal-header .modal-title{
+#devNoticeModal .modal-header .modal-title,
+#howToModal .modal-header .modal-title {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
@@ -275,7 +277,8 @@ a:hover, a:focus {
 }
 
 #aboutSPPModal .modal-header .modal-title img,
-#devNoticeModal .modal-header .modal-title img{
+#devNoticeModal .modal-header .modal-title img,
+#howToModal .modal-header .modal-title img {
   display: block;
   max-height: 80px;
   height: auto;
@@ -379,20 +382,13 @@ a:hover, a:focus {
 
 
 @media (max-width: 1200px), (max-height: 800px) {
-  #year_selector,
-  .download_map_btn{
+  #year_selector{
     position: fixed !important;    /* fixed relative to viewport, not container */
     bottom: 25px !important;       /* always stick to bottom */
     left: 35% !important;          /* center horizontally */
     right: 15% !important;          /* center horizontally */
     /*transform: translateX(-50%) scale(0.9);  /* slight shrink + center alignment */
     z-index: 2000 !important;
-  }
-
-  /* Avoid overlap between year selector and screenshot button */
-  .download_map_btn {
-    left: calc(35% + 120px) !important; /* move slightly to the right */
-    transform: translateX(-50%) scale(0.9);
   }
 
   
@@ -473,11 +469,6 @@ body.sidebar-collapse #year_selector {
   /*max-width: 90vw;         /* expand width dynamically */
 }
 
-body.sidebar-collapse .download_map_btn {
-  left: calc(20% + 120px) !important; /* shift right when sidebar collapses */
-  transform: translateX(-50%) scale(0.9);
-}
-
 
 /* =========================================================
    20) PORTRAIT MODE — EXPAND YEAR SELECTOR AND DOWNLOAD BUTTON
@@ -487,8 +478,7 @@ body.sidebar-collapse .download_map_btn {
 @media screen and (orientation: portrait) {
 
   /* Let the year selector stretch wider across the bottom */
-  #year_selector,
-  .download_map_btn{
+  #year_selector{
     /*position: fixed !important;    /* fixed relative to viewport, not container */
     bottom: 25px !important;       /* always stick to bottom */
     left: 5% !important;          /* center horizontally */
@@ -496,11 +486,6 @@ body.sidebar-collapse .download_map_btn {
     /*transform: translateX(-50%) scale(0.9);  /* slight shrink + center alignment */
     z-index: 2000 !important;
   }
-
-  /* Enlarge the download button and move it to the right edge */
-  .download_map_btn {
-    left: calc(5% + 120px) !important; /* shift right when sidebar collapses */
-      }
 
   
 }
@@ -716,10 +701,235 @@ background-color: var(--purple) !important; color: #fff !important;
 }
 
 
+
+
+
+
+
 .main-header .navbar .navbar-custom-menu {
-  float: left !important;
+  position: absolute;
+  right: 0;
+  left: 0;
+  width: 100%;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+/* 2️⃣ Turn the inner <ul> into a flexbox container */
+.main-header .navbar .navbar-custom-menu > .nav.navbar-nav {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between; /* left group | right group */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* 4️⃣ TEC logo goes to the far right */
+.main-header .navbar .navbar-custom-menu .tec-logo {
+  order: 2;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+
+
+/* === Responsive header: icons only on small screens or portrait ========== */
+
+/* Hide the text (not the icons) when screen is narrow or in portrait mode */
+@media (max-width: 992px), (orientation: portrait) {
+  .main-header .navbar .navbar-custom-menu .header-tab a {
+    padding: 10px; /* shrink padding a bit */
+  }
+
+  /* Hide the text labels but keep icons visible */
+  .main-header .navbar .navbar-custom-menu .header-tab a {
+    font-size: 0; /* hides text but not icons */
+  }
+
+  .main-header .navbar .navbar-custom-menu .header-tab a i {
+    font-size: 18px; /* restore icon size */
+    margin-right: 0; /* remove gap */
+  }
+
+  /* Optional: hide text in contact link too */
+  #contact-email span {
+    display: none;
+  }
+
+  #contact-email i {
+    font-size: 18px;
+  }
+}
+
+/* Restore text labels for larger screens */
+@media (min-width: 993px) and (orientation: landscape) {
+  .main-header .navbar .navbar-custom-menu .header-tab a {
+    font-size: 14px;
+  }
+  .main-header .navbar .navbar-custom-menu .header-tab a i {
+    margin-right: 6px;
+  }
+}
+
+
+
+/* === Responsive TEC logo behavior ====================================== */
+
+/* Hide the "title" TEC logo by default */
+.tec-logo-title {
+  display: none;
+}
+
+/* Show the right-corner TEC logo normally */
+.main-header .navbar .navbar-custom-menu .tec-logo {
+  display: flex;
+  align-items: center;
+}
+
+/* ------------- Portrait or small screens ------------- */
+@media (orientation: portrait), (max-width: 992px) {
+  /* Hide the right-corner TEC logo */
+  .main-header .navbar .navbar-custom-menu .tec-logo {
+    display: none !important;
+  }
+
+  /* Show the small TEC logo next to the main title */
+  .tec-logo-title {
+    display: inline-block !important;
+  }
+
+  /* Optionally shrink it a bit */
+  .tec-logo-title img {
+    height: 40px !important;
+    vertical-align: middle;
+    padding: 0px 0px;
+  }
+
+  /* Add a bit of spacing between SPP and TEC logos */
+  .app-header-logo {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between; /* Push logos apart */
+    width: 100%;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  .skin-blue .main-header .logo img {
+  padding: 0px 0px;
+  }
+}
+
+.sidebar-howto-container {
+  display: flex;
+  justify-content: center;    /* centers horizontally */
+  padding: 15px 0;            /* top/bottom spacing */
+  width: 100%;
+}
+
+
+.btn-howto {
+  background: var(--orange);
+  color: white !important;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-howto:hover, .btn-howto:focus {
+  background: var(--purple);
+  transform: scale(1.03);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+}
+
+.sidebar-howto-container {
+  text-align: center;        /* centers the inline button */
+  padding: 10px 0 15px 0;    /* top/bottom spacing */
 }
 
 
 
 
+
+/* =========================================================
+   FANCYTREE CONTAINER — NARROWER STYLE (MATCHING JSTREE)
+   ========================================================= */
+
+#fancytree_vars_demo {
+  background: var(--bg-light);
+  border-radius: 5px;
+  box-shadow: var(--shadow-200);
+  padding: 6px;
+  border: 1px solid #ddd;
+  overflow-y: auto;
+  max-height: 200px;        /* keep a comfortable height */
+  width: 220px;             /* 👈 narrower box */
+  min-width: 180px;
+  font-size: 13px;
+  line-height: 1.3em;
+}
+
+/* Center the box if needed */
+#fancytree_vars_demo {
+  margin: 0 auto;           /* centers it horizontally */
+}
+
+/* Inner list cleanup */
+ul.fancytree-container {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  color: var(--text-dark);
+}
+
+/* Multiline titles */
+span.fancytree-title {
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  text-overflow: clip !important;
+  line-height: 1.3em !important;
+  padding: 2px 4px !important;
+  border-radius: 3px;
+}
+
+/* Hover and focus (same as your jsTree theme) */
+span.fancytree-hover .fancytree-title {
+  background-color: rgba(255,169,42,0.25) !important; /* orange hover tint */
+  color: var(--text-dark) !important;
+}
+span.fancytree-active .fancytree-title,
+span.fancytree-focused .fancytree-title {
+  background-color: var(--purple) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+
+
+
+
+
+/* Fancytree multiline titles */
+span.fancytree-title {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  line-height: 1.4em !important;
+  padding: 2px 4px !important;
+}
+
+/* Optional: match your orange-purple theme */
+span.fancytree-active .fancytree-title {
+  background-color: var(--purple) !important;
+  color: #fff !important;
+}
+span.fancytree-hover .fancytree-title {
+  background-color: rgba(255,169,42,0.25) !important;
+}
