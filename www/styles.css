@@ -714,3 +714,12 @@ background-color: var(--purple) !important; color: #fff !important;
   margin-top: 5px; /* tweak or remove if not needed */
   margin-bottom: 5px;
 }
+
+
+.main-header .navbar .navbar-custom-menu {
+  float: left !important;
+}
+
+
+
+

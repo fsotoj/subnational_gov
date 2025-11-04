@@ -1,54 +1,74 @@
 
 
 ui <- dashboardPage(  
-  dashboardHeader(title = tags$div(
-    class = "app-header-logo",
-    tags$img(src = "spp_logo_v5.svg", height = "50px")
+  dashboardHeader(
+    title = tags$div(
+      class = "app-header-logo",
+      tags$img(src = "spp_logo_v5.svg", height = "50px")
     ),
-     titleWidth = 390,
-    tags$li(
-      class = "dropdown app-header-logo tec-logo",
-      tags$a(
-        href = "https://egobiernoytp.tec.mx/es/escuela-de-ciencias-sociales-y-gobierno",
-        target = "_blank",
-        tags$img(src = "EscuelaCienciasSocialesyGobierno_Horizontal_Blanco.png",
-                 height = "40px",
-                 style = "vertical-align: middle;"
-                 
-                 #style = "max-height: 70px; padding: 0;"
-        )
-      )
-    ),
+    titleWidth = 390,
+    
+    # --- TOP NAVIGATION MENU ---
+    tags$li(class = "dropdown header-tab", a(href="#", id="tab_about", icon("info-circle"), "About")),
+    tags$li(class = "dropdown header-tab", a(href="#", id="tab_map", icon("map"), "Mapping tool")),
+    tags$li(class = "dropdown header-tab", a(href="#", id="tab_graph", icon("chart-line"), "Graphing tool")),
+    tags$li(class = "dropdown header-tab", a(href="#", id="tab_camera", icon("landmark"), "Camera Viz")),
+    tags$li(class = "dropdown header-tab", a(href="#", id="tab_codebook", icon("book-open"), "Codebook")),
+    tags$li(class = "dropdown header-tab", a(href="#", id="tab_data", icon("table"), "Databases")),
+    
+    
+    # --- Logos and Contact Link (keep these as before) ---
     tags$li(
       class = "dropdown",
-      # mailto can include prefilled subject/body if you like
       tags$a(
         id = "contact-email",
         href = "mailto:subnationalpoliticsproject@gmail.com?subject=SPP%20contact&body=Hi%20SPP%20team%2C%0D%0A",
         target = "_blank",
         `aria-label` = "Email contact",
         icon("envelope"),
-        # show label on desktop, hide on very small screens
         span(class = "hidden-xs", " Contact SPP")
+      )
+    ),
+    tags$li(
+      class = "dropdown app-header-logo tec-logo",
+      tags$a(
+        href = "https://egobiernoytp.tec.mx/es/escuela-de-ciencias-sociales-y-gobierno",
+        target = "_blank",
+        tags$img(
+          src = "EscuelaCienciasSocialesyGobierno_Horizontal_Blanco.png",
+          height = "40px",
+          style = "vertical-align: middle;"
+        )
       )
     )
     
-    # --- /NEW ---
   ),
   title = "SPP-Subnational Politics Project",   # <-- this sets <title>
   dashboardSidebar(
     width = 390,
     useShinyjs(),
     tagList(
-      sidebarMenu(id = "tabs",
-                  menuItem("About", tabName = "about", icon = icon("info-circle")),
-                  menuItem("Mapping tool", tabName = "map_tab", icon = icon("map"),selected = TRUE),
-                  menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
-                  menuItem("Camera Viz tool", tabName = "camera", icon = icon("landmark")),
-                  menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
-                  menuItem("Databases", tabName = "data_tab", icon = icon("table"))
-                  
+      # sidebarMenu(id = "tabs",
+      #             menuItem("About", tabName = "about", icon = icon("info-circle")),
+      #             menuItem("Mapping tool", tabName = "map_tab", icon = icon("map"),selected = TRUE),
+      #             menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
+      #             menuItem("Camera Viz tool", tabName = "camera", icon = icon("landmark")),
+      #             menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
+      #             menuItem("Databases", tabName = "data_tab", icon = icon("table"))
+      # 
+      # ),
+      div(
+        style = "display:none;",
+        sidebarMenu(id = "tabs",
+                    menuItem("About", tabName = "about"),
+                    menuItem("Mapping tool", tabName = "map_tab",selected = TRUE),
+                    menuItem("Graphing tool", tabName = "graph_tab"),
+                    menuItem("Camera Viz tool", tabName = "camera"),
+                    menuItem("Codebook", tabName = "codebook"),
+                    menuItem("Databases", tabName = "data_tab")
+        )
       ),
+      
       hidden(uiOutput("db_selector")),
       hidden(uiOutput("country_selector")),  # default: visible
       #hidden(selectInput("var_sel", "Variable", choices = NULL)),
@@ -86,6 +106,18 @@ ui <- dashboardPage(
   ),
   dashboardBody(
     tags$head(includeHTML("ga.html")),
+    tags$head(
+      # --- JS: make header tabs switch between tabItems ---
+      tags$script(HTML("
+    $(document).on('click', '.header-tab > a', function(e) {
+      e.preventDefault();
+      var tabId = $(this).attr('id');
+      Shiny.setInputValue(tabId, new Date().getTime());
+    });
+  ")),
+      
+      # --- Optional CSS for nicer look ---
+    ),
     tags$footer(
       style = "
       position: fixed;

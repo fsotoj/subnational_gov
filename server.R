@@ -2,8 +2,15 @@ server <- function(input, output, session) {
   
   # ==== 0) CONSTANTS / INITIALIZATION =======================================
   default_states <- c("ARGENTINA-CAPITAL FEDERAL", "BRAZIL-DISTRITO FEDERAL", "MEXICO-CDMX")
-  current_tab   <- reactive({ input$tabs })
+  #current_tab   <- reactive({ input$tabs })
   
+  current_tab <- reactiveVal("map_tab")
+  
+  observeEvent(input$tabs, {
+    current_tab(input$tabs)
+  })
+  
+
   # Initialize JSTree with default selection
   observeEvent(session, {
     session$sendCustomMessage(
@@ -885,7 +892,22 @@ server <- function(input, output, session) {
   output$pdf_visor <- renderUI({
     tags$iframe(style = "height:800px; width:100%;", src = "SPP_codebook.pdf")
   })
+  
+  # ==== 12) TABS ======================================================
+  
+  observeEvent(input$tab_about, { updateTabItems(session, "tabs", "about") })
+  observeEvent(input$tab_map, { updateTabItems(session, "tabs", "map_tab") })
+  observeEvent(input$tab_graph, { updateTabItems(session, "tabs", "graph_tab") })
+  observeEvent(input$tab_camera, { updateTabItems(session, "tabs", "camera") })
+  observeEvent(input$tab_codebook, { updateTabItems(session, "tabs", "codebook") })
+  observeEvent(input$tab_data, { updateTabItems(session, "tabs", "data_tab") })
+  
+  
+  
+  
+  
 }
+
 
 
 
