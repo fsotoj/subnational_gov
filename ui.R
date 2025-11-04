@@ -4,9 +4,18 @@ ui <- dashboardPage(
   dashboardHeader(
     title = tags$div(
       class = "app-header-logo",
-      tags$img(src = "spp_logo_v5.svg", height = "50px")
+      tags$img(src = "spp_logo_v5.svg", height = "50px"),
+      tags$div(
+        class = "tec-logo-title",  # 👈 new class for portrait version
+        tags$img(
+          src = "EscuelaCienciasSocialesyGobierno_Horizontal_Negro.jpg",
+          height = "36px",
+          style = "margin-left: 10px; vertical-align: middle;"
+        )
+      )
     ),
-    titleWidth = 390,
+    
+    titleWidth = 300,
     
     # --- TOP NAVIGATION MENU ---
     tags$li(class = "dropdown header-tab", a(href="#", id="tab_about", icon("info-circle"), "About")),
@@ -26,7 +35,7 @@ ui <- dashboardPage(
         target = "_blank",
         `aria-label` = "Email contact",
         icon("envelope"),
-        span(class = "hidden-xs", " Contact SPP")
+        span(class = "hidden-xs", " Contact")
       )
     ),
     tags$li(
@@ -45,7 +54,7 @@ ui <- dashboardPage(
   ),
   title = "SPP-Subnational Politics Project",   # <-- this sets <title>
   dashboardSidebar(
-    width = 390,
+    width = 250,
     useShinyjs(),
     tagList(
       # sidebarMenu(id = "tabs",
@@ -57,6 +66,16 @@ ui <- dashboardPage(
       #             menuItem("Databases", tabName = "data_tab", icon = icon("table"))
       # 
       # ),
+      
+      div(
+        class = "sidebar-howto-container",
+        actionButton(
+          inputId = "btn_howto",
+          label = tagList(icon("circle-question"), " How to"),
+          class = "btn-howto",width = 150
+        )
+      ),
+      
       div(
         style = "display:none;",
         sidebarMenu(id = "tabs",
@@ -68,6 +87,7 @@ ui <- dashboardPage(
                     menuItem("Databases", tabName = "data_tab")
         )
       ),
+      div(id = "fancytree_vars_demo"),
       
       hidden(uiOutput("db_selector")),
       hidden(uiOutput("country_selector")),  # default: visible
@@ -154,6 +174,16 @@ ui <- dashboardPage(
       }
     ")),
       tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/jstree.min.js"),
+      tags$link(
+        rel = "stylesheet",
+        href = "https://cdn.jsdelivr.net/npm/jquery.fancytree@2/dist/skin-lion/ui.fancytree.min.css"
+      ),
+      tags$script(
+        src = "https://cdn.jsdelivr.net/npm/jquery.fancytree@2/dist/jquery.fancytree-all-deps.min.js"
+      ),
+      
+      # --- Optional: your own initialization logic ---
+      tags$script(src = "fancytree_init.js"),   # put this in www/
       tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/themes/default/style.min.css"),
       tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"),
       tags$link(id = "theme-css", rel = "stylesheet", type = "text/css", href = "styles.css"),
