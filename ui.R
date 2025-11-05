@@ -87,7 +87,6 @@ ui <- dashboardPage(
                     menuItem("Databases", tabName = "data_tab")
         )
       ),
-      div(id = "fancytree_vars_demo"),
       
       hidden(uiOutput("db_selector")),
       hidden(uiOutput("country_selector")),  # default: visible
@@ -99,13 +98,23 @@ ui <- dashboardPage(
           tags$label("Select a state:", `for` = "jstree_demo"),
           div(id = "jstree_demo")
         )),
-      shinyjs::hidden(
-        div(
-          id = "jstree_vars_container", # Agregamos un ID para poder referenciarlo
-          style = "padding: 15px;",
-          tags$label("Select a variable:", `for` = "jstree_vars_demo"),
-          div(id = "jstree_vars_demo")
-        )),
+      
+      hidden(
+        div( id= "fancytree_vars_demo_container",
+             style = "padding: 15px;",
+          tags$label("Select a variable:", `for` = "fancytree_vars_demo"),
+          div(id = "fancytree_vars_demo")
+        )
+      ),
+      
+      
+      # shinyjs::hidden(
+      #   div(
+      #     id = "jstree_vars_container", # Agregamos un ID para poder referenciarlo
+      #     style = "padding: 15px;",
+      #     tags$label("Select a variable:", `for` = "jstree_vars_demo"),
+      #     div(id = "jstree_vars_demo")
+      #   )),
       
       shinyjs::hidden(
         div(

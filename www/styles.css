@@ -860,76 +860,99 @@ background-color: var(--purple) !important; color: #fff !important;
 /* =========================================================
    FANCYTREE CONTAINER — NARROWER STYLE (MATCHING JSTREE)
    ========================================================= */
+/* Allow wrapping inside title */
+/* ✅ Allow title wrapping only */
+#fancytree_vars_demo span.fancytree-title {
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  display: inline-block !important;
+  line-height: 1.25em;
+  max-width: 95%;
+  padding: 2px 3px;
+}
 
+/* ✅ Keep icons/top aligned when text wraps */
+#fancytree_vars_demo span.fancytree-node {
+  vertical-align: top;
+}
+
+/* ✅ Let rows grow with content */
+#fancytree_vars_demo .fancytree-node {
+  min-height: 20px;        /* default row height; auto grows */
+  background: transparent !important;
+}
+
+/* ✅ Expand the inner container to fill outer box */
+#fancytree_vars_demo .fancytree-container {
+  width: 100% !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  box-sizing: border-box !important;
+}
+
+/* ✅ Style the outer box (jsTree-like) */
 #fancytree_vars_demo {
   background: var(--bg-light);
   border-radius: 5px;
   box-shadow: var(--shadow-200);
-  padding: 6px;
+  padding: 5px;
   border: 1px solid #ddd;
   overflow-y: auto;
-  max-height: 200px;        /* keep a comfortable height */
-  width: 220px;             /* 👈 narrower box */
-  min-width: 180px;
-  font-size: 13px;
-  line-height: 1.3em;
+  max-height: 200px;
+  width: 100% !important;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* Center the box if needed */
-#fancytree_vars_demo {
-  margin: 0 auto;           /* centers it horizontally */
-}
+/* -------------------------------------------------------
+   Base neutralization (matching jsTree)
+------------------------------------------------------- */
 
-/* Inner list cleanup */
-ul.fancytree-container {
-  border: none !important;
+/* Remove built-in background on nodes */
+#fancytree_vars_demo span.fancytree-node,
+#fancytree_vars_demo span.fancytree-title {
   background: transparent !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  color: var(--text-dark);
+  box-shadow: none !important;
 }
 
-/* Multiline titles */
-span.fancytree-title {
-  white-space: normal !important;
-  word-break: break-word !important;
-  overflow-wrap: anywhere !important;
-  text-overflow: clip !important;
-  line-height: 1.3em !important;
-  padding: 2px 4px !important;
+/* -------------------------------------------------------
+   Full-row hover (like jstree-wholerow-hovered)
+------------------------------------------------------- */
+
+#fancytree_vars_demo span.fancytree-node:hover {
+  background-color: rgba(255,169,42,0.25) !important; /* hover tint */
   border-radius: 3px;
 }
 
-/* Hover and focus (same as your jsTree theme) */
-span.fancytree-hover .fancytree-title {
-  background-color: rgba(255,169,42,0.25) !important; /* orange hover tint */
-  color: var(--text-dark) !important;
+/* Remove inner title background so row stays clean */
+#fancytree_vars_demo span.fancytree-node:hover span.fancytree-title {
+  background: transparent !important;
 }
-span.fancytree-active .fancytree-title,
-span.fancytree-focused .fancytree-title {
+
+/* -------------------------------------------------------
+   Full-row selected (like jstree-wholerow-clicked)
+------------------------------------------------------- */
+
+#fancytree_vars_demo span.fancytree-node.fancytree-active {
   background-color: var(--purple) !important;
+  border-radius: 3px;
+}
+
+/* Text on selected row (white + bold, like jsTree) */
+#fancytree_vars_demo span.fancytree-node.fancytree-active span.fancytree-title {
   color: #fff !important;
   font-weight: 600 !important;
+  background: transparent !important;
+}
+
+#fancytree_vars_demo {
+  overflow-x: hidden !important;   /* ✅ Kill horizontal scroll entirely */
+}
+
+#fancytree_vars_demo .fancytree-container {
+  overflow-x: hidden !important;   /* ✅ Prevent internal sideways scroll */
 }
 
 
-
-
-
-
-/* Fancytree multiline titles */
-span.fancytree-title {
-  white-space: normal !important;
-  word-wrap: break-word !important;
-  line-height: 1.4em !important;
-  padding: 2px 4px !important;
-}
-
-/* Optional: match your orange-purple theme */
-span.fancytree-active .fancytree-title {
-  background-color: var(--purple) !important;
-  color: #fff !important;
-}
-span.fancytree-hover .fancytree-title {
-  background-color: rgba(255,169,42,0.25) !important;
-}

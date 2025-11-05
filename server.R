@@ -23,13 +23,31 @@ server <- function(input, output, session) {
   })
   
 
-  # Send to the client (message name is up to you; example: "jstree_vars_data")
+  # # Send to the client (message name is up to you; example: "jstree_vars_data")
+  # observeEvent(session, {
+  #   session$sendCustomMessage(
+  #     "jstree_vars_data",
+  #     list(
+  #       data = jstree_json_vars, 
+  #       default_selected = list("Executive Elections-Valid Votes") # optional
+  #     )
+  #   )
+  # })
+  
+  
+  
+  
   observeEvent(session, {
+    fancytree_json_vars <- get_fancytree_data_vars(
+      dict %>% 
+        filter(viewable_map == 1, variable != "chamber_sub_leg")
+    )
+    
     session$sendCustomMessage(
-      "jstree_vars_data",
+      "fancytree_vars_data",
       list(
-        data = jstree_json_vars, 
-        default_selected = list("Executive Elections-Valid Votes") # optional
+        data = jsonlite::fromJSON(fancytree_json_vars, simplifyVector = FALSE),
+        default_selected = list("Executive Elections-Valid Votes")
       )
     )
   })
@@ -57,29 +75,63 @@ server <- function(input, output, session) {
   
   
   # -- 1.0) vars JSTree map ----------------------
+  # selected_vars_vector <- reactive({
+  #   x <- input$selected_nodes_vars
+  #   if (is.null(x) || identical(x, "[]")) return(NULL)
+  #   ids <- jsonlite::fromJSON(x)
+  #   if (!length(ids)) return(NULL)
+  #   
+  #   parts <- strsplit(ids[1], "-", fixed = TRUE)[[1]]
+  #   # SLED-Lower-Pretty... / SLED-Upper-Pretty...
+  #   if (identical(parts[1], "Legislative Elections") && length(parts) >= 3 && parts[2] %in% c("Lower Chamber","Upper Chamber")) {
+  #     
+  #     n_chamber <- case_when(parts[2] == "Lower Chamber" ~ 1,
+  #                            parts[2] == "Upper Chamber" ~ 2)
+  #     
+  #     dict %>% 
+  #       filter(pretty_name == paste(parts[3:length(parts)], collapse = "-")) %>% 
+  #       pull(variable) %>% 
+  #       paste0(.,"_",n_chamber)
+  #     
+  #   } else {
+  #     # Generic: DATASET-Pretty...
+  #     
+  #     dict %>% filter(pretty_name == paste(parts[2:length(parts)], collapse = "-")) %>% pull(variable)
+  #     
+  #   }
+  # })
+  
+  
   selected_vars_vector <- reactive({
-    x <- input$selected_nodes_vars
-    if (is.null(x) || identical(x, "[]")) return(NULL)
-    ids <- jsonlite::fromJSON(x)
-    if (!length(ids)) return(NULL)
+    x <- input$selected_nodes_vars2
+    if (is.null(x) || x == "") return(NULL)
     
-    parts <- strsplit(ids[1], "-", fixed = TRUE)[[1]]
-    # SLED-Lower-Pretty... / SLED-Upper-Pretty...
-    if (identical(parts[1], "Legislative Elections") && length(parts) >= 3 && parts[2] %in% c("Lower Chamber","Upper Chamber")) {
+    # Fancytree sends a simple string (not a JSON array), so no fromJSON
+    key <- x
+    parts <- strsplit(key, "-", fixed = TRUE)[[1]]
+    
+    # Check SLED structure
+    if (identical(parts[1], "Legislative Elections") &&
+        length(parts) >= 3 &&
+        parts[2] %in% c("Lower Chamber", "Upper Chamber")) {
       
-      n_chamber <- case_when(parts[2] == "Lower Chamber" ~ 1,
-                             parts[2] == "Upper Chamber" ~ 2)
+      chamber <- parts[2]
+      n_chamber <- ifelse(chamber == "Lower Chamber", 1, 2)
       
-      dict %>% 
-        filter(pretty_name == paste(parts[3:length(parts)], collapse = "-")) %>% 
-        pull(variable) %>% 
-        paste0(.,"_",n_chamber)
+      pretty <- paste(parts[3:length(parts)], collapse = "-")
+      
+      dict %>%
+        filter(pretty_name == pretty) %>%
+        pull(variable) %>%
+        paste0("_", n_chamber)
       
     } else {
-      # Generic: DATASET-Pretty...
+      # Generic format: DATASET-Pretty Name
+      pretty <- paste(parts[2:length(parts)], collapse = "-")
       
-      dict %>% filter(pretty_name == paste(parts[2:length(parts)], collapse = "-")) %>% pull(variable)
-      
+      dict %>%
+        filter(pretty_name == pretty) %>%
+        pull(variable)
     }
   })
   
@@ -122,109 +174,6 @@ server <- function(input, output, session) {
     dplyr::left_join(geom_filtered, data_filtered, by = "country_state_code")
   })
   
-  
-  # ==== 1.1) DATA TAB SELECTORS (based on active dataset) ====================
-  # active_df <- reactive({
-  #   req(input$db_sel)
-  #   switch(input$db_sel,
-  #          SED = SED, SEED = SEED, SLED = SLED, NED = NED, CFTDFLD = CFTDFLD)
-  # })
-  # has_col <- function(df, nm) nm %in% names(df)
-  # uniq_sorted <- function(x) sort(unique(stats::na.omit(x)))
-  # 
-  # available_countries <- reactive({
-  #   df <- active_df()
-  #   if (!has_col(df, "country_name")) character(0) else uniq_sorted(df$country_name)
-  # })
-  # available_states <- reactive({
-  #   df <- active_df()
-  #   if (!has_col(df, "state_name")) character(0) else {
-  #     if (!length(input$country_sel2)) uniq_sorted(df$state_name)
-  #     else uniq_sorted(df$state_name[df$country_name == input$country_sel2])
-  #   }
-  # })
-  # available_years_scoped <- reactive({
-  #   df <- active_df()
-  #   if (!has_col(df, "year")) return(integer(0))
-  #   if (has_col(df, "country_name") && !is.null(input$country_sel2) && nzchar(input$country_sel2)) {
-  #     df <- df[df$country_name == input$country_sel2, , drop = FALSE]
-  #   }
-  #   if (has_col(df, "state_name") && !is.null(input$state_sel2) && nzchar(input$state_sel2)) {
-  #     df <- df[df$state_name == input$state_sel2, , drop = FALSE]
-  #   }
-  #   uniq_sorted(df$year)
-  # })
-  # 
-  # # Update Data Tab selectors when active dataset changes
-  # observeEvent(active_df(), {
-  #   req(current_tab() == "data_tab")
-  #   shinyjs::disable("country_sel2"); shinyjs::disable("state_sel2"); shinyjs::disable("years")
-  #   
-  #   # Countries
-  #   countries <- available_countries()
-  #   new_country <- if (length(input$country_sel2) && input$country_sel2 %in% countries) input$country_sel2 else countries[1]
-  #   updateSelectInput(session, "country_sel2", choices = countries, selected = new_country)
-  #   
-  #   # States
-  #   states <- isolate(available_states())
-  #   if (length(states)) {
-  #     new_state <- if (length(input$state_sel2) && input$state_sel2 %in% states) input$state_sel2 else states[1]
-  #     updateSelectInput(session, "state_sel2", choices = states, selected = new_state)
-  #     shinyjs::enable("state_sel2")
-  #   } else {
-  #     updateSelectInput(session, "state_sel2", choices = character(0), selected = character(0))
-  #     shinyjs::disable("state_sel2")
-  #   }
-  #   
-  #   # Years (pickerInput)
-  #   yrs <- available_years_scoped()
-  #   old_sel <- isolate(input$years)
-  #   new_sel <- if (length(old_sel) && all(old_sel %in% yrs)) old_sel else yrs
-  #   shinyWidgets::updatePickerInput(session, "years", choices = yrs, selected = new_sel)
-  #   
-  #   shinyjs::enable("country_sel2"); shinyjs::enable("years")
-  # })
-  # 
-  # # Refresh states when country changes (Data Tab)
-  # observeEvent(input$country_sel2, {
-  #   req(current_tab() == "data_tab")
-  #   shinyjs::disable("state_sel2")
-  #   states <- available_states()
-  #   if (length(states)) {
-  #     new_state <- if (length(input$state_sel2) && input$state_sel2 %in% states) input$state_sel2 else states[1]
-  #     updateSelectInput(session, "state_sel2", choices = states, selected = new_state)
-  #     shinyjs::enable("state_sel2")
-  #   } else {
-  #     updateSelectInput(session, "state_sel2", choices = character(0), selected = character(0))
-  #   }
-  # }, ignoreInit = TRUE)
-  # 
-  # # Refresh years (Data Tab) on dataset/country/state changes
-  # observeEvent(list(active_df(), input$country_sel2, input$state_sel2), {
-  #   req(current_tab() == "data_tab")
-  #   yrs <- available_years_scoped()
-  #   old_sel <- isolate(input$years)
-  #   new_sel <- if (length(old_sel) && all(old_sel %in% yrs)) old_sel else yrs
-  #   shinyjs::disable("years")
-  #   shinyWidgets::updatePickerInput(session, "years", choices = yrs, selected = new_sel)
-  #   shinyjs::enable("years")
-  # }, ignoreInit = TRUE)
-  # 
-  # 
-  # # ==== 1.2) FILTERED DATA FOR TABLE MODULE (outside module) =================
-  # data_filtered <- reactive({
-  #   df <- active_df()
-  #   if (has_col(df, "country_name") && length(input$country_sel2)) {
-  #     df <- df[df$country_name == input$country_sel2, , drop = FALSE]
-  #   }
-  #   if (has_col(df, "state_name") && length(input$state_sel2)) {
-  #     df <- df[df$state_name == input$state_sel2, , drop = FALSE]
-  #   }
-  #   if (has_col(df, "year") && length(input$years)) {
-  #     df <- df[df$year %in% input$years, , drop = FALSE]  # pickerInput → membership
-  #   }
-  #   df
-  # })
   
   
   # ==== 1.3) CAMERA TAB SELECTORS (SLED-driven) ==============================
@@ -732,7 +681,8 @@ observeEvent(input$btn_howto, {
   ALL_TOGGLES <- c(
     # map/graph controls
     "country_selector","var_sel","var_description_map","var_description_graph","jstree_container",
-    "state_selector","jstree_vars_container","jstree_vars_container_graph",
+    "state_selector",#"jstree_vars_container",
+    "jstree_vars_container_graph","fancytree_vars_demo_container",
     # data-tab selectors
     #"country_sel2","state_sel2","db_selector","years",
     # legacy camera selector
@@ -744,7 +694,7 @@ observeEvent(input$btn_howto, {
   # Given a tab, return vector of IDs to show
   .ids_to_show_for_tab <- function(tab) {
     switch(tab,
-           "map_tab"   = c("country_selector","var_sel","var_description_map","jstree_vars_container"),
+           "map_tab"   = c("country_selector","var_sel","var_description_map","fancytree_vars_demo_container"),
            "graph_tab" = c("var_description_graph","state_selector","jstree_container","jstree_vars_container_graph"),
            #"data_tab"  = c("country_sel2","state_sel2","db_selector","years"),
            "camera"    = c("country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera"),
@@ -844,40 +794,41 @@ observeEvent(input$btn_howto, {
   # ==== 7) VARIABLE DESCRIPTIONS (map & graph) ==============================
   output$var_description_map <- renderUI({
     req(selected_vars_vector())
-    x <- input$selected_nodes_vars
-    if (is.null(x) || identical(x, "[]")) return(NULL)
-    ids <- jsonlite::fromJSON(x)
-    if (!length(ids)) return(NULL)
     
-    parts <- strsplit(ids[1], "-", fixed = TRUE)[[1]]
+    # Fancytree sends a single string key
+    key <- input$selected_nodes_vars2
+    if (is.null(key) || key == "") return(NULL)
     
+    parts <- strsplit(key, "-", fixed = TRUE)[[1]]
     
-    if (identical(parts[1], "Legislative Elections") && length(parts) >= 3 && parts[2] %in% c("Lower Chamber","Upper Chamber")) {
-     chamber <- parts[2]
-    } else {
-       chamber <- NULL
-     }
+    # Detect chamber (only applies to Legislative Elections)
+    chamber <- NULL
+    if (identical(parts[1], "Legislative Elections") &&
+        length(parts) >= 3 &&
+        parts[2] %in% c("Lower Chamber", "Upper Chamber")) {
+      chamber <- parts[2]
+    }
     
+    # Remove _1/_2 suffix from variable ID
+    clean_var <- sub("_[12]$", "", selected_vars_vector())
     
-    clean_var <- sub("_[12]$", "", selected_vars_vector())  # remove "_1" or "_2" at the end
+    # Retrieve metadata
+    var_info <- dict %>%
+      dplyr::filter(variable == clean_var) %>%
+      dplyr::slice(1)
     
-    var_info <- dict %>% dplyr::filter(variable == clean_var) %>% dplyr::slice(1)
-    #paste0(var_info$pretty_name[1], ": ", var_info$description[1], input$selected_nodes_vars)
-    
-    text_d <- paste0("<div>You are seeing <strong>",var_info$description_for_ui[1], "</strong>",
-                     ifelse(!is.null(chamber),paste0(
-                      " (",chamber,") "),
-                      ""),
-                     #"</strong> for the year",
-           # input$year_sel,
-           # " in ",stringr::str_to_title(input$country_sel),
-           "; from the Subnational <strong>",
-           parts[1],
-           "</strong> Database.</div>") 
+    # Build text
+    text_d <- paste0(
+      "<div>You are seeing <strong>",
+      var_info$description_for_ui[1], "</strong>",
+      if (!is.null(chamber)) paste0(" (", chamber, ")") else "",
+      "; from the Subnational <strong>", parts[1],
+      "</strong> Database.</div>"
+    )
     
     HTML(text_d)
-    
   })
+  
   
   
   output$var_description_graph <- renderUI({
@@ -1003,28 +954,6 @@ observeEvent(input$btn_howto, {
   
   
   
-  
-  session$sendCustomMessage("fancytree_vars_data", list(
-    data = list(
-      list(title = "Democracy Indices", key = "Democracy Indices", folder = TRUE, children = list(
-        list(title = "SUR Index Giraudy (2015) te das cuenta de lo largo que es este nombre", key = "SUR Index Giraudy (2015)"),
-        list(title = "Contestation Legislative", key = "Contestation Legislative")
-      ))
-    )
-  ))
-  
-  observeEvent(input$selected_nodes_vars2, {
-    # Convert JSON from JS into an R vector
-    selected <- jsonlite::fromJSON(input$selected_nodes_vars2)
-    
-    # Print to console (useful for debugging)
-    cat("Selected node key:", selected, "\n")
-    
-    # Optional: display it in the UI
-    output$selected_node_text <- renderText({
-      paste("You selected:", selected)
-    })
-  })
   
    
   
