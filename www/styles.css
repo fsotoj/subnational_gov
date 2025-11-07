@@ -225,7 +225,7 @@ a:hover, a:focus {
   height: auto;
   width: auto;
   background-color: #fff;
-  padding: 0px 30px;
+  padding: 0px 0px;
 }
 
 .skin-blue .main-header .logo #sidebar-toggle-relocated {
@@ -858,11 +858,12 @@ background-color: var(--purple) !important; color: #fff !important;
 
 
 /* =========================================================
-   FANCYTREE CONTAINER — NARROWER STYLE (MATCHING JSTREE)
+   FANCYTREE 
    ========================================================= */
-/* Allow wrapping inside title */
-/* ✅ Allow title wrapping only */
-#fancytree_vars_demo span.fancytree-title {
+/* ✅ Allow title wrapping */
+#fancytree_vars_demo span.fancytree-title,
+#fancytree_vars_demo_graph span.fancytree-title,
+#fancytree_states_demo span.fancytree-title {
   white-space: normal !important;
   overflow-wrap: anywhere !important;
   display: inline-block !important;
@@ -871,35 +872,45 @@ background-color: var(--purple) !important; color: #fff !important;
   padding: 2px 3px;
 }
 
-/* ✅ Keep icons/top aligned when text wraps */
-#fancytree_vars_demo span.fancytree-node {
+/* ✅ Keep icons aligned when text wraps */
+#fancytree_vars_demo span.fancytree-node,
+#fancytree_vars_demo_graph span.fancytree-node,
+#fancytree_states_demo span.fancytree-node {
   vertical-align: top;
 }
 
 /* ✅ Let rows grow with content */
-#fancytree_vars_demo .fancytree-node {
-  min-height: 20px;        /* default row height; auto grows */
+#fancytree_vars_demo .fancytree-node,
+#fancytree_vars_demo_graph .fancytree-node,
+#fancytree_states_demo .fancytree-node {
+  min-height: 20px;
   background: transparent !important;
 }
 
-/* ✅ Expand the inner container to fill outer box */
-#fancytree_vars_demo .fancytree-container {
+/* ✅ Expand inner container */
+#fancytree_vars_demo .fancytree-container,
+#fancytree_vars_demo_graph .fancytree-container,
+#fancytree_states_demo .fancytree-container {
   width: 100% !important;
   border: none !important;
   padding: 0 !important;
   margin: 0 !important;
   background: transparent !important;
   box-sizing: border-box !important;
+  overflow-x: hidden !important;
 }
 
-/* ✅ Style the outer box (jsTree-like) */
-#fancytree_vars_demo {
+/* ✅ Style the OUTER box (jsTree look) */
+#fancytree_vars_demo,
+#fancytree_vars_demo_graph,
+#fancytree_states_demo {
   background: var(--bg-light);
   border-radius: 5px;
   box-shadow: var(--shadow-200);
   padding: 5px;
   border: 1px solid #ddd;
   overflow-y: auto;
+  overflow-x: hidden !important;
   max-height: 200px;
   width: 100% !important;
   margin-left: auto;
@@ -907,52 +918,74 @@ background-color: var(--purple) !important; color: #fff !important;
 }
 
 /* -------------------------------------------------------
-   Base neutralization (matching jsTree)
+   Base neutralization (remove default fancytree styling)
 ------------------------------------------------------- */
-
-/* Remove built-in background on nodes */
 #fancytree_vars_demo span.fancytree-node,
-#fancytree_vars_demo span.fancytree-title {
+#fancytree_vars_demo_graph span.fancytree-node,
+#fancytree_states_demo span.fancytree-node,
+#fancytree_vars_demo span.fancytree-title,
+#fancytree_vars_demo_graph span.fancytree-title,
+#fancytree_states_demo span.fancytree-title {
   background: transparent !important;
   box-shadow: none !important;
 }
 
 /* -------------------------------------------------------
-   Full-row hover (like jstree-wholerow-hovered)
+   FULL-ROW HOVER (jsTree-like)
 ------------------------------------------------------- */
-
-#fancytree_vars_demo span.fancytree-node:hover {
-  background-color: rgba(255,169,42,0.25) !important; /* hover tint */
+#fancytree_vars_demo span.fancytree-node:hover,
+#fancytree_vars_demo_graph span.fancytree-node:hover,
+#fancytree_states_demo span.fancytree-node:hover {
+  background-color: rgba(255,169,42,0.25) !important;
   border-radius: 3px;
 }
 
-/* Remove inner title background so row stays clean */
-#fancytree_vars_demo span.fancytree-node:hover span.fancytree-title {
+/* Remove inner title background */
+#fancytree_vars_demo span.fancytree-node:hover span.fancytree-title,
+#fancytree_vars_demo_graph span.fancytree-node:hover span.fancytree-title,
+#fancytree_states_demo span.fancytree-node:hover span.fancytree-title {
   background: transparent !important;
 }
 
 /* -------------------------------------------------------
-   Full-row selected (like jstree-wholerow-clicked)
+   FULL-ROW SELECTED (active)
 ------------------------------------------------------- */
-
-#fancytree_vars_demo span.fancytree-node.fancytree-active {
+#fancytree_vars_demo span.fancytree-node.fancytree-active,
+#fancytree_vars_demo_graph span.fancytree-node.fancytree-active,
+#fancytree_states_demo span.fancytree-node.fancytree-active {
   background-color: var(--purple) !important;
   border-radius: 3px;
 }
 
-/* Text on selected row (white + bold, like jsTree) */
-#fancytree_vars_demo span.fancytree-node.fancytree-active span.fancytree-title {
+/* Selected text */
+#fancytree_vars_demo span.fancytree-node.fancytree-active span.fancytree-title,
+#fancytree_vars_demo_graph span.fancytree-node.fancytree-active span.fancytree-title,
+#fancytree_states_demo span.fancytree-node.fancytree-active span.fancytree-title {
   color: #fff !important;
-  font-weight: 600 !important;
   background: transparent !important;
+  outline: none;
 }
 
-#fancytree_vars_demo {
-  overflow-x: hidden !important;   /* ✅ Kill horizontal scroll entirely */
+
+/* -----------------------------------------------
+   STATES TREE: selected nodes keep the hover style
+   (because multiselect is allowed)
+------------------------------------------------ */
+
+/* Selected row uses same color as hover */
+#fancytree_states_demo span.fancytree-node.fancytree-selected {
+  background-color: rgba(255,169,42,0.25) !important;
+  border-radius: 3px;
 }
 
-#fancytree_vars_demo .fancytree-container {
-  overflow-x: hidden !important;   /* ✅ Prevent internal sideways scroll */
+/* Text stays normal (not white, not bold) */
+#fancytree_states_demo span.fancytree-node.fancytree-selected span.fancytree-title {
+  color: #000 !important;
+  font-weight: normal !important;
 }
 
+/* When hovered AND selected → same highlight, not purple */
+#fancytree_states_demo span.fancytree-node.fancytree-selected:hover {
+  background-color: rgba(255,169,42,0.35) !important; /* slightly stronger */
+}
 
