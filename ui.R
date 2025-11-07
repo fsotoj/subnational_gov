@@ -6,7 +6,7 @@ ui <- dashboardPage(
       class = "app-header-logo",
       tags$img(src = "spp_logo_v5.svg", height = "50px"),
       tags$div(
-        class = "tec-logo-title",  # 👈 new class for portrait version
+        class = "tec-logo-title",  
         tags$img(
           src = "EscuelaCienciasSocialesyGobierno_Horizontal_Negro.jpg",
           height = "36px",
@@ -15,7 +15,7 @@ ui <- dashboardPage(
       )
     ),
     
-    titleWidth = 300,
+    titleWidth = 250,
     
     # --- TOP NAVIGATION MENU ---
     tags$li(class = "dropdown header-tab", a(href="#", id="tab_about", icon("info-circle"), "About")),
@@ -66,7 +66,16 @@ ui <- dashboardPage(
       #             menuItem("Databases", tabName = "data_tab", icon = icon("table"))
       # 
       # ),
-      
+      tags$head(
+        tags$style(HTML("
+        .main-sidebar {
+          background-image: url('background_gray.svg');
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-position: center;
+        }
+      "))
+      ),
       div(
         class = "sidebar-howto-container",
         actionButton(
@@ -91,13 +100,27 @@ ui <- dashboardPage(
       hidden(uiOutput("db_selector")),
       hidden(uiOutput("country_selector")),  # default: visible
       #hidden(selectInput("var_sel", "Variable", choices = NULL)),
+      # shinyjs::hidden(
+      #   div(
+      #     id = "jstree_container", # Agregamos un ID para poder referenciarlo
+      #     style = "padding: 15px;",
+      #     tags$label("Select a state:", `for` = "jstree_demo"),
+      #     div(id = "jstree_demo")
+      #   )),
+      
       shinyjs::hidden(
         div(
-          id = "jstree_container", # Agregamos un ID para poder referenciarlo
+          id = "fancytree_states_container",   # new container id (renamed for clarity)
           style = "padding: 15px;",
-          tags$label("Select a state:", `for` = "jstree_demo"),
-          div(id = "jstree_demo")
-        )),
+          
+          tags$label("Select a state:", `for` = "fancytree_states_demo"),
+          
+          div(id = "fancytree_states_demo")   # tree mounts here
+        )
+      ),
+      
+      
+      
       
       hidden(
         div( id= "fancytree_vars_demo_container",
@@ -116,13 +139,25 @@ ui <- dashboardPage(
       #     div(id = "jstree_vars_demo")
       #   )),
       
-      shinyjs::hidden(
-        div(
-          id = "jstree_vars_container_graph", # Agregamos un ID para poder referenciarlo
-          style = "padding: 15px;",
-          tags$label("Select a variable:", `for` = "jstree_vars_demo_graph"),
-          div(id = "jstree_vars_demo_graph")
-        )),
+      # shinyjs::hidden(
+      #   div(
+      #     id = "jstree_vars_container_graph", # Agregamos un ID para poder referenciarlo
+      #     style = "padding: 15px;",
+      #     tags$label("Select a variable:", `for` = "jstree_vars_demo_graph"),
+      #     div(id = "jstree_vars_demo_graph")
+      #   )),
+      
+      hidden(
+        div( id= "fancytree_vars_container_graph",
+             style = "padding: 15px;",
+             tags$label("Select a variable:", `for` = "fancytree_vars_demo_graph"),
+             div(id = "fancytree_vars_demo_graph")
+        )
+      ),
+      
+      
+      
+      
       
       #hidden(uiOutput("state_selector")),
       #hidden(selectInput("var_sel2", "Variable", choices = NULL)),
@@ -138,12 +173,12 @@ ui <- dashboardPage(
     tags$head(
       # --- JS: make header tabs switch between tabItems ---
       tags$script(HTML("
-    $(document).on('click', '.header-tab > a', function(e) {
-      e.preventDefault();
-      var tabId = $(this).attr('id');
-      Shiny.setInputValue(tabId, new Date().getTime());
-    });
-  ")),
+        $(document).on('click', '.header-tab > a', function(e) {
+          e.preventDefault();
+          var tabId = $(this).attr('id');
+          Shiny.setInputValue(tabId, new Date().getTime());
+        });
+      ")),
       
       # --- Optional CSS for nicer look ---
     ),
@@ -167,21 +202,21 @@ ui <- dashboardPage(
       
       ## move the toggle
       tags$script(HTML("
-    $(function () {
-      var $logo   = $('.main-header .logo').first();
-      var $toggle = $('.main-header .navbar .sidebar-toggle').first();
-      if ($logo.length && $toggle.length) {
-        // Move the existing toggle into the logo, before the title text
-        $toggle.attr('id','sidebar-toggle-relocated'); // give it an id for styling
-        $toggle.detach().prependTo($logo);
-      }
-    });
-  ")),
+        $(function () {
+          var $logo   = $('.main-header .logo').first();
+          var $toggle = $('.main-header .navbar .sidebar-toggle').first();
+          if ($logo.length && $toggle.length) {
+            // Move the existing toggle into the logo, before the title text
+            $toggle.attr('id','sidebar-toggle-relocated'); // give it an id for styling
+            $toggle.detach().prependTo($logo);
+          }
+        });
+      ")),
       tags$style(HTML("
-      .content-wrapper, .right-side {
-        padding-bottom: 200px;  /* adjust value as you like */
-      }
-    ")),
+        .content-wrapper, .right-side {
+          padding-bottom: 200px;  /* adjust value as you like */
+        }
+      ")),
       tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/jstree.min.js"),
       tags$link(
         rel = "stylesheet",
@@ -200,27 +235,48 @@ ui <- dashboardPage(
       
     ),
     tags$script(HTML("
-    $(document).on('shiny:value', function(event) {
-      const btn = $('.slider-animate-button');
-      if (!btn.hasClass('customized')) {
-        btn.addClass('customized');
-        btn.append('<span class=\"btn-text\"> Play</span>');
-  
-        btn.on('click', function() {
-          const textSpan = btn.find('.btn-text');
-          const isPlaying = btn.hasClass('playing');
-  
-          if (isPlaying) {
-            textSpan.text(' Play');
-            btn.removeClass('playing');
-          } else {
-            textSpan.text(' Pause');
-            btn.addClass('playing');
+      function fixAnimateButtons() {
+        $('.slider-animate-button').each(function() {
+          const btn = $(this);
+    
+          // Prevent re-initializing the same button
+          if (btn.hasClass('ab-fixed')) return;
+    
+          btn.addClass('ab-fixed');
+    
+          // Insert text span if missing
+          if (!btn.find('.btn-text').length) {
+            btn.append('<span class=\"btn-text\"> Play</span>');
           }
+    
+          // Keep text in sync with Shiny internal state
+          const updateText = () => {
+            const playing = btn.hasClass('playing');
+            btn.find('.btn-text').text(playing ? ' Pause' : ' Play');
+          };
+    
+          // Click handler (only once)
+          btn.on('click.animatefix', function() {
+            // Toggle ONLY the visual class.
+            btn.toggleClass('playing');
+            updateText();
+          });
+    
+          // Update when Shiny updates the widget
+          $(document).on('shiny:value', updateText);
+    
+          // Initial sync
+          updateText();
         });
       }
-    });
-  ")),
+    
+      // Run on load and whenever the DOM changes
+      const obs = new MutationObserver(fixAnimateButtons);
+      obs.observe(document.body, { childList: true, subtree: true });
+    
+      // Also run once at startup
+      $(document).on('shiny:connected', fixAnimateButtons);
+    ")),
     # ui.R (Add this script, or combine it with your existing JS script)
     tabItems(
       tabItem(

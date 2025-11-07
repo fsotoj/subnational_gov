@@ -1,3 +1,5 @@
+// fancytree_vars_data for map tool
+
 $(document).ready(function () {
   Shiny.addCustomMessageHandler('fancytree_vars_data', function (message) {
     const $tree = $("#fancytree_vars_demo");
@@ -50,4 +52,94 @@ $(document).ready(function () {
 
     }
   });
+});
+
+
+
+// fancy tree vars for graph tool
+
+Shiny.addCustomMessageHandler('fancytree_vars_data_graph', function (message) {
+    const $tree = $("#fancytree_vars_demo_graph");
+
+    // Destroy previous instance if exists
+    if ($tree.fancytree("instance")) {
+        $tree.fancytree("destroy");
+    }
+
+    // Initialize Fancytree
+    $tree.fancytree({
+        source: message.data,
+        icon: false,
+        checkbox: false,
+        selectMode: 1,          // single selection
+        clickFolderMode: 2,     // click = expand, not select
+
+        activate: function (event, data) {
+            // block selection of folders (datasets)
+            if (data.node.folder) {
+                data.node.deactivate();  // unselect folder
+                data.node.toggleExpanded();
+                return;
+            }
+
+            // ✅ send plain string key
+            Shiny.setInputValue(
+                "selected_nodes_vars_graph2",
+                data.node.key,
+                { priority: "event" }
+            );
+        }
+    });
+
+    // Apply default selected node (optional)
+    const tree = $tree.fancytree("getTree");
+
+    if (message.default_selected && message.default_selected.length > 0) {
+        const key = message.default_selected[0];
+        const node = tree.getNodeByKey(key);
+
+        if (node) {
+            node.makeVisible({ scrollIntoView: true });
+            node.setActive();
+        }
+    }
+});
+
+
+
+
+/// state selector
+
+Shiny.addCustomMessageHandler("fancytree_states_data", function (message) {
+  const $tree = $("#fancytree_states_demo");
+
+  if ($tree.fancytree("instance")) $tree.fancytree("destroy");
+
+  $tree.fancytree({
+    source: message.data,
+    checkbox: true,
+    selectMode: 3,
+    icon: false,
+    clickFolderMode: 2,
+
+    select: function(event, data) {
+      const tree = data.tree;
+      const selected = tree.getSelectedNodes().map(n => n.key);
+      Shiny.setInputValue("selected_nodes_states", JSON.stringify(selected), {priority: "event"});
+    }
+  });
+
+  // ✅ Apply default selection
+  const tree = $tree.fancytree("getTree");
+
+  if (message.default_selected && message.default_selected.length) {
+    message.default_selected.forEach(key => {
+      const node = tree.getNodeByKey(key);
+      if (node) node.setSelected(true);
+    });
+  }
+
+  // ✅ Send initial selection
+  const selectedKeys = tree.getSelectedNodes().map(n => n.key);
+  Shiny.setInputValue("selected_nodes_states", JSON.stringify(selectedKeys));
 });
