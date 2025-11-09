@@ -17,13 +17,13 @@ ui <- dashboardPage(
     
     titleWidth = 250,
     
-    # --- TOP NAVIGATION MENU ---
-    tags$li(class = "dropdown header-tab", a(href="#", id="tab_about", icon("info-circle"), "About")),
-    tags$li(class = "dropdown header-tab", a(href="#", id="tab_map", icon("map"), "Mapping tool")),
-    tags$li(class = "dropdown header-tab", a(href="#", id="tab_graph", icon("chart-line"), "Graphing tool")),
-    tags$li(class = "dropdown header-tab", a(href="#", id="tab_camera", icon("landmark"), "Camera Viz")),
-    tags$li(class = "dropdown header-tab", a(href="#", id="tab_codebook", icon("book-open"), "Codebook")),
-    tags$li(class = "dropdown header-tab", a(href="#", id="tab_data", icon("table"), "Databases")),
+    #--- TOP NAVIGATION MENU ---
+    # tags$li(class = "dropdown header-tab", a(href="#", id="tab_about", icon("info-circle"), "About")),
+    # tags$li(class = "dropdown header-tab", a(href="#", id="tab_map", icon("map"), "Mapping tool")),
+    # tags$li(class = "dropdown header-tab", a(href="#", id="tab_graph", icon("chart-line"), "Graphing tool")),
+    # tags$li(class = "dropdown header-tab", a(href="#", id="tab_camera", icon("landmark"), "Camera Viz")),
+    # tags$li(class = "dropdown header-tab", a(href="#", id="tab_codebook", icon("book-open"), "Codebook")),
+    # tags$li(class = "dropdown header-tab", a(href="#", id="tab_data", icon("table"), "Databases")),
     
     
     # --- Logos and Contact Link (keep these as before) ---
@@ -57,25 +57,6 @@ ui <- dashboardPage(
     width = 250,
     useShinyjs(),
     tagList(
-      # sidebarMenu(id = "tabs",
-      #             menuItem("About", tabName = "about", icon = icon("info-circle")),
-      #             menuItem("Mapping tool", tabName = "map_tab", icon = icon("map"),selected = TRUE),
-      #             menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
-      #             menuItem("Camera Viz tool", tabName = "camera", icon = icon("landmark")),
-      #             menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
-      #             menuItem("Databases", tabName = "data_tab", icon = icon("table"))
-      # 
-      # ),
-      tags$head(
-        tags$style(HTML("
-        .main-sidebar {
-          background-image: url('background_gray.svg');
-          background-size: cover;
-          background-repeat: no-repeat;
-          background-position: center;
-        }
-      "))
-      ),
       div(
         class = "sidebar-howto-container",
         actionButton(
@@ -84,18 +65,38 @@ ui <- dashboardPage(
           class = "btn-howto",width = 150
         )
       ),
-      
-      div(
-        style = "display:none;",
-        sidebarMenu(id = "tabs",
-                    menuItem("About", tabName = "about"),
-                    menuItem("Mapping tool", tabName = "map_tab",selected = TRUE),
-                    menuItem("Graphing tool", tabName = "graph_tab"),
-                    menuItem("Camera Viz tool", tabName = "camera"),
-                    menuItem("Codebook", tabName = "codebook"),
-                    menuItem("Databases", tabName = "data_tab")
-        )
+      sidebarMenu(id = "tabs",
+                  menuItem("About", tabName = "about", icon = icon("info-circle")),
+                  menuItem("Mapping tool", tabName = "map_tab", icon = icon("map"),selected = TRUE),
+                  menuItem("Graphing tool", tabName = "graph_tab", icon = icon("chart-line")),
+                  menuItem("Camera Viz tool", tabName = "camera", icon = icon("landmark")),
+                  menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
+                  menuItem("Databases", tabName = "data_tab", icon = icon("table"))
+
       ),
+      # tags$head(
+      #   tags$style(HTML("
+      #   .main-sidebar {
+      #     background-image: url('background_gray.svg');
+      #     background-size: cover;
+      #     background-repeat: no-repeat;
+      #     background-position: center;
+      #   }
+      # "))
+      # ),
+      # 
+      # 
+      # div(
+      #   style = "display:none;",
+      #   sidebarMenu(id = "tabs",
+      #               menuItem("About", tabName = "about"),
+      #               menuItem("Mapping tool", tabName = "map_tab",selected = TRUE),
+      #               menuItem("Graphing tool", tabName = "graph_tab"),
+      #               menuItem("Camera Viz tool", tabName = "camera"),
+      #               menuItem("Codebook", tabName = "codebook"),
+      #               menuItem("Databases", tabName = "data_tab")
+      #   )
+      # ),
       
       hidden(uiOutput("db_selector")),
       hidden(uiOutput("country_selector")),  # default: visible
