@@ -50,6 +50,7 @@ ui <- dashboardPage(
         )
       )
     )
+
     
   ),
   title = "SPP-Subnational Politics Project",   # <-- this sets <title>
