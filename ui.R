@@ -1,48 +1,71 @@
 
 
 ui <- dashboardPage(  
-  dashboardHeader(title = tags$div(
-    class = "app-header-logo",
-    tags$img(src = "spp_logo_v5.svg", height = "50px")
+  dashboardHeader(
+    title = tags$div(
+      class = "app-header-logo",
+      tags$img(src = "spp_logo_v5.svg", height = "50px"),
+      tags$div(
+        class = "tec-logo-title",  
+        tags$img(
+          src = "EscuelaCienciasSocialesyGobierno_Horizontal_Negro.jpg",
+          height = "36px",
+          style = "margin-left: 10px; vertical-align: middle;"
+        )
+      )
     ),
-     titleWidth = 390,
     
+    titleWidth = 250,
+    
+    #--- TOP NAVIGATION MENU ---
+    # tags$li(class = "dropdown header-tab", a(href="#", id="tab_about", icon("info-circle"), "About")),
+    # tags$li(class = "dropdown header-tab", a(href="#", id="tab_map", icon("map"), "Mapping tool")),
+    # tags$li(class = "dropdown header-tab", a(href="#", id="tab_graph", icon("chart-line"), "Graphing tool")),
+    # tags$li(class = "dropdown header-tab", a(href="#", id="tab_camera", icon("landmark"), "Camera Viz")),
+    # tags$li(class = "dropdown header-tab", a(href="#", id="tab_codebook", icon("book-open"), "Codebook")),
+    # tags$li(class = "dropdown header-tab", a(href="#", id="tab_data", icon("table"), "Databases")),
+    
+    
+    # --- Logos and Contact Link (keep these as before) ---
     tags$li(
       class = "dropdown",
-      # mailto can include prefilled subject/body if you like
       tags$a(
         id = "contact-email",
         href = "mailto:subnationalpoliticsproject@gmail.com?subject=SPP%20contact&body=Hi%20SPP%20team%2C%0D%0A",
         target = "_blank",
         `aria-label` = "Email contact",
         icon("envelope"),
-        # show label on desktop, hide on very small screens
-        span(class = "hidden-xs")
+        span(class = "hidden-xs", " Contact")
       )
     ),
-    
     tags$li(
       class = "dropdown app-header-logo tec-logo",
       tags$a(
         href = "https://egobiernoytp.tec.mx/es/escuela-de-ciencias-sociales-y-gobierno",
         target = "_blank",
-        tags$img(src = "EscuelaCienciasSocialesyGobierno_Horizontal_Blanco.png",
-                 height = "40px",
-                 style = "vertical-align: middle;"
-                 
-                 #style = "max-height: 70px; padding: 0;"
+        tags$img(
+          src = "EscuelaCienciasSocialesyGobierno_Horizontal_Blanco.png",
+          height = "40px",
+          style = "vertical-align: middle;"
         )
       )
     )
 
     
-    # --- /NEW ---
   ),
   title = "SPP-Subnational Politics Project",   # <-- this sets <title>
   dashboardSidebar(
-    width = 390,
+    width = 250,
     useShinyjs(),
     tagList(
+      div(
+        class = "sidebar-howto-container",
+        actionButton(
+          inputId = "btn_howto",
+          label = tagList(icon("circle-question"), " How to"),
+          class = "btn-howto",width = 150
+        )
+      ),
       sidebarMenu(id = "tabs",
                   menuItem("About", tabName = "about", icon = icon("info-circle")),
                   menuItem("Mapping tool", tabName = "map_tab", icon = icon("map"),selected = TRUE),
@@ -50,33 +73,93 @@ ui <- dashboardPage(
                   menuItem("Camera Viz tool", tabName = "camera", icon = icon("landmark")),
                   menuItem("Codebook", tabName = "codebook", icon = icon("book-open")),
                   menuItem("Databases", tabName = "data_tab", icon = icon("table"))
-                  
+
       ),
+      # tags$head(
+      #   tags$style(HTML("
+      #   .main-sidebar {
+      #     background-image: url('background_gray.svg');
+      #     background-size: cover;
+      #     background-repeat: no-repeat;
+      #     background-position: center;
+      #   }
+      # "))
+      # ),
+      # 
+      # 
+      # div(
+      #   style = "display:none;",
+      #   sidebarMenu(id = "tabs",
+      #               menuItem("About", tabName = "about"),
+      #               menuItem("Mapping tool", tabName = "map_tab",selected = TRUE),
+      #               menuItem("Graphing tool", tabName = "graph_tab"),
+      #               menuItem("Camera Viz tool", tabName = "camera"),
+      #               menuItem("Codebook", tabName = "codebook"),
+      #               menuItem("Databases", tabName = "data_tab")
+      #   )
+      # ),
+      
       hidden(uiOutput("db_selector")),
       hidden(uiOutput("country_selector")),  # default: visible
       #hidden(selectInput("var_sel", "Variable", choices = NULL)),
-      shinyjs::hidden(
-        div(
-          id = "jstree_container", # Agregamos un ID para poder referenciarlo
-          style = "padding: 15px;",
-          tags$label("Select a state:", `for` = "jstree_demo"),
-          div(id = "jstree_demo")
-        )),
-      shinyjs::hidden(
-        div(
-          id = "jstree_vars_container", # Agregamos un ID para poder referenciarlo
-          style = "padding: 15px;",
-          tags$label("Select a variable:", `for` = "jstree_vars_demo"),
-          div(id = "jstree_vars_demo")
-        )),
+      # shinyjs::hidden(
+      #   div(
+      #     id = "jstree_container", # Agregamos un ID para poder referenciarlo
+      #     style = "padding: 15px;",
+      #     tags$label("Select a state:", `for` = "jstree_demo"),
+      #     div(id = "jstree_demo")
+      #   )),
       
       shinyjs::hidden(
         div(
-          id = "jstree_vars_container_graph", # Agregamos un ID para poder referenciarlo
+          id = "fancytree_states_container",   # new container id (renamed for clarity)
           style = "padding: 15px;",
-          tags$label("Select a variable:", `for` = "jstree_vars_demo_graph"),
-          div(id = "jstree_vars_demo_graph")
-        )),
+          
+          tags$label("Select a state:", `for` = "fancytree_states_demo"),
+          
+          div(id = "fancytree_states_demo")   # tree mounts here
+        )
+      ),
+      
+      
+      
+      
+      hidden(
+        div( id= "fancytree_vars_demo_container",
+             style = "padding: 15px;",
+          tags$label("Select a variable:", `for` = "fancytree_vars_demo"),
+          div(id = "fancytree_vars_demo")
+        )
+      ),
+      
+      
+      # shinyjs::hidden(
+      #   div(
+      #     id = "jstree_vars_container", # Agregamos un ID para poder referenciarlo
+      #     style = "padding: 15px;",
+      #     tags$label("Select a variable:", `for` = "jstree_vars_demo"),
+      #     div(id = "jstree_vars_demo")
+      #   )),
+      
+      # shinyjs::hidden(
+      #   div(
+      #     id = "jstree_vars_container_graph", # Agregamos un ID para poder referenciarlo
+      #     style = "padding: 15px;",
+      #     tags$label("Select a variable:", `for` = "jstree_vars_demo_graph"),
+      #     div(id = "jstree_vars_demo_graph")
+      #   )),
+      
+      hidden(
+        div( id= "fancytree_vars_container_graph",
+             style = "padding: 15px;",
+             tags$label("Select a variable:", `for` = "fancytree_vars_demo_graph"),
+             div(id = "fancytree_vars_demo_graph")
+        )
+      ),
+      
+      
+      
+      
       
       #hidden(uiOutput("state_selector")),
       #hidden(selectInput("var_sel2", "Variable", choices = NULL)),
@@ -89,6 +172,18 @@ ui <- dashboardPage(
   ),
   dashboardBody(
     tags$head(includeHTML("ga.html")),
+    tags$head(
+      # --- JS: make header tabs switch between tabItems ---
+      tags$script(HTML("
+        $(document).on('click', '.header-tab > a', function(e) {
+          e.preventDefault();
+          var tabId = $(this).attr('id');
+          Shiny.setInputValue(tabId, new Date().getTime());
+        });
+      ")),
+      
+      # --- Optional CSS for nicer look ---
+    ),
     tags$footer(
       style = "
       position: fixed;
@@ -109,22 +204,32 @@ ui <- dashboardPage(
       
       ## move the toggle
       tags$script(HTML("
-    $(function () {
-      var $logo   = $('.main-header .logo').first();
-      var $toggle = $('.main-header .navbar .sidebar-toggle').first();
-      if ($logo.length && $toggle.length) {
-        // Move the existing toggle into the logo, before the title text
-        $toggle.attr('id','sidebar-toggle-relocated'); // give it an id for styling
-        $toggle.detach().prependTo($logo);
-      }
-    });
-  ")),
+        $(function () {
+          var $logo   = $('.main-header .logo').first();
+          var $toggle = $('.main-header .navbar .sidebar-toggle').first();
+          if ($logo.length && $toggle.length) {
+            // Move the existing toggle into the logo, before the title text
+            $toggle.attr('id','sidebar-toggle-relocated'); // give it an id for styling
+            $toggle.detach().prependTo($logo);
+          }
+        });
+      ")),
       tags$style(HTML("
-      .content-wrapper, .right-side {
-        padding-bottom: 200px;  /* adjust value as you like */
-      }
-    ")),
+        .content-wrapper, .right-side {
+          padding-bottom: 200px;  /* adjust value as you like */
+        }
+      ")),
       tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/jstree.min.js"),
+      tags$link(
+        rel = "stylesheet",
+        href = "https://cdn.jsdelivr.net/npm/jquery.fancytree@2/dist/skin-lion/ui.fancytree.min.css"
+      ),
+      tags$script(
+        src = "https://cdn.jsdelivr.net/npm/jquery.fancytree@2/dist/jquery.fancytree-all-deps.min.js"
+      ),
+      
+      # --- Optional: your own initialization logic ---
+      tags$script(src = "fancytree_init.js"),   # put this in www/
       tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/themes/default/style.min.css"),
       tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"),
       tags$link(id = "theme-css", rel = "stylesheet", type = "text/css", href = "styles.css"),
@@ -132,27 +237,48 @@ ui <- dashboardPage(
       
     ),
     tags$script(HTML("
-    $(document).on('shiny:value', function(event) {
-      const btn = $('.slider-animate-button');
-      if (!btn.hasClass('customized')) {
-        btn.addClass('customized');
-        btn.append('<span class=\"btn-text\"> Play</span>');
-  
-        btn.on('click', function() {
-          const textSpan = btn.find('.btn-text');
-          const isPlaying = btn.hasClass('playing');
-  
-          if (isPlaying) {
-            textSpan.text(' Play');
-            btn.removeClass('playing');
-          } else {
-            textSpan.text(' Pause');
-            btn.addClass('playing');
+      function fixAnimateButtons() {
+        $('.slider-animate-button').each(function() {
+          const btn = $(this);
+    
+          // Prevent re-initializing the same button
+          if (btn.hasClass('ab-fixed')) return;
+    
+          btn.addClass('ab-fixed');
+    
+          // Insert text span if missing
+          if (!btn.find('.btn-text').length) {
+            btn.append('<span class=\"btn-text\"> Play</span>');
           }
+    
+          // Keep text in sync with Shiny internal state
+          const updateText = () => {
+            const playing = btn.hasClass('playing');
+            btn.find('.btn-text').text(playing ? ' Pause' : ' Play');
+          };
+    
+          // Click handler (only once)
+          btn.on('click.animatefix', function() {
+            // Toggle ONLY the visual class.
+            btn.toggleClass('playing');
+            updateText();
+          });
+    
+          // Update when Shiny updates the widget
+          $(document).on('shiny:value', updateText);
+    
+          // Initial sync
+          updateText();
         });
       }
-    });
-  ")),
+    
+      // Run on load and whenever the DOM changes
+      const obs = new MutationObserver(fixAnimateButtons);
+      obs.observe(document.body, { childList: true, subtree: true });
+    
+      // Also run once at startup
+      $(document).on('shiny:connected', fixAnimateButtons);
+    ")),
     # ui.R (Add this script, or combine it with your existing JS script)
     tabItems(
       tabItem(
