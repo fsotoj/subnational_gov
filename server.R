@@ -924,7 +924,7 @@ observeEvent(input$btn_howto, {
       var_info$description_for_ui[1], "</strong>",
       if (!is.null(chamber)) paste0(" (", chamber, ")") else "",
       "; from the Subnational <strong>", parts[1],
-      "</strong> Database.</div>"
+      "</strong> Database.",ifelse(is.na(var_info$add_indices[1]),"",var_info$add_indices[1]),"</div>"
     )
     
     HTML(text_d)
