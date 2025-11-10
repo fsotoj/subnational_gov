@@ -579,8 +579,10 @@ body.sidebar-collapse #year_selector {
 }
 
 
-/* --- Custom styling for Leaflet EasyPrint wide text button --- */
-
+/* =========================================================
+   21F) STYLING FOR THE SCREENSHOT BUTTON
+   ========================================================= */
+   
 /* Hide the small default export icon */
 .leaflet-control-easyPrint-button-export {
   display: none !important;
@@ -626,6 +628,7 @@ body.sidebar-collapse #year_selector {
 
 /* --- STYLE THE BUTTON --- */
 .easyPrintHolder .A4Landscape.page {
+  
   position: relative !important;
   top: 28px !important;
   font-size: 14px; 
@@ -690,6 +693,12 @@ background-color: var(--purple) !important; color: #fff !important;
   opacity: 0 !important;
 }
 
+
+
+
+/* =========================================================
+   21F) HEADER TABS
+   ========================================================= */
 .main-header .navbar .nav > li.tec-logo > a {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
@@ -699,11 +708,6 @@ background-color: var(--purple) !important; color: #fff !important;
   margin-top: 5px; /* tweak or remove if not needed */
   margin-bottom: 5px;
 }
-
-
-
-
-
 
 
 .main-header .navbar .navbar-custom-menu {
@@ -762,6 +766,10 @@ background-color: var(--purple) !important; color: #fff !important;
   #contact-email i {
     font-size: 18px;
   }
+  
+  .easyPrintHolder {display: none !important; }
+
+
 }
 
 /* Restore text labels for larger screens */
@@ -772,6 +780,7 @@ background-color: var(--purple) !important; color: #fff !important;
   .main-header .navbar .navbar-custom-menu .header-tab a i {
     margin-right: 6px;
   }
+  
 }
 
 
