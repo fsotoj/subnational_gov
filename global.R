@@ -106,10 +106,59 @@ jstree_json_vars_graph <- get_jstree_data_vars(dict %>% filter(viewable_graph ==
 
 
 
+# country_bboxes <- list(
+#   ARGENTINA = list(lng1 = -73.5, lat1 = -59, lng2 = -56, lat2 = -21.8),
+#   BRAZIL    = list(lng1 = -73.9, lat1 = -33.7, lng2 = -44.5, lat2 = 5.3),
+#   MEXICO    = list(lng1 = -118.5, lat1 = 14.5, lng2 = -86.7, lat2 = 32.7)
+# )
+
+
+
 country_bboxes <- list(
-  ARGENTINA = list(lng1 = -73.5, lat1 = -59, lng2 = -56, lat2 = -21.8),
-  BRAZIL    = list(lng1 = -73.9, lat1 = -33.7, lng2 = -44.5, lat2 = 5.3),
-  MEXICO    = list(lng1 = -118.5, lat1 = 14.5, lng2 = -86.7, lat2 = 32.7)
-  # ,
-  # `Select a country`  = list(lng1 = -118.5, lat1 = -55.1, lng2 = -34.8, lat2 = 32.7)
+  ARGENTINA = list(
+    large  = list(
+      lng1 = -73.5, lat1 = -60,
+      lng2 = -56,   lat2 = -22.8
+    ),
+    medium = list(
+      lng1 = -72,   lat1 = -57,
+      lng2 = -57,   lat2 = -22
+    ),
+    small  = list(                      # doubled width
+      lng1 = -77,   lat1 = -54.5,
+      lng2 = -53,   lat2 = -25.5
+    )
+  ),
+  
+  BRAZIL = list(
+    large  = list(
+      lng1 = -73.9, lat1 = -34.7,
+      lng2 = -44.5, lat2 = 4.3
+    ),
+    medium = list(
+      lng1 = -72,   lat1 = -31,
+      lng2 = -46,   lat2 = 5
+    ),
+    small  = list(                      # moved another ¼ height south
+      lng1 = -68,   lat1 = -35.8,
+      lng2 = -44,   lat2 = -4.6
+    )
+  ),
+  
+  MEXICO = list(
+    large = list(
+      lng1 = -118.5, lat1 = 12.5,
+      lng2 = -86.7,  lat2 = 30.7
+    ),
+    medium = list(
+      lng1 = -116,   lat1 = 16.5,
+      lng2 = -89,    lat2 = 30.5
+    ),
+    small = list(
+      lng1 = -114,   lat1 = 16.75,
+      lng2 = -90.5,  lat2 = 27.75
+    )
+  )
 )
+
+

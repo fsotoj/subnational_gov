@@ -220,6 +220,22 @@ ui <- dashboardPage(
         });
       ")),
       
+      tags$script(
+              '
+        $(document).on("shiny:connected", function() {
+          Shiny.setInputValue("screen_width", window.innerWidth);
+          Shiny.setInputValue("screen_height", window.innerHeight);
+        });
+        
+        $(window).resize(function() {
+          Shiny.setInputValue("screen_width", window.innerWidth);
+          Shiny.setInputValue("screen_height", window.innerHeight);
+        });
+        '
+            ),
+      
+      
+      
       tags$script(HTML("
         $('#btn_howto').on('click', function(e) {
           e.preventDefault();
