@@ -179,6 +179,9 @@ ui <- dashboardPage(
   dashboardBody(
     tags$head(includeHTML("ga.html")),
     tags$head(
+      tags$link(rel = "icon", type = "image/svg+xml", href = "spp_logo_tab_v2.svg")
+    ),
+    tags$head(
       # --- HOW TO TRIGGER---
       tags$script(HTML("
         $(document).on('click', '#btn_howto', function(e) {
