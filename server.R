@@ -462,32 +462,48 @@ server <- function(input, output, session) {
   })
   
   observe({
-    if (current_tab() == "camera") {
+    tab     <- current_tab()
+    country <- input$country_sel
+    selvar  <- selected_vars_vector()
+    
+    is_legislative <- FALSE
+    
+    if (!is.null(selvar)) {
+      
+      # remove trailing _1 or _2 from the variable
+      selvar_clean <- sub("_[12]$", "", selvar)
+      
+      dataset_val <- dict %>%
+        dplyr::filter(variable == selvar_clean) %>%
+        dplyr::pull(dataset) %>%
+        unique()
+      
+      is_legislative <- identical(dataset_val, "Legislative Elections")
+      
+    }
+    
+    if (
+      tab == "camera" ||
+      (tab == "map_tab" && identical(country, "MEXICO") && is_legislative)
+    ) {
       showModal(
         tags$div(
           id = "devNoticeModal",
           modalDialog(
-            title = HTML("
-            <div style='display:flex; align-items:center; justify-content:center;'>
-              <img src='spp_logo_v5.svg' height='60'/>
-            </div>
-          "),
+            title = HTML(""),
             HTML("
-            <div style='color:#111; font-size: 1em; text-align:justify;'>
+            <div style='color:#fff; font-size: 1em; text-align:center;'>
               <p>
-                This tool is currently <strong>under development</strong>, even though you are welcome to explore it.
+                <strong>UNDER DEVELOPMENT</strong>
               </p>
               <p>
-                Some features may not yet be fully functional, and the displayed data or visualizations may change in future updates.
-              </p>
-              <p>
-                Thank you for your interest and feedback while we continue improving this section!
+                COMING SOON!
               </p>
             </div>
           "),
-            easyClose = TRUE,
-            size = "m",
-            footer = modalButton("Close")
+            easyClose = FALSE,
+            size = "s",
+            footer = modalButton("Back to the tool")
           )
         )
       )
