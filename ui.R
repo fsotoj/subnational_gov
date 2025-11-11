@@ -26,6 +26,20 @@ ui <- dashboardPage(
     # tags$li(class = "dropdown header-tab", a(href="#", id="tab_data", icon("table"), "Databases")),
     
     
+    
+    # How to button
+    tags$li(
+      class = "dropdown",
+      tags$a(
+        id = "btn_howto",
+        href = "#",
+        icon("circle-question"),
+        span(class = "hidden-xs", " How to")
+      )
+    ),
+    
+    
+    
     # --- Logos and Contact Link (keep these as before) ---
     tags$li(
       class = "dropdown",
@@ -58,14 +72,6 @@ ui <- dashboardPage(
     width = 250,
     useShinyjs(),
     tagList(
-      div(
-        class = "sidebar-howto-container",
-        actionButton(
-          inputId = "btn_howto",
-          label = tagList(icon("circle-question"), " How to"),
-          class = "btn-howto",width = 150
-        )
-      ),
       sidebarMenu(id = "tabs",
                   menuItem("About", tabName = "about", icon = icon("info-circle")),
                   menuItem("Mapping tool", tabName = "map_tab", icon = icon("map"),selected = TRUE),
@@ -173,12 +179,11 @@ ui <- dashboardPage(
   dashboardBody(
     tags$head(includeHTML("ga.html")),
     tags$head(
-      # --- JS: make header tabs switch between tabItems ---
+      # --- HOW TO TRIGGER---
       tags$script(HTML("
-        $(document).on('click', '.header-tab > a', function(e) {
+        $(document).on('click', '#btn_howto', function(e) {
           e.preventDefault();
-          var tabId = $(this).attr('id');
-          Shiny.setInputValue(tabId, new Date().getTime());
+          Shiny.setInputValue('btn_howto', Date.now(), {priority: 'event'});
         });
       ")),
       
@@ -214,6 +219,14 @@ ui <- dashboardPage(
           }
         });
       ")),
+      
+      tags$script(HTML("
+        $('#btn_howto').on('click', function(e) {
+          e.preventDefault();
+          Shiny.setInputValue('btn_howto', new Date().getTime());
+        });
+      ")),
+      
       tags$style(HTML("
         .content-wrapper, .right-side {
           padding-bottom: 200px;  /* adjust value as you like */

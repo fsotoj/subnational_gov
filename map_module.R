@@ -311,14 +311,11 @@ mapModuleUI <- function(id) {
   map_id <- ns("map")
   
   bootstrapPage(
-    tags$head(
+    
       tags$head(
         tags$script(src = "https://unpkg.com/leaflet-easyprint@2.1.9/dist/bundle.js"),
         tags$script(src = "leaflet-export.js")
-      )
-      
-      
-    ),
+      ),
     
     div(
       class = "outer",

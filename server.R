@@ -451,7 +451,7 @@ server <- function(input, output, session) {
         <h4 style='color:#FFA92A; margin-top:0;'>Reference</h4>
         <p style='font-size:0.9em; color:#4D4D4D;'>
           Giraudy, Agustina; Gonzalez, Guadalupe Andrea; Urdinez, Francisco, 2025, <em>\"Codebook: Subnational Politics Project (SPP) (v. 1)\"</em>, 
-          <a href='https://doi.org/doi:10.7910/DVN/IBSJO2' target='_blank' style='color:#E5007D; text-decoration:none;'>https://doi.org/doi:10.7910/DVN/IBSJO2</a>.
+          <a href='https://doi.org/10.17605/OSF.IO/H96FD' target='_blank' style='color:#E5007D; text-decoration:none;'>https://doi.org/10.17605/OSF.IO/H96FD</a>.
         </p>
       </div>
     "),
@@ -495,6 +495,10 @@ server <- function(input, output, session) {
   })
   
   # ==== HOW-TO MODAL ======================================================
+  
+  
+  
+  
 observeEvent(input$btn_howto, {
   
   # Pick the right explanation based on the current tab

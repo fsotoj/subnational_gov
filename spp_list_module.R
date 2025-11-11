@@ -60,7 +60,7 @@ spp_citations <- data.frame(
     "10.7910/DVN/7TNLBW",
     "10.7910/DVN/AJJLHX",
     "10.7910/DVN/HNKQUH",
-    "10.7910/DVN/IBSJO2"
+    "10.17605/OSF.IO/H96FD"
   ),
   stringsAsFactors = FALSE
 )
