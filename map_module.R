@@ -323,7 +323,7 @@ mapModuleUI <- function(id) {
         type = "text/css",
         ".outer {
           position: fixed;
-          top: 0px;
+          top: 41px;
           left: 0;
           right: 0;
           bottom: 0;
@@ -339,8 +339,7 @@ mapModuleUI <- function(id) {
 # --- Map Module Server ---
 
 # mapModuleServer function
-mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, 
-                            input_country_sel = "ARGENTINA", active_tab, bbox_size) {
+mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, input_country_sel = "ARGENTINA", active_tab) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -383,36 +382,18 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes,
     prev_var <- reactiveVal(NULL)
     prev_tab <- reactiveVal(NULL)  # Nueva variable reactiva para trackear el tab anterior
     
-    # output$map <- renderLeaflet({
-    #   req(active_tab() == "map_tab", input_country_sel() != "", input_var_sel())
-    #   
-    #   leaflet(options = leafletOptions(preferCanvas = TRUE, zoomControl = FALSE)) %>%
-    #     fitBounds(
-    #       lng1 = country_bboxes[[input_country_sel()]]$lng1,
-    #       lat1 = country_bboxes[[input_country_sel()]]$lat1,
-    #       lng2 = country_bboxes[[input_country_sel()]]$lng2,
-    #       lat2 = country_bboxes[[input_country_sel()]]$lat2
-    #     ) %>%
-    #     addProviderTiles("CartoDB.PositronNoLabels") # clean white base, no labels
-    # })
-    
-    
     output$map <- renderLeaflet({
       req(active_tab() == "map_tab", input_country_sel() != "", input_var_sel())
       
-      size <- bbox_size()
-      bbox <- country_bboxes[[input_country_sel()]][[size]]
-      
       leaflet(options = leafletOptions(preferCanvas = TRUE, zoomControl = FALSE)) %>%
         fitBounds(
-          lng1 = bbox$lng1,
-          lat1 = bbox$lat1,
-          lng2 = bbox$lng2,
-          lat2 = bbox$lat2
+          lng1 = country_bboxes[[input_country_sel()]]$lng1,
+          lat1 = country_bboxes[[input_country_sel()]]$lat1,
+          lng2 = country_bboxes[[input_country_sel()]]$lng2,
+          lat2 = country_bboxes[[input_country_sel()]]$lat2
         ) %>%
-        addProviderTiles("CartoDB.PositronNoLabels")
+        addProviderTiles("CartoDB.PositronNoLabels") # clean white base, no labels
     })
-    
     
 
     

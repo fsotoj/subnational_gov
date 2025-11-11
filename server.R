@@ -994,16 +994,6 @@ observeEvent(input$btn_howto, {
   
   # ==== 9) MODULES (map / lines / table / camera) ===========================
   
-  
-  bbox_size <- reactive({
-    w <- input$screen_width
-    if (is.null(w)) return("large")
-    
-    if (w > 1400) "large"
-    else if (w > 900) "medium"
-    else "small"
-  })
-  
 
   
   mapModuleServer(
@@ -1013,8 +1003,7 @@ observeEvent(input$btn_howto, {
     dict = dict,
     country_bboxes = country_bboxes,
     input_country_sel = reactive(input$country_sel),
-    active_tab = current_tab,
-    bbox_size = bbox_size
+    active_tab = current_tab
   )
   
   linePlotModuleServer(
