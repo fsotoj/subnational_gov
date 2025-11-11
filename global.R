@@ -53,7 +53,8 @@ SEED <- read.xlsx("data/SEED SHINY (v.0.1).xlsx")
 SED <- read.xlsx("data/SED (v.0.1).xlsx")
 SLED <- read.xlsx("data/SLED (v.0.1).xlsx")
 CFTDFLD <- read.xlsx("data/CFTDFLD (v.0.1).xlsx")
-SDI <- read.xlsx("data/SDI (v.1).xlsx")
+SDI <- read.xlsx("data/SDI (v.1).xlsx") %>% 
+  distinct()
 
 cols_to_fill <- c("chamber_sub_leg",as.vector(outer(setdiff(sled_names,c("chamber_sub_leg","concurrent_election_with_nat_sub_leg")), c("_1","_2"), paste0)))
 
