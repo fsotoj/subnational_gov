@@ -494,7 +494,7 @@ server <- function(input, output, session) {
             HTML("
             <div style='color:#fff; font-size: 1em; text-align:center;'>
               <p>
-                <strong>UNDER DEVELOPMENT</strong>
+                <strong>UNDER CONSTRUCTION</strong>
               </p>
               <p>
                 COMING SOON!
