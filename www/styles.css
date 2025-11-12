@@ -443,59 +443,6 @@ a:hover, a:focus {
 
 
 /* =========================================================
-   16) SIDEBAR COLOR EXTENDS WITH SCROLLING CONTENT
-   ========================================================= */
-
-/* Force sidebar background to always fill page height */
-.main-sidebar {
-  position: absolute !important;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  background-color: var(--bg-muted) !important;
-  min-height: 100% !important;
-}
-
-/* Let the parent wrapper expand naturally */
-.wrapper {
-  min-height: 100% !important;
-}
-
-/* Make sure sidebar follows page height when content is taller */
-html, body {
-  background-color: var(--bg-muted) !important;
-  height: auto !important;
-  min-height: 100% !important;
-}
-
-/* Optional: for extremely long pages, make sidebar stretch dynamically */
-body:after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  /*width: 390px; /* your sidebar width, adjust if responsive */
-  height: 100%;
-  background-color: var(--bg-muted);
-  z-index: -1; /* behind all other elements */
-}
-
-
-
-/* =========================================================
-   17) YEAR SELECTOR RESPONSIVE TO SIDEBAR STATE
-   ========================================================= */
-
-
-/* When the sidebar is collapsed or hidden */
-body.sidebar-collapse #year_selector {
-  left: 20% !important;   /* move closer to left edge */
-  /*right: 10%;              /* allow more space on the right */
-  /*max-width: 90vw;         /* expand width dynamically */
-}
-
-
-/* =========================================================
    20) PORTRAIT MODE — EXPAND YEAR SELECTOR AND DOWNLOAD BUTTON
    ========================================================= */
 
@@ -513,28 +460,6 @@ body.sidebar-collapse #year_selector {
   }
 
   
-}
-
-
-/* =========================================================
-   21D) GLOBAL LEAFLET LEGEND RESPONSIVE STYLING
-   ========================================================= */
-
-/* Default (desktop / landscape) */
-.leaflet-control {
-  max-width: 25vw !important;
-}
-
-.leaflet-control .leaflet-control-legend {
-  max-width: 100% !important;
-  white-space: normal !important;
-  word-wrap: break-word !important;
-  overflow-wrap: break-word !important;
-}
-
-.leaflet-control .leaflet-control-legend div {
-  white-space: normal !important;
-  overflow-wrap: break-word !important;
 }
 
 
@@ -602,6 +527,132 @@ body.sidebar-collapse #year_selector {
     
   }
 }
+
+
+
+/* === Responsive header: icons only on small screens or portrait ========== */
+
+/* Hide the text (not the icons) when screen is narrow or in portrait mode */
+/*@media (max-width: 992px), (orientation: portrait) {*/
+@media (orientation: portrait) {
+  .main-header .navbar .navbar-custom-menu .header-tab a {
+    padding: 10px; /* shrink padding a bit */
+  }
+
+  /* Hide the text labels but keep icons visible */
+  .main-header .navbar .navbar-custom-menu .header-tab a {
+    font-size: 0; /* hides text but not icons */
+  }
+
+  .main-header .navbar .navbar-custom-menu .header-tab a i {
+    font-size: 18px; /* restore icon size */
+    margin-right: 0; /* remove gap */
+  }
+
+  /* Optional: hide text in contact link too */
+  #contact-email span {
+    display: none;
+  }
+
+  #contact-email i {
+    font-size: 18px;
+  }
+  
+
+}
+
+/* Restore text labels for larger screens */
+@media (orientation: landscape) {
+  .main-header .navbar .navbar-custom-menu .header-tab a {
+    font-size: 14px;
+  }
+  .main-header .navbar .navbar-custom-menu .header-tab a i {
+    margin-right: 6px;
+  }
+  
+}
+
+
+
+
+
+/* =========================================================
+   16) SIDEBAR COLOR EXTENDS WITH SCROLLING CONTENT
+   ========================================================= */
+
+/* Force sidebar background to always fill page height */
+.main-sidebar {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background-color: var(--bg-muted) !important;
+  min-height: 100% !important;
+}
+
+/* Let the parent wrapper expand naturally */
+.wrapper {
+  min-height: 100% !important;
+}
+
+/* Make sure sidebar follows page height when content is taller */
+html, body {
+  background-color: var(--bg-muted) !important;
+  height: auto !important;
+  min-height: 100% !important;
+}
+
+/* Optional: for extremely long pages, make sidebar stretch dynamically */
+body:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  /*width: 390px; /* your sidebar width, adjust if responsive */
+  height: 100%;
+  background-color: var(--bg-muted);
+  z-index: -1; /* behind all other elements */
+}
+
+
+
+/* =========================================================
+   17) YEAR SELECTOR RESPONSIVE TO SIDEBAR STATE
+   ========================================================= */
+
+
+/* When the sidebar is collapsed or hidden */
+body.sidebar-collapse #year_selector {
+  left: 20% !important;   /* move closer to left edge */
+  /*right: 10%;              /* allow more space on the right */
+  /*max-width: 90vw;         /* expand width dynamically */
+}
+
+
+
+
+/* =========================================================
+   21D) GLOBAL LEAFLET LEGEND RESPONSIVE STYLING
+   ========================================================= */
+
+/* Default (desktop / landscape) */
+.leaflet-control {
+  max-width: 25vw !important;
+}
+
+.leaflet-control .leaflet-control-legend {
+  max-width: 100% !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+.leaflet-control .leaflet-control-legend div {
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+
 
 
 /* =========================================================
@@ -721,6 +772,12 @@ background-color: var(--purple) !important; color: #fff !important;
 
 
 
+@media (orientation: portrait) {.easyPrintHolder {display: none !important;}}
+
+
+
+
+
 /* =========================================================
    21F) HEADER TABS
    ========================================================= */
@@ -765,49 +822,6 @@ background-color: var(--purple) !important; color: #fff !important;
 
 
 
-/* === Responsive header: icons only on small screens or portrait ========== */
-
-/* Hide the text (not the icons) when screen is narrow or in portrait mode */
-@media (max-width: 992px), (orientation: portrait) {
-  .main-header .navbar .navbar-custom-menu .header-tab a {
-    padding: 10px; /* shrink padding a bit */
-  }
-
-  /* Hide the text labels but keep icons visible */
-  .main-header .navbar .navbar-custom-menu .header-tab a {
-    font-size: 0; /* hides text but not icons */
-  }
-
-  .main-header .navbar .navbar-custom-menu .header-tab a i {
-    font-size: 18px; /* restore icon size */
-    margin-right: 0; /* remove gap */
-  }
-
-  /* Optional: hide text in contact link too */
-  #contact-email span {
-    display: none;
-  }
-
-  #contact-email i {
-    font-size: 18px;
-  }
-  
-  .easyPrintHolder {display: none !important; }
-
-
-}
-
-/* Restore text labels for larger screens */
-@media (min-width: 993px) and (orientation: landscape) {
-  .main-header .navbar .navbar-custom-menu .header-tab a {
-    font-size: 14px;
-  }
-  .main-header .navbar .navbar-custom-menu .header-tab a i {
-    margin-right: 6px;
-  }
-  
-}
-
 
 
 /* === Responsive TEC logo behavior ====================================== */
@@ -823,8 +837,11 @@ background-color: var(--purple) !important; color: #fff !important;
   align-items: center;
 }
 
+
+
 /* ------------- Portrait or small screens ------------- */
-@media (orientation: portrait), (max-width: 992px) {
+/*@media (orientation: portrait), (max-width: 992px) {*/
+@media (orientation: portrait) {  
   /* Hide the right-corner TEC logo */
   .main-header .navbar .navbar-custom-menu .tec-logo {
     display: none !important;
@@ -855,7 +872,11 @@ background-color: var(--purple) !important; color: #fff !important;
   .skin-blue .main-header .logo img {
   padding: 0px 0px;
   }
+  
+
 }
+
+
 
 
 /* -------------- HOW TO BUTTON ----------- */
@@ -1024,5 +1045,49 @@ background-color: var(--purple) !important; color: #fff !important;
 /* When hovered AND selected → same highlight, not purple */
 #fancytree_states_demo span.fancytree-node.fancytree-selected:hover {
   background-color: rgba(255,169,42,0.35) !important; /* slightly stronger */
+}
+
+
+
+
+
+
+
+
+/* Keep logo + navbar in one line for landscape phones */
+@media (orientation: landscape) and (max-width: 799px) {
+  .main-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .main-header .logo {
+    float: none !important;
+    width: auto !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .main-header .navbar {
+    float: none !important;
+    width: auto !important;
+    flex: 1 1 auto !important;
+  }
+  .easyPrintHolder {display: none !important;}
+  
+  .outer {
+          top: -40px !important;
+        }
+  
+    #year_selector{
+    /*position: fixed !important;    /* fixed relative to viewport, not container */
+    bottom: 25px !important;       /* always stick to bottom */
+    left: 5% !important;          /* center horizontally */
+    right: 15% !important;          /* center horizontally */
+    /*transform: translateX(-50%) scale(0.9);  /* slight shrink + center alignment */
+    z-index: 2000 !important;
+  }
 }
 
