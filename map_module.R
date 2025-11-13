@@ -323,7 +323,7 @@ mapModuleUI <- function(id) {
         type = "text/css",
         ".outer {
           position: fixed;
-          top: 41px;
+          top: 0;
           left: 0;
           right: 0;
           bottom: 0;
