@@ -406,7 +406,7 @@ a:hover, a:focus {
 
 
 
-@media (max-width: 1200px), (max-height: 800px) {
+@media (max-width: 1200px) , (max-height: 800px) {
   #year_selector{
     position: fixed !important;    /* fixed relative to viewport, not container */
     bottom: 25px !important;       /* always stick to bottom */
@@ -466,7 +466,7 @@ a:hover, a:focus {
 /* =========================================================
    21F) CLEAN TWO-LINE, GROUPED LEGEND FOR PORTRAIT
    ========================================================= */
-@media screen and (orientation: portrait){
+@media screen and (orientation: portrait) and (max-width: 600px){
 
   .info.legend.leaflet-control {
     position: fixed !important;
@@ -571,7 +571,6 @@ a:hover, a:focus {
   }
   
 }
-
 
 
 
@@ -841,7 +840,7 @@ background-color: var(--purple) !important; color: #fff !important;
 
 /* ------------- Portrait or small screens ------------- */
 /*@media (orientation: portrait), (max-width: 992px) {*/
-@media (orientation: portrait) {  
+@media (orientation: portrait) and (max-width: 600px) {  
   /* Hide the right-corner TEC logo */
   .main-header .navbar .navbar-custom-menu .tec-logo {
     display: none !important;
@@ -1089,5 +1088,84 @@ background-color: var(--purple) !important; color: #fff !important;
     /*transform: translateX(-50%) scale(0.9);  /* slight shrink + center alignment */
     z-index: 2000 !important;
   }
+}
+
+
+/* TABLET PORTRAIT = use the SAME single-row header as landscape */
+@media screen and (orientation: portrait) and (min-width: 700px) and (max-width: 1200px) {
+
+
+
+  .main-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .main-header .logo {
+    float: none !important;
+    width: auto !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .main-header .navbar {
+    float: none !important;
+    width: auto !important;
+    flex: 1 1 auto !important;
+  }
+  .easyPrintHolder {display: none !important;}
+  
+
+  
+
+/* HEADER: logo + navbar should sit side-by-side cleanly */
+  .main-header {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      width: 100% !important;
+  }
+  
+  /* LOGO stays left, fixed size */
+  .main-header .logo {
+      flex: 0 0 auto !important;  /* do NOT grow */
+      display: flex !important;
+      align-items: center !important;
+  }
+  
+  /* NAVBAR takes the remaining available space */
+  .main-header .navbar {
+      flex: 1 1 auto !important;   /* grow to fill remaining width */
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-end !important;
+  
+      /* IMPORTANT: remove offsets WITHOUT pushing under logo */
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+      width: auto !important;
+  }
+  
+  /* UL inside navbar distributes icons on the right */
+  .navbar-custom-menu .nav.navbar-nav {
+      display: flex !important;
+      flex-direction: row !important;
+      justify-content: flex-end !important;
+      align-items: center !important;
+  
+      margin: 0 !important;
+      padding: 0 !important;
+  }
+
+
+  body:not(.sidebar-collapse):not(.sidebar-open) #year_selector {
+    left: 27% !important;
+    right: 15% !important;
+  }
+
+
 }
 
