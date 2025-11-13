@@ -282,7 +282,7 @@ server <- function(input, output, session) {
     selectInput(
       "country_sel_camera", "Country",
       choices  = sort(unique(SLED$country_name)),
-      selected = "ARGENTINA"
+      selected = "BRAZIL"
     )
   })
   
@@ -307,7 +307,7 @@ server <- function(input, output, session) {
       label    = "State",
       choices  = choices_vals,                 # shows Title Case, returns originals
       selected = if (length(choices_vals))
-        choices_vals[[min(6, length(choices_vals))]]
+        choices_vals[[min(4, length(choices_vals))]]
       else NULL
     )
   })
