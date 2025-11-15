@@ -177,7 +177,26 @@ ui <- dashboardPage(
       )
   ),
   dashboardBody(
-    tags$head(includeHTML("ga.html")),
+    tags$head(includeHTML("ga.html"),
+              # --- Google Analytics: Track tab changes ---
+              tags$script(HTML("
+                $(document).on('shiny:inputchanged', function(e) {
+                  if (e.name === 'tabs') {
+              
+                    // List of important tools
+                    let importantTabs = ['map_tab', 'graph_tab', 'camera'];
+              
+                    // Send event to GA4
+                    gtag('event', 'tab_open', {
+                      'tab_name': e.value,
+                      'category': importantTabs.includes(e.value) ? 'important' : 'secondary'
+                    });
+              
+                    console.log('GA4 tab_open event sent: ', e.value);
+                  }
+                });
+              "))
+    ),
     tags$head(
       tags$link(rel = "icon", type = "image/svg+xml", href = "spp_logo_tab_v2.svg")
     ),
