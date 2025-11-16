@@ -107,15 +107,6 @@ ui <- dashboardPage(
       
       hidden(uiOutput("db_selector")),
       hidden(uiOutput("country_selector")),  # default: visible
-      #hidden(selectInput("var_sel", "Variable", choices = NULL)),
-      # shinyjs::hidden(
-      #   div(
-      #     id = "jstree_container", # Agregamos un ID para poder referenciarlo
-      #     style = "padding: 15px;",
-      #     tags$label("Select a state:", `for` = "jstree_demo"),
-      #     div(id = "jstree_demo")
-      #   )),
-      
       shinyjs::hidden(
         div(
           id = "fancytree_states_container",   # new container id (renamed for clarity)
@@ -127,9 +118,6 @@ ui <- dashboardPage(
         )
       ),
       
-      
-      
-      
       hidden(
         div( id= "fancytree_vars_demo_container",
              style = "padding: 15px;",
@@ -137,23 +125,6 @@ ui <- dashboardPage(
           div(id = "fancytree_vars_demo")
         )
       ),
-      
-      
-      # shinyjs::hidden(
-      #   div(
-      #     id = "jstree_vars_container", # Agregamos un ID para poder referenciarlo
-      #     style = "padding: 15px;",
-      #     tags$label("Select a variable:", `for` = "jstree_vars_demo"),
-      #     div(id = "jstree_vars_demo")
-      #   )),
-      
-      # shinyjs::hidden(
-      #   div(
-      #     id = "jstree_vars_container_graph", # Agregamos un ID para poder referenciarlo
-      #     style = "padding: 15px;",
-      #     tags$label("Select a variable:", `for` = "jstree_vars_demo_graph"),
-      #     div(id = "jstree_vars_demo_graph")
-      #   )),
       
       hidden(
         div( id= "fancytree_vars_container_graph",
@@ -164,11 +135,6 @@ ui <- dashboardPage(
       ),
       
       
-      
-      
-      
-      #hidden(uiOutput("state_selector")),
-      #hidden(selectInput("var_sel2", "Variable", choices = NULL)),
       hidden(selectInput("country_sel2", "Select a country:", choices = c(unique(data$country_name)), selected = "ARGENTINA")),
       hidden(selectInput("state_sel2", "Select a state:", choices = NULL)),
       hidden(uiOutput("country_selector_camera")),
@@ -180,22 +146,51 @@ ui <- dashboardPage(
     tags$head(includeHTML("ga.html"),
               # --- Google Analytics: Track tab changes ---
               tags$script(HTML("
-                $(document).on('shiny:inputchanged', function(e) {
-                  if (e.name === 'tabs') {
-              
-                    // List of important tools
-                    let importantTabs = ['map_tab', 'graph_tab', 'camera'];
-              
-                    // Send event to GA4
-                    gtag('event', 'tab_open', {
-                      'tab_name': e.value,
-                      'category': importantTabs.includes(e.value) ? 'important' : 'secondary'
-                    });
-              
-                    console.log('GA4 tab_open event sent: ', e.value);
-                  }
-                });
-              "))
+    function safeGtag(){
+      if (typeof gtag === 'function') {
+        gtag.apply(null, arguments);
+      } else {
+        console.warn('gtag not ready, event skipped:', arguments);
+      }
+    }
+
+    let lastTab = 'map_tab';       
+    let lastTabStart = Date.now();
+
+    // Try initial tab event safely
+    safeGtag('event', 'tab_open', { 'tab_name': lastTab });
+    //console.log('GA4 event sent: tab_open → map_tab (initial load)');
+
+    $(document).on('shiny:inputchanged', function(e) {
+      if (e.name === 'tabs') {
+        
+        const now = Date.now();
+
+        // --- Send duration event safely ---
+        if (lastTab !== null && lastTabStart !== null) {
+          const seconds = Math.round((now - lastTabStart) / 1000);
+
+          safeGtag('event', 'tab_duration', {
+            'tab_name': lastTab,
+            'seconds': seconds
+          });
+
+          //console.log(`GA4 tab_duration sent: ${lastTab} → ${seconds}s`);
+        }
+
+        // --- Reset timer for new tab ---
+        lastTab = e.value;
+        lastTabStart = now;
+
+        // --- Send tab_open safely ---
+        safeGtag('event', 'tab_open', {
+          'tab_name': e.value
+        });
+
+        //console.log('GA4 event sent: tab_open → ' + e.value);
+      }
+    });
+  "))
     ),
     tags$head(
       tags$link(rel = "icon", type = "image/svg+xml", href = "spp_logo_tab_v2.svg")
@@ -249,11 +244,6 @@ ui <- dashboardPage(
         });
       ")),
       
-      tags$style(HTML("
-        .content-wrapper, .right-side {
-          padding-bottom: 200px;  /* adjust value as you like */
-        }
-      ")),
       tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/jstree.min.js"),
       tags$link(
         rel = "stylesheet",
@@ -263,12 +253,12 @@ ui <- dashboardPage(
         src = "https://cdn.jsdelivr.net/npm/jquery.fancytree@2/dist/jquery.fancytree-all-deps.min.js"
       ),
       
-      # --- Optional: your own initialization logic ---
-      tags$script(src = "fancytree_init.js"),   # put this in www/
+      
+      tags$script(src = "fancytree_init.js"),
       tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/themes/default/style.min.css"),
       tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"),
       tags$link(id = "theme-css", rel = "stylesheet", type = "text/css", href = "styles.css"),
-      tags$script(src = "custom.js")
+      
       
     ),
     tags$script(HTML("
@@ -314,7 +304,6 @@ ui <- dashboardPage(
       // Also run once at startup
       $(document).on('shiny:connected', fixAnimateButtons);
     ")),
-    # ui.R (Add this script, or combine it with your existing JS script)
     tabItems(
       tabItem(
         tabName = "map_tab", # QUE PASA ACAAAAAA
@@ -328,7 +317,6 @@ ui <- dashboardPage(
             div(class = "small-text-box",
                 id = "var-desc-map",
                 box(
-                  #title = "Variable description", 
                   solidHeader = F,
                   collapsible = F,
                   collapsed = FALSE,
@@ -347,16 +335,7 @@ ui <- dashboardPage(
             style = "position: absolute; bottom: 30px; left: 40%; right: 20%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
             uiOutput("year_selector")
           ),
-          # div(
-          #   style = "position: absolute; bottom: 30px; left: 40%; margin-left: 71px; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
-          #   hidden(
-          #     actionButton(
-          #       "captureMapBtn",
-          #       label = tagList(icon("camera"), "Screenshot"),
-          #       class = "download_map_btn"
-          #     )
-          #   )
-          # )
+
           
           
         )
