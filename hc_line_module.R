@@ -21,6 +21,9 @@ linePlotLegendUI <- function(id, width = NULL) {
 linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Ymin, active_tab) {
   moduleServer(id, function(input, output, session) {
     
+    clean_var <- reactive({sub("_[12]$", "", input_variable())})   # remove "_1" or "_2" at the end
+    
+    
     format_value <- function(values, type) {
       values <- as.double(values)
       if (isTRUE(type == "discrete"))   return(format(values, big.mark = ",", scientific = FALSE))
@@ -58,9 +61,9 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Y
         tidyr::drop_na(date_year)
       req(nrow(df) > 0)
       
-      pretty_name <- dict %>% dplyr::filter(variable == input_variable()) %>% dplyr::pull(pretty_name) %>%
-        { if (length(.) == 0 || is.na(.)) input_variable() else . }
-      var_type <- dict %>% dplyr::filter(variable == input_variable()) %>% dplyr::pull(type) %>%
+      pretty_name <- dict %>% dplyr::filter(variable == clean_var()) %>% dplyr::pull(pretty_name) %>%
+        { if (length(.) == 0 || is.na(.)) clean_var() else . }
+      var_type <- dict %>% dplyr::filter(variable == clean_var()) %>% dplyr::pull(type) %>%
         { if (length(.) == 0 || is.na(.)) "continuous" else . }
       
       country_colors_base <- c(
