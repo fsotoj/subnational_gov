@@ -204,8 +204,14 @@ ui <- dashboardPage(
         });
       ")),
       
-      # --- Optional CSS for nicer look ---
+      # SIDE BAR SWIPE
+      tags$script(src = "sidebar_swipe.js")
+      
+      
     ),
+    
+    # --- FOOTER
+    
     tags$footer(
       style = "
       position: fixed;
