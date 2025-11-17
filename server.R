@@ -910,6 +910,17 @@ observeEvent(input$btn_howto, {
   # 
   # 
   
+  # ==== 12) SWIPE ======================================================
+  observeEvent(input$sidebar_swipe, {
+    if (input$sidebar_swipe == "left") {
+      shinyjs::runjs("
+      console.log('Force closing sidebar (server).');
+      $('body')
+        .removeClass('sidebar-open')
+        .addClass('sidebar-collapse');
+    ");
+    }
+  })
   
   
    
