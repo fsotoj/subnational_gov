@@ -145,53 +145,8 @@ ui <- dashboardPage(
   dashboardBody(
     tags$head(includeHTML("ga.html"),
               # --- Google Analytics: Track tab changes ---
-              tags$script(HTML("
-    function safeGtag(){
-      if (typeof gtag === 'function') {
-        gtag.apply(null, arguments);
-      } else {
-        console.warn('gtag not ready, event skipped:', arguments);
-      }
-    }
-
-    let lastTab = 'map_tab';       
-    let lastTabStart = Date.now();
-
-    // Try initial tab event safely
-    safeGtag('event', 'tab_open', { 'tab_name': lastTab });
-    //console.log('GA4 event sent: tab_open → map_tab (initial load)');
-
-    $(document).on('shiny:inputchanged', function(e) {
-      if (e.name === 'tabs') {
-        
-        const now = Date.now();
-
-        // --- Send duration event safely ---
-        if (lastTab !== null && lastTabStart !== null) {
-          const seconds = Math.round((now - lastTabStart) / 1000);
-
-          safeGtag('event', 'tab_duration', {
-            'tab_name': lastTab,
-            'seconds': seconds
-          });
-
-          //console.log(`GA4 tab_duration sent: ${lastTab} → ${seconds}s`);
-        }
-
-        // --- Reset timer for new tab ---
-        lastTab = e.value;
-        lastTabStart = now;
-
-        // --- Send tab_open safely ---
-        safeGtag('event', 'tab_open', {
-          'tab_name': e.value
-        });
-
-        //console.log('GA4 event sent: tab_open → ' + e.value);
-      }
-    });
-  "))
-    ),
+              includeScript("www/tab_analytics.js")
+              ),
     tags$head(
       tags$link(rel = "icon", type = "image/svg+xml", href = "spp_logo_tab_v2.svg")
     ),
