@@ -1,99 +1,94 @@
-/******************************************************
- * SECURE TAB ANALYTICS (Proxy Version)
- * -------------------------------------
- * - No API secret in browser
- * - No client_id needed in browser
- * - Unload tracked reliably via sendBeacon → Shiny proxy
- * - Initial map load labeled as "map_tab_initial"
- ******************************************************/
 
 function safeGtag() {
   if (typeof gtag === "function") {
     gtag.apply(null, arguments);
   } else {
-    console.warn("gtag not ready (skipped)", arguments);
+    console.warn("gtag not ready, event skipped:", arguments);
   }
 }
 
 let lastTab = "map_tab";
 let lastTabStart = Date.now();
-let isInitialMap = true;
+let isInitialMap = true;  // <--- KEY FLAG
 
-// Initial open event (landing tab)
+// 1) Send initial tab_open (as initial load)
 safeGtag("event", "tab_open", { tab_name: "map_tab_initial" });
 
 /******************************************************
- * TAB CHANGE HANDLER
+ * TAB CHANGE TRACKING
  ******************************************************/
 $(document).on("shiny:inputchanged", function (e) {
   if (e.name === "tabs") {
+
     const now = Date.now();
     const seconds = Math.round((now - lastTabStart) / 1000);
 
-    // Determine label for tab being left
-    const outgoingLabel =
-      lastTab === "map_tab" && isInitialMap
-        ? "map_tab_initial"
-        : lastTab;
+    // Determine proper label for the tab we are LEAVING
+    let tabLabel;
 
-    // Send tab_duration event (safe)
+    if (lastTab === "map_tab" && isInitialMap) {
+      tabLabel = "map_tab_initial";
+      isInitialMap = false;  // After first leave, switch off
+    } else {
+      tabLabel = lastTab;
+    }
+
+    // Send duration event
     safeGtag("event", "tab_duration", {
-      tab_name: outgoingLabel,
+      tab_name: tabLabel,
       seconds: seconds
     });
 
-    if (lastTab === "map_tab" && isInitialMap) {
-      isInitialMap = false;
-    }
-
-    // Switch tab
+    // Prepare new tab
     lastTab = e.value;
     lastTabStart = now;
 
-    // Determine label for new tab
-    const incomingLabel =
+    // Determine proper label for the tab we are ENTERING
+    let nextLabel =
       lastTab === "map_tab" && isInitialMap
         ? "map_tab_initial"
         : lastTab;
 
-    // Send tab_open for new tab
+    // Send open event
     safeGtag("event", "tab_open", {
-      tab_name: incomingLabel
+      tab_name: nextLabel
     });
   }
 });
 
 /******************************************************
- * UNLOAD HANDLER → SEND TO SHINY PROXY (secure)
+ * WINDOW CLOSE / REFRESH HANDLER
  ******************************************************/
 window.addEventListener("beforeunload", function () {
   const now = Date.now();
   const seconds = Math.round((now - lastTabStart) / 1000);
 
-  // Determine final label
-  const finalLabel =
-    lastTab === "map_tab" && isInitialMap
-      ? "map_tab_initial"
-      : lastTab;
-  
-  console.log("Unload fired!", finalLabel, seconds);  // <--- TEST
+  // Determine label for closing tab
+  let tabLabel;
 
-  
+  if (lastTab === "map_tab" && isInitialMap) {
+    tabLabel = "map_tab_initial";
+    isInitialMap = false;
+  } else {
+    tabLabel = lastTab;
+  }
+
+  // Prepare Measurement Protocol payload
   const payload = {
+    client_id: (window.gtagClientId || ""),
     events: [
       {
         name: "tab_duration",
         params: {
-          tab_name: finalLabel,
+          tab_name: tabLabel,
           seconds: seconds
         }
       }
     ]
   };
 
-  // Send to Shiny proxy (safe, no secret exposed)
-  navigator.sendBeacon(
-    "ga4proxy",                  // Shiny secure endpoint
-    JSON.stringify(payload)
-  );
+  const url =
+    "https://www.google-analytics.com/mp/collect?measurement_id=G-2D6B3PWVGG&api_secret=ZKNkvKGbTV6504car3fmFw";
+
+  navigator.sendBeacon(url, JSON.stringify(payload));
 });
