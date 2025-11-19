@@ -932,33 +932,32 @@ observeEvent(input$btn_howto, {
     data = NULL,
     filter = function(data, req) {
       
-      # Parse JSON payload
       raw <- req$rook.input$read_lines()
-      json_payload <- jsonlite::fromJSON(paste(raw, collapse = ""))
+      json_payload <- paste(raw, collapse = "")
       
-      # Insert the correct client_id from GA cookies
-      # (Shiny session gives access to this securely)
-      cid <- session$token  # or use cookies directly
-      json_payload$client_id <- cid
+      measurement_id <- "G-2D6B3PWVGG"
+      api_secret     <- "ZKNkvKGbTV6504car3fmFw"
       
-      # Convert back to JSON
-      final_json <- jsonlite::toJSON(json_payload, auto_unbox = TRUE)
+      url <- sprintf(
+        "https://www.google-analytics.com/mp/collect?measurement_id=%s&api_secret=%s",
+        measurement_id, api_secret
+      )
       
-      # Send to GA4
       httr::POST(
-        url = sprintf(
-          "https://www.google-analytics.com/mp/collect?measurement_id=%s&api_secret=%s",
-          "G-2D6B3PWVGG",
-          "ZKNkvKGbTV6504car3fmFw"
-        ),
-        body = final_json,
+        url,
+        body = json_payload,
         encode = "raw",
         httr::content_type_json()
       )
       
-      list(status = 204L, headers = list("Content-Type" = "text/plain"), body = "")
+      list(
+        status = 204L,
+        headers = list("Content-Type" = "text/plain"),
+        body = ""
+      )
     }
   )
+  
   
    
   
