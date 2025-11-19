@@ -75,7 +75,10 @@ window.addEventListener("beforeunload", function () {
     lastTab === "map_tab" && isInitialMap
       ? "map_tab_initial"
       : lastTab;
+  
+  console.log("Unload fired!", finalLabel, seconds);  // <--- TEST
 
+  
   const payload = {
     events: [
       {
