@@ -923,6 +923,45 @@ observeEvent(input$btn_howto, {
   })
   
   
+  
+  
+  # ==== 13) GA4 Proxy Endpoint ======================================================
+  session$registerDataObj(
+    name = "ga4proxy",
+    data = NULL,
+    filter = function(data, req) {
+      
+      # Read raw JSON payload sent from JS
+      raw <- req$rook.input$read_lines()
+      json_payload <- paste(raw, collapse = "")
+      
+      # Your GA4 credentials (NOT exposed to the browser)
+      measurement_id <- "G-2D6B3PWVGG"
+      api_secret     <- "ZKNkvKGbTV6504car3fmFw"   # stays server-side
+      
+      # Forward to Google Analytics Measurement Protocol
+      url <- sprintf(
+        "https://www.google-analytics.com/mp/collect?measurement_id=%s&api_secret=%s",
+        measurement_id, api_secret
+      )
+      
+      httr::POST(
+        url,
+        body = json_payload,
+        encode = "raw",
+        httr::content_type_json()
+      )
+      
+      # Respond to browser (required)
+      list(
+        status = 204L,
+        headers = list(
+          "Content-Type" = "text/plain"
+        ),
+        body = ""
+      )
+    }
+  )
    
   
   
