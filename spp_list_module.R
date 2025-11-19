@@ -149,7 +149,7 @@ spp_mvp_ui <- function(id,
           class = "card",
           open  = open_attr("datasets", open_sections),
           tags$summary(
-            tags$span(class = "card-title", "SPP Databases"),
+            tags$span(class = "card-title", "Download SPP Databases"),
             shiny::icon("chevron-down", class = "chev")
           ),
           tags$div(
