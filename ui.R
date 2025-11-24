@@ -293,9 +293,7 @@ ui <- dashboardPage(
       // Also run once at startup
       $(document).on('shiny:connected', fixAnimateButtons);
     ")),
-<<<<<<< Updated upstream
-    # ui.R (Add this script, or combine it with your existing JS script)
-=======
+
     # tabItems(
     #   tabItem(
     #     tabName = "map_tab", # QUE PASA ACAAAAAA
@@ -336,33 +334,11 @@ ui <- dashboardPage(
     
     
     ###### DOUBLE MAP 
->>>>>>> Stashed changes
+
     tabItems(
       tabItem(
         tabName = "map_tab",
         tagList(
-          
-<<<<<<< Updated upstream
-          absolutePanel(
-            top = 90, right = 12, 
-            width = 300,
-            draggable = F,
-            div(class = "small-text-box",
-                id = "var-desc-map",
-                box(
-                  #title = "Variable description", 
-                  solidHeader = F,
-                  collapsible = F,
-                  collapsed = FALSE,
-                  width = NULL,
-                  closable = TRUE,
-                  uiOutput("var_description_map")
-                )
-            )),
-          
-          # Custom year selector placed at the bottom of the tab
-=======
->>>>>>> Stashed changes
           div(
             style = "display: flex; gap: 0px; width: 100%;",
             
@@ -392,29 +368,8 @@ ui <- dashboardPage(
           div(
             style = "position: absolute; bottom: 50%; left: 45%; z-index: 1000;",
             hidden(textOutput("no_data_message"))
-<<<<<<< Updated upstream
-          ),
-          div(
-            style = "position: absolute; bottom: 30px; left: 40%; right: 20%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
-            uiOutput("year_selector")
-          ),
-          # div(
-          #   style = "position: absolute; bottom: 30px; left: 40%; margin-left: 71px; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
-          #   hidden(
-          #     actionButton(
-          #       "captureMapBtn",
-          #       label = tagList(icon("camera"), "Screenshot"),
-          #       class = "download_map_btn"
-          #     )
-          #   )
-          # )
-          
-          
-=======
-          )
->>>>>>> Stashed changes
         )
-      ),
+      )),
       
     
 

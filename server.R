@@ -685,7 +685,7 @@ observeEvent(input$btn_howto, {
   #   )
   # })
   
-  
+
   # output$year_selector <- renderUI({
   #   req(current_tab() == "map_tab", input$country_sel, selected_vars_vector())
   #   
@@ -1048,6 +1048,83 @@ observeEvent(input$btn_howto, {
   
   
   
+  
+  
+  
+  
+  ##### DOUBLE MAP
+
+  
+  #--------------------------------------------------------------
+  # YEAR SELECTOR (LEFT)
+  #--------------------------------------------------------------
+  output$year_selector_left <- renderUI({
+    req(current_tab() == "map_tab", input$country_sel, selected_vars_vector())
+    
+    df <- data
+    country_col <- "country_name"
+    year_col    <- "year"
+    
+    var_name <- selected_vars_vector()
+    if (length(var_name) > 1) var_name <- var_name[[1]]
+    
+    df_filtered <- df |>
+      dplyr::filter(.data[[country_col]] == input$country_sel) |>
+      dplyr::select(dplyr::all_of(c(country_col, year_col, var_name)))
+    
+    valid_years <- df_filtered |>
+      dplyr::filter(!is.na(.data[[var_name]])) |>
+      dplyr::pull(.data[[year_col]])
+    
+    y_min <- if (length(valid_years) > 0) min(valid_years) else min(df_filtered[[year_col]])
+    y_max <- max(df_filtered[[year_col]])
+    
+    shinyWidgets::sliderTextInput(
+      inputId  = "year_sel_left",
+      label    = "Year",
+      choices  = as.character(seq(y_min, y_max, by = 1)),
+      grid     = TRUE,
+      width    = "90%",
+      animate  = TRUE,
+      selected = y_min
+    )
+  })
+  
+  
+  #--------------------------------------------------------------
+  # YEAR SELECTOR (RIGHT)
+  #--------------------------------------------------------------
+  output$year_selector_right <- renderUI({
+    req(current_tab() == "map_tab", input$country_sel, selected_vars_vector())
+    
+    df <- data
+    country_col <- "country_name"
+    year_col    <- "year"
+    
+    var_name <- selected_vars_vector()
+    if (length(var_name) > 1) var_name <- var_name[[1]]
+    
+    df_filtered <- df |>
+      dplyr::filter(.data[[country_col]] == input$country_sel) |>
+      dplyr::select(dplyr::all_of(c(country_col, year_col, var_name)))
+    
+    valid_years <- df_filtered |>
+      dplyr::filter(!is.na(.data[[var_name]])) |>
+      dplyr::pull(.data[[year_col]])
+    
+    y_min <- if (length(valid_years) > 0) min(valid_years) else min(df_filtered[[year_col]])
+    y_max <- max(df_filtered[[year_col]])
+    
+    shinyWidgets::sliderTextInput(
+      inputId  = "year_sel_right",
+      label    = "Year",
+      choices  = as.character(seq(y_min, y_max, by = 1)),
+      grid     = TRUE,
+      width    = "90%",
+      animate  = TRUE,
+      selected = y_max
+    )
+  })
   
   
   
