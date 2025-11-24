@@ -267,14 +267,14 @@ server <- function(input, output, session) {
   
   
   # -- 1.0) DATA MAP ---------------------
-  data_map <- reactive({
-    req(input$country_sel, input$year_sel)
-    geom_filtered <- geom %>% dplyr::filter(country_name == input$country_sel)
-    data_filtered <- data %>% dplyr::filter(country_name == input$country_sel, year == input$year_sel)
-    dplyr::left_join(geom_filtered, data_filtered, by = "country_state_code")
-  })
-  
-  
+  # data_map <- reactive({
+  #   req(input$country_sel, input$year_sel)
+  #   geom_filtered <- geom %>% dplyr::filter(country_name == input$country_sel)
+  #   data_filtered <- data %>% dplyr::filter(country_name == input$country_sel, year == input$year_sel)
+  #   dplyr::left_join(geom_filtered, data_filtered, by = "country_state_code")
+  # })
+  # 
+  # 
   
   # ==== 1.3) CAMERA TAB SELECTORS (SLED-driven) ==============================
   # UI renderers (camera-only)
@@ -686,65 +686,65 @@ observeEvent(input$btn_howto, {
   # })
   
   
-  output$year_selector <- renderUI({
-    req(current_tab() == "map_tab", input$country_sel, selected_vars_vector())
-    
-    # Static dataset
-    df <- data
-    
-    # Core column names (adjust if needed)
-    country_col <- "country_name"
-    year_col    <- "year"
-    
-    # Selected variable (single column name as string)
-    var_name <- selected_vars_vector()
-    if (length(var_name) > 1) var_name <- var_name[[1]]
-    req(is.character(var_name), var_name %in% names(df))
-    
-    # --- Filter early to minimize data in memory ---
-    df_filtered <- df |>
-      dplyr::filter(.data[[country_col]] == input$country_sel) |>
-      dplyr::select(dplyr::all_of(c(country_col, year_col, var_name)))
-    
-    # Determine the first non-NA year for the selected variable
-    y_min <- if (nrow(df_filtered) == 0) {
-      1983L
-    } else {
-      valid_years <- df_filtered |>
-        dplyr::filter(!is.na(.data[[var_name]])) |>
-        dplyr::pull(.data[[year_col]])
-      
-      if (length(valid_years) > 0) {
-        min(valid_years, na.rm = TRUE)
-      } else {
-        min(df_filtered[[year_col]], na.rm = TRUE)
-      }
-    }
-    
-    # Determine the latest available year (country-specific)
-    y_max <- if (nrow(df_filtered) > 0) {
-      max(df_filtered[[year_col]], na.rm = TRUE)
-    } else {
-      max(df[[year_col]], na.rm = TRUE)
-    }
-    
-    # Safety fallback
-    if (!is.finite(y_min) || !is.finite(y_max) || y_min > y_max) {
-      y_min <- 1983L
-      y_max <- 2024L
-    }
-    
-    shinyWidgets::sliderTextInput(
-      inputId  = "year_sel",
-      label    = "Year",
-      choices  = as.character(seq(y_min, y_max, by = 1)),
-      grid     = TRUE,
-      width    = "90%",
-      animate  = TRUE,
-      selected = 2005
-    )
-  })
-  
+  # output$year_selector <- renderUI({
+  #   req(current_tab() == "map_tab", input$country_sel, selected_vars_vector())
+  #   
+  #   # Static dataset
+  #   df <- data
+  #   
+  #   # Core column names (adjust if needed)
+  #   country_col <- "country_name"
+  #   year_col    <- "year"
+  #   
+  #   # Selected variable (single column name as string)
+  #   var_name <- selected_vars_vector()
+  #   if (length(var_name) > 1) var_name <- var_name[[1]]
+  #   req(is.character(var_name), var_name %in% names(df))
+  #   
+  #   # --- Filter early to minimize data in memory ---
+  #   df_filtered <- df |>
+  #     dplyr::filter(.data[[country_col]] == input$country_sel) |>
+  #     dplyr::select(dplyr::all_of(c(country_col, year_col, var_name)))
+  #   
+  #   # Determine the first non-NA year for the selected variable
+  #   y_min <- if (nrow(df_filtered) == 0) {
+  #     1983L
+  #   } else {
+  #     valid_years <- df_filtered |>
+  #       dplyr::filter(!is.na(.data[[var_name]])) |>
+  #       dplyr::pull(.data[[year_col]])
+  #     
+  #     if (length(valid_years) > 0) {
+  #       min(valid_years, na.rm = TRUE)
+  #     } else {
+  #       min(df_filtered[[year_col]], na.rm = TRUE)
+  #     }
+  #   }
+  #   
+  #   # Determine the latest available year (country-specific)
+  #   y_max <- if (nrow(df_filtered) > 0) {
+  #     max(df_filtered[[year_col]], na.rm = TRUE)
+  #   } else {
+  #     max(df[[year_col]], na.rm = TRUE)
+  #   }
+  #   
+  #   # Safety fallback
+  #   if (!is.finite(y_min) || !is.finite(y_max) || y_min > y_max) {
+  #     y_min <- 1983L
+  #     y_max <- 2024L
+  #   }
+  #   
+  #   shinyWidgets::sliderTextInput(
+  #     inputId  = "year_sel",
+  #     label    = "Year",
+  #     choices  = as.character(seq(y_min, y_max, by = 1)),
+  #     grid     = TRUE,
+  #     width    = "90%",
+  #     animate  = TRUE,
+  #     selected = 2005
+  #   )
+  # })
+  # 
   
   # -- 4.5) Camera year selector (UI; updated above) -------------------------
   output$year_selector_camera <- renderUI({
@@ -763,14 +763,7 @@ observeEvent(input$btn_howto, {
   
   # ==== 5) SHOW / HIDE CONTROLS BY TAB ======================================
   # “No data” visibility (map)
-  observe({
-    req(current_tab() == "map_tab", data_map())
-    if (nrow(data_map()) == 0 || all(is.na(data_map()[[selected_vars_vector()]]))) {
-      shinyjs::show("no_data_message")
-    } else {
-      shinyjs::hide("no_data_message")
-    }
-  })
+
   
   # Batch toggle helpers
   .combine_selector <- function(ids) if (length(ids)) paste0("#", ids, collapse = ", ") else NULL
@@ -781,7 +774,7 @@ observeEvent(input$btn_howto, {
   ALL_TOGGLES <- c(
     # map/graph controls
     "country_selector","var_sel","var_description_map","var_description_graph","jstree_container",
-    "state_selector",#"jstree_vars_container",
+    "state_selector","show_map_swicht",#"jstree_vars_container",
     "jstree_vars_container_graph","fancytree_vars_demo_container", "fancytree_vars_container_graph",
     "fancytree_states_container",
     # data-tab selectors
@@ -795,7 +788,8 @@ observeEvent(input$btn_howto, {
   # Given a tab, return vector of IDs to show
   .ids_to_show_for_tab <- function(tab) {
     switch(tab,
-           "map_tab"   = c("country_selector","var_sel","var_description_map","fancytree_vars_demo_container"),
+           "map_tab"   = c("country_selector","var_sel","var_description_map","fancytree_vars_demo_container",
+                           "show_map_swicht"),
            "graph_tab" = c("var_description_graph","state_selector","fancytree_states_container","fancytree_vars_container_graph"),
            #"data_tab"  = c("country_sel2","state_sel2","db_selector","years"),
            "camera"    = c("country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera"),
@@ -992,15 +986,15 @@ observeEvent(input$btn_howto, {
   
 
   
-  mapModuleServer(
-    id = "map1",
-    data_map = data_map,
-    input_var_sel = selected_vars_vector,
-    dict = dict,
-    country_bboxes = country_bboxes,
-    input_country_sel = reactive(input$country_sel),
-    active_tab = current_tab
-  )
+  # mapModuleServer(
+  #   id = "map1",
+  #   data_map = data_map,
+  #   input_var_sel = selected_vars_vector,
+  #   dict = dict,
+  #   country_bboxes = country_bboxes,
+  #   input_country_sel = reactive(input$country_sel),
+  #   active_tab = current_tab
+  # )
   
   linePlotModuleServer(
     id = "lp",
@@ -1055,8 +1049,167 @@ observeEvent(input$btn_howto, {
   
   
   
-   
   
+  
+  
+  ##### DOUBLE MAP
+
+  
+  #--------------------------------------------------------------
+  # YEAR SELECTOR (LEFT)
+  #--------------------------------------------------------------
+  output$year_selector_left <- renderUI({
+    req(current_tab() == "map_tab", input$country_sel, selected_vars_vector())
+    
+    df <- data
+    country_col <- "country_name"
+    year_col    <- "year"
+    
+    var_name <- selected_vars_vector()
+    if (length(var_name) > 1) var_name <- var_name[[1]]
+    
+    df_filtered <- df |>
+      dplyr::filter(.data[[country_col]] == input$country_sel) |>
+      dplyr::select(dplyr::all_of(c(country_col, year_col, var_name)))
+    
+    valid_years <- df_filtered |>
+      dplyr::filter(!is.na(.data[[var_name]])) |>
+      dplyr::pull(.data[[year_col]])
+    
+    y_min <- if (length(valid_years) > 0) min(valid_years) else min(df_filtered[[year_col]])
+    y_max <- max(df_filtered[[year_col]])
+    
+    shinyWidgets::sliderTextInput(
+      inputId  = "year_sel_left",
+      label    = "Year",
+      choices  = as.character(seq(y_min, y_max, by = 1)),
+      grid     = TRUE,
+      width    = "90%",
+      animate  = TRUE,
+      selected = y_min
+    )
+  })
+  
+  
+  #--------------------------------------------------------------
+  # YEAR SELECTOR (RIGHT)
+  #--------------------------------------------------------------
+  output$year_selector_right <- renderUI({
+    req(current_tab() == "map_tab", input$country_sel, selected_vars_vector())
+    
+    df <- data
+    country_col <- "country_name"
+    year_col    <- "year"
+    
+    var_name <- selected_vars_vector()
+    if (length(var_name) > 1) var_name <- var_name[[1]]
+    
+    df_filtered <- df |>
+      dplyr::filter(.data[[country_col]] == input$country_sel) |>
+      dplyr::select(dplyr::all_of(c(country_col, year_col, var_name)))
+    
+    valid_years <- df_filtered |>
+      dplyr::filter(!is.na(.data[[var_name]])) |>
+      dplyr::pull(.data[[year_col]])
+    
+    y_min <- if (length(valid_years) > 0) min(valid_years) else min(df_filtered[[year_col]])
+    y_max <- max(df_filtered[[year_col]])
+    
+    shinyWidgets::sliderTextInput(
+      inputId  = "year_sel_right",
+      label    = "Year",
+      choices  = as.character(seq(y_min, y_max, by = 1)),
+      grid     = TRUE,
+      width    = "90%",
+      animate  = TRUE,
+      selected = y_max
+    )
+  })
+  
+  
+  #--------------------------------------------------------------
+  # REACTIVE DATA FOR LEFT MAP
+  #--------------------------------------------------------------
+  data_map_left <- reactive({
+    req(input$country_sel, input$year_sel_left)
+    
+    geom_filtered <- geom %>%
+      dplyr::filter(country_name == input$country_sel)
+    
+    data_filtered <- data %>%
+      dplyr::filter(
+        country_name == input$country_sel,
+        year == input$year_sel_left
+      )
+    
+    dplyr::left_join(geom_filtered, data_filtered, by = "country_state_code")
+  })
+  
+  
+  #--------------------------------------------------------------
+  # REACTIVE DATA FOR RIGHT MAP
+  #--------------------------------------------------------------
+  data_map_right <- reactive({
+    req(input$show_both_maps)        # <- only compute when TRUE
+    req(input$country_sel, input$year_sel_right)
+    
+    geom_filtered <- geom %>%
+      dplyr::filter(country_name == input$country_sel)
+    
+    data_filtered <- data %>%
+      dplyr::filter(
+        country_name == input$country_sel,
+        year == input$year_sel_right
+      )
+    
+    dplyr::left_join(geom_filtered, data_filtered, by = "country_state_code")
+  })
+  
+  
+  #--------------------------------------------------------------
+  # LEFT MAP MODULE
+  #--------------------------------------------------------------
+  mapModuleServer(
+    id = "map_left",
+    data_map = data_map_left,
+    input_var_sel = selected_vars_vector,
+    dict = dict,
+    country_bboxes = country_bboxes,
+    input_country_sel = reactive(input$country_sel),
+    active_tab = current_tab
+  )
+  
+  
+  #--------------------------------------------------------------
+  # RIGHT MAP MODULE
+  #--------------------------------------------------------------
+  mapModuleServer(
+    id = "map_right",
+    data_map = data_map_right,
+    input_var_sel = selected_vars_vector,
+    dict = dict,
+    country_bboxes = country_bboxes,
+    input_country_sel = reactive(input$country_sel),
+    active_tab = current_tab
+  )
+  
+  observeEvent(input$show_both_maps, {
+    if (input$show_both_maps) {
+      shinyjs::show("right_map_container")
+    } else {
+      shinyjs::hide("right_map_container")
+    }
+  })
+  
+
+  # observe({
+  #   req(current_tab() == "map_tab", data_map())
+  #   if (nrow(data_map()) == 0 || all(is.na(data_map()[[selected_vars_vector()]]))) {
+  #     shinyjs::show("no_data_message")
+  #   } else {
+  #     shinyjs::hide("no_data_message")
+  #   }
+  # })
   
 }
 

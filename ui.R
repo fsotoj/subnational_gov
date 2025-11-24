@@ -156,6 +156,20 @@ ui <- dashboardPage(
              div(id = "fancytree_vars_demo_graph")
         )
       ),
+      hidden(
+        div(
+          id= "show_map_swicht",
+          style = "margin-bottom: 10px;",
+          shinyWidgets::switchInput(
+            inputId = "show_both_maps",
+            label = "Enable/Disable Comparison",
+            value = FALSE,
+            onLabel = "Enabled",
+            offLabel = "Disabled"
+            )
+          )
+        ),
+        
       
       
       
@@ -279,13 +293,56 @@ ui <- dashboardPage(
       // Also run once at startup
       $(document).on('shiny:connected', fixAnimateButtons);
     ")),
+<<<<<<< Updated upstream
     # ui.R (Add this script, or combine it with your existing JS script)
+=======
+    # tabItems(
+    #   tabItem(
+    #     tabName = "map_tab", # QUE PASA ACAAAAAA
+    #     tagList(
+    #       mapModuleUI("map1"),
+    #       
+    #       absolutePanel(
+    #         top = 90, right = 12, 
+    #         width = 300,
+    #         draggable = F,
+    #         div(class = "small-text-box",
+    #             id = "var-desc-map",
+    #             box(
+    #               solidHeader = F,
+    #               collapsible = F,
+    #               collapsed = FALSE,
+    #               width = NULL,
+    #               closable = TRUE,
+    #               uiOutput("var_description_map")
+    #             )
+    #         )),
+    #       
+    #       # Custom year selector placed at the bottom of the tab
+    #       div(
+    #         style = "position: absolute; bottom: 50%; left: 40%; z-index: 1000;",
+    #         hidden(textOutput("no_data_message"))
+    #       ),
+    #       div(
+    #         style = "position: absolute; bottom: 30px; left: 40%; right: 20%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
+    #         uiOutput("year_selector")
+    #       ),
+    # 
+    #       
+    #       
+    #     )
+    #   ),
+    
+    
+    
+    ###### DOUBLE MAP 
+>>>>>>> Stashed changes
     tabItems(
       tabItem(
-        tabName = "map_tab", # QUE PASA ACAAAAAA
+        tabName = "map_tab",
         tagList(
-          mapModuleUI("map1"),
           
+<<<<<<< Updated upstream
           absolutePanel(
             top = 90, right = 12, 
             width = 300,
@@ -304,9 +361,38 @@ ui <- dashboardPage(
             )),
           
           # Custom year selector placed at the bottom of the tab
+=======
+>>>>>>> Stashed changes
           div(
-            style = "position: absolute; bottom: 50%; left: 40%; z-index: 1000;",
+            style = "display: flex; gap: 0px; width: 100%;",
+            
+            # LEFT MAP ALWAYS PRESENT
+            div(
+              style = "flex: 1; height: 99vh; position: relative;",
+              mapModuleUI("map_left"),
+              div(
+                style = "position: absolute; bottom: 5px; left: 5%; right: 20%; z-index: 1000;",
+                uiOutput("year_selector_left")
+              )
+            ),
+            
+            # RIGHT MAP ALWAYS PRESENT, BUT HIDDEN WHEN FALSE
+            div(
+              id = "right_map_container",
+              style = "flex: 1; height: 99vh; position: relative;",
+              mapModuleUI("map_right"),
+              div(
+                style = "position: absolute; bottom: 5px; left: 5%; right: 20%; z-index: 1000;",
+                uiOutput("year_selector_right")
+              )
+            )
+          ),
+          
+          # Message when no data available
+          div(
+            style = "position: absolute; bottom: 50%; left: 45%; z-index: 1000;",
             hidden(textOutput("no_data_message"))
+<<<<<<< Updated upstream
           ),
           div(
             style = "position: absolute; bottom: 30px; left: 40%; right: 20%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
@@ -324,8 +410,13 @@ ui <- dashboardPage(
           # )
           
           
+=======
+          )
+>>>>>>> Stashed changes
         )
       ),
+      
+    
 
       
       tabItem(
