@@ -1,7 +1,7 @@
 # ================= UI HELPERS ==================
 linePlotModuleUI <- function(id) {
   ns <- NS(id)
-  highcharter::highchartOutput(ns("line_plot"), height = "90vh")
+  highcharter::highchartOutput(ns("line_plot"), height = "80vh")
 }
 
 linePlotLegendUI <- function(id, width = NULL) {
@@ -20,9 +20,6 @@ linePlotLegendUI <- function(id, width = NULL) {
 # =============== SERVER ==================
 linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Ymin, active_tab) {
   moduleServer(id, function(input, output, session) {
-    
-    clean_var <- reactive({sub("_[12]$", "", input_variable())})   # remove "_1" or "_2" at the end
-    
     
     format_value <- function(values, type) {
       values <- as.double(values)
@@ -61,9 +58,9 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Y
         tidyr::drop_na(date_year)
       req(nrow(df) > 0)
       
-      pretty_name <- dict %>% dplyr::filter(variable == clean_var()) %>% dplyr::pull(pretty_name) %>%
-        { if (length(.) == 0 || is.na(.)) clean_var() else . }
-      var_type <- dict %>% dplyr::filter(variable == clean_var()) %>% dplyr::pull(type) %>%
+      pretty_name <- dict %>% dplyr::filter(variable == input_variable()) %>% dplyr::pull(pretty_name) %>%
+        { if (length(.) == 0 || is.na(.)) input_variable() else . }
+      var_type <- dict %>% dplyr::filter(variable == input_variable()) %>% dplyr::pull(type) %>%
         { if (length(.) == 0 || is.na(.)) "continuous" else . }
       
       country_colors_base <- c(
@@ -137,71 +134,72 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Y
           panning = FALSE,
           events = list(
             load = highcharter::JS(sprintf("
-                    function() {
-                      var chart = this;
-                      var root = document.getElementById('%s');
-                      if(!root) return;
-                      var locked = null;
-                    
-                      function setInactiveAllExcept(name){
-                        chart.series.forEach(function(s){
-                          if(!s.visible) return;
-                          if(s.name === name){
-                            s.setState('hover');
-                            if(s.group) s.group.toFront();
-                            if(s.markerGroup) s.markerGroup.toFront();
-                          } else {
-                            s.setState('inactive');
-                          }
-                        });
-                        // Highlight corresponding tag
-                        root.querySelectorAll('[data-state]').forEach(function(el){
-                          el.style.opacity = (el.getAttribute('data-state') === name) ? '1.0' : '0.4';
-                          el.style.boxShadow = (el.getAttribute('data-state') === name) ? 'inset 0 0 0 1px #FFA92A' : 'inset 0 0 0 1px #E6E6E6';
-                        });
-                      }
-                    
-                      function clearStates(){
-                        chart.series.forEach(function(s){
-                          if(!s.visible) return;
-                          s.setState('normal');
-                        });
-                        root.querySelectorAll('[data-state]').forEach(function(el){
-                          el.style.opacity = '1';
-                          el.style.boxShadow = 'inset 0 0 0 1px #E6E6E6';
-                        });
-                      }
-                    
-                      chart.series.forEach(function(s){
-                        s.update({
-                          events: {
-                            click: function(){
-                              var name = this.name;
-                              if(locked === name){ locked = null; clearStates(); }
-                              else { locked = name; setInactiveAllExcept(name); }
-                            }
-                          }
-                        });
-                      });
-                    
-                      root.querySelectorAll('[data-state]').forEach(function(el){
-                        el.style.cursor = 'pointer';
-                        el.addEventListener('mouseenter', function(){
-                          if(locked) return;
-                          var sName = this.getAttribute('data-state');
-                          setInactiveAllExcept(sName);
-                        });
-                        el.addEventListener('mouseleave', function(){
-                          if(locked) return;
-                          clearStates();
-                        });
-                        el.addEventListener('click', function(){
-                          var sName = this.getAttribute('data-state');
-                          if(locked === sName){ locked = null; clearStates(); }
-                          else { locked = sName; setInactiveAllExcept(sName); }
-                        });
-                      });
-                    }", paste0(session$ns("line_plot"), "-legend")
+    function() {
+      var chart = this;
+      var root = document.getElementById('%s');
+      if(!root) return;
+      var locked = null;
+
+      function setInactiveAllExcept(name){
+        chart.series.forEach(function(s){
+          if(!s.visible) return;
+          if(s.name === name){
+            s.setState('hover');
+            if(s.group) s.group.toFront();
+            if(s.markerGroup) s.markerGroup.toFront();
+          } else {
+            s.setState('inactive');
+          }
+        });
+        // Highlight corresponding tag
+        root.querySelectorAll('[data-state]').forEach(function(el){
+          el.style.opacity = (el.getAttribute('data-state') === name) ? '1.0' : '0.4';
+          el.style.boxShadow = (el.getAttribute('data-state') === name) ? 'inset 0 0 0 1px #FFA92A' : 'inset 0 0 0 1px #E6E6E6';
+        });
+      }
+
+      function clearStates(){
+        chart.series.forEach(function(s){
+          if(!s.visible) return;
+          s.setState('normal');
+        });
+        root.querySelectorAll('[data-state]').forEach(function(el){
+          el.style.opacity = '1';
+          el.style.boxShadow = 'inset 0 0 0 1px #E6E6E6';
+        });
+      }
+
+      chart.series.forEach(function(s){
+        s.update({
+          events: {
+            click: function(){
+              var name = this.name;
+              if(locked === name){ locked = null; clearStates(); }
+              else { locked = name; setInactiveAllExcept(name); }
+            }
+          }
+        });
+      });
+
+      root.querySelectorAll('[data-state]').forEach(function(el){
+        el.style.cursor = 'pointer';
+        el.addEventListener('mouseenter', function(){
+          if(locked) return;
+          var sName = this.getAttribute('data-state');
+          setInactiveAllExcept(sName);
+        });
+        el.addEventListener('mouseleave', function(){
+          if(locked) return;
+          clearStates();
+        });
+        el.addEventListener('click', function(){
+          var sName = this.getAttribute('data-state');
+          if(locked === sName){ locked = null; clearStates(); }
+          else { locked = sName; setInactiveAllExcept(sName); }
+        });
+      });
+    }",
+                                           paste0(session$ns("line_plot"), "-legend")
             ))
           )
           

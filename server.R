@@ -8,6 +8,23 @@ server <- function(input, output, session) {
   })
   
   
+  
+  default_states <- c("ARGENTINA-CAPITAL FEDERAL", "BRAZIL-DISTRITO FEDERAL", "MEXICO-CDMX")
+  #current_tab   <- reactive({ input$tabs })
+  
+
+
+  # Initialize JSTree with default selection
+  observeEvent(session, {
+    session$sendCustomMessage(
+      "jstree_data",
+      list(
+        data = jstree_json_data,
+        default_selected = default_states
+      )
+    )
+  })
+  
 
   # Initialize Fancytree with default selection
   observeEvent(session, {
@@ -26,6 +43,18 @@ server <- function(input, output, session) {
       )
     )
   })
+  
+
+  # # Send to the client (message name is up to you; example: "jstree_vars_data")
+  # observeEvent(session, {
+  #   session$sendCustomMessage(
+  #     "jstree_vars_data",
+  #     list(
+  #       data = jstree_json_vars, 
+  #       default_selected = list("Executive Elections-Valid Votes") # optional
+  #     )
+  #   )
+  # })
   
   
   ## fancy tree map
@@ -66,12 +95,26 @@ server <- function(input, output, session) {
   
   
   
-
+  # observeEvent(session, {
+  #   session$sendCustomMessage(
+  #     "jstree_vars_data_graph",
+  #     list(
+  #       data = jstree_json_vars_graph, 
+  #       default_selected = list("Executive Elections-Valid Votes") # optional
+  #     )
+  #   )
+  # })
   # 
   
   # ==== 1) GLOBAL REACTIVES ==================================================
   # -- 1.0) states JSTree graph ----------------------
-
+  # selected_states_vector <- reactive({
+  #   if (is.null(input$selected_nodes) || input$selected_nodes == "[]") return(character(0))
+  #   nodes <- jsonlite::fromJSON(input$selected_nodes)
+  #   states_selected_ids <- nodes[grepl("-", nodes)]
+  #   sapply(strsplit(states_selected_ids, "-"), function(x) x[2])
+  # })
+  
   selected_states_vector <- reactive({
     x <- input$selected_nodes_states
     if (is.null(x) || x == "" || x == "[]") return(character(0))
@@ -90,6 +133,34 @@ server <- function(input, output, session) {
   })
   
   
+  
+  
+  # -- 1.0) vars JSTree map ----------------------
+  # selected_vars_vector <- reactive({
+  #   x <- input$selected_nodes_vars
+  #   if (is.null(x) || identical(x, "[]")) return(NULL)
+  #   ids <- jsonlite::fromJSON(x)
+  #   if (!length(ids)) return(NULL)
+  #   
+  #   parts <- strsplit(ids[1], "-", fixed = TRUE)[[1]]
+  #   # SLED-Lower-Pretty... / SLED-Upper-Pretty...
+  #   if (identical(parts[1], "Legislative Elections") && length(parts) >= 3 && parts[2] %in% c("Lower Chamber","Upper Chamber")) {
+  #     
+  #     n_chamber <- case_when(parts[2] == "Lower Chamber" ~ 1,
+  #                            parts[2] == "Upper Chamber" ~ 2)
+  #     
+  #     dict %>% 
+  #       filter(pretty_name == paste(parts[3:length(parts)], collapse = "-")) %>% 
+  #       pull(variable) %>% 
+  #       paste0(.,"_",n_chamber)
+  #     
+  #   } else {
+  #     # Generic: DATASET-Pretty...
+  #     
+  #     dict %>% filter(pretty_name == paste(parts[2:length(parts)], collapse = "-")) %>% pull(variable)
+  #     
+  #   }
+  # })
   
   
   selected_vars_vector <- reactive({
@@ -127,6 +198,34 @@ server <- function(input, output, session) {
   
   
   
+  # 
+  # selected_vars_vector_graph <- reactive({
+  #   x <- input$selected_nodes_vars_graph
+  #   if (is.null(x) || identical(x, "[]")) return(NULL)
+  #   ids <- jsonlite::fromJSON(x)
+  #   if (!length(ids)) return(NULL)
+  #   
+  #   parts <- strsplit(ids[1], "-", fixed = TRUE)[[1]]
+  #   # SLED-Lower-Pretty... / SLED-Upper-Pretty...
+  #   if (identical(parts[1], "Legislative Elections") && length(parts) >= 3 && parts[2] %in% c("Lower Chamber","Upper Chamber")) {
+  #     
+  #     n_chamber <- case_when(parts[2] == "Lower Chamber" ~ 1,
+  #                            parts[2] == "Upper Chamber" ~ 2)
+  #     
+  #     dict %>% 
+  #       filter(pretty_name == paste(parts[3:length(parts)], collapse = "-")) %>% 
+  #       pull(variable) %>% 
+  #       paste0(.,"_",n_chamber)
+  #     
+  #   } else {
+  #     # Generic: DATASET-Pretty...
+  #     
+  #     dict %>% filter(pretty_name == paste(parts[2:length(parts)], collapse = "-")) %>% pull(variable)
+  #     
+  #   }
+  # })
+  # 
+  
   
   selected_vars_vector_graph <- reactive({
     key <- input$selected_nodes_vars_graph2
@@ -134,7 +233,9 @@ server <- function(input, output, session) {
     
     parts <- strsplit(key, "-", fixed = TRUE)[[1]]
     
-
+    # -----------------------------------------
+    # Case 1 → Legislative Elections Lower/Upper
+    # -----------------------------------------
     if (identical(parts[1], "Legislative Elections") &&
         length(parts) >= 3 &&
         parts[2] %in% c("Lower Chamber", "Upper Chamber")) {
@@ -152,7 +253,10 @@ server <- function(input, output, session) {
       
       return(paste0(base_var, "_", n_chamber))
     }
-
+    
+    # -----------------------------------------
+    # Case 2 → Normal dataset variable
+    # -----------------------------------------
     pretty <- paste(parts[2:length(parts)], collapse = "-")
     
     dict %>%
@@ -178,7 +282,7 @@ server <- function(input, output, session) {
     selectInput(
       "country_sel_camera", "Country",
       choices  = sort(unique(SLED$country_name)),
-      selected = "BRAZIL"
+      selected = "ARGENTINA"
     )
   })
   
@@ -203,7 +307,7 @@ server <- function(input, output, session) {
       label    = "State",
       choices  = choices_vals,                 # shows Title Case, returns originals
       selected = if (length(choices_vals))
-        choices_vals[[min(4, length(choices_vals))]]
+        choices_vals[[min(6, length(choices_vals))]]
       else NULL
     )
   })
@@ -347,7 +451,7 @@ server <- function(input, output, session) {
         <h4 style='color:#FFA92A; margin-top:0;'>Reference</h4>
         <p style='font-size:0.9em; color:#4D4D4D;'>
           Giraudy, Agustina; Gonzalez, Guadalupe Andrea; Urdinez, Francisco, 2025, <em>\"Codebook: Subnational Politics Project (SPP) (v. 1)\"</em>, 
-          <a href='https://doi.org/10.17605/OSF.IO/H96FD' target='_blank' style='color:#E5007D; text-decoration:none;'>https://doi.org/10.17605/OSF.IO/H96FD</a>.
+          <a href='https://doi.org/doi:10.7910/DVN/IBSJO2' target='_blank' style='color:#E5007D; text-decoration:none;'>https://doi.org/doi:10.7910/DVN/IBSJO2</a>.
         </p>
       </div>
     "),
@@ -358,48 +462,32 @@ server <- function(input, output, session) {
   })
   
   observe({
-    tab     <- current_tab()
-    country <- input$country_sel
-    selvar  <- selected_vars_vector()
-    
-    is_legislative <- FALSE
-    
-    if (!is.null(selvar)) {
-      
-      # remove trailing _1 or _2 from the variable
-      selvar_clean <- sub("_[12]$", "", selvar)
-      
-      dataset_val <- dict %>%
-        dplyr::filter(variable == selvar_clean) %>%
-        dplyr::pull(dataset) %>%
-        unique()
-      
-      is_legislative <- identical(dataset_val, "Legislative Elections")
-      
-    }
-    
-    if (
-      tab == "camera" ||
-      (tab == "map_tab" && identical(country, "MEXICO") && is_legislative)
-    ) {
+    if (current_tab() == "camera") {
       showModal(
         tags$div(
           id = "devNoticeModal",
           modalDialog(
-            title = HTML(""),
+            title = HTML("
+            <div style='display:flex; align-items:center; justify-content:center;'>
+              <img src='spp_logo_v5.svg' height='60'/>
+            </div>
+          "),
             HTML("
-            <div style='color:#fff; font-size: 1em; text-align:center;'>
+            <div style='color:#111; font-size: 1em; text-align:justify;'>
               <p>
-                <strong>UNDER CONSTRUCTION</strong>
+                This tool is currently <strong>under development</strong>, even though you are welcome to explore it.
               </p>
               <p>
-                COMING SOON!
+                Some features may not yet be fully functional, and the displayed data or visualizations may change in future updates.
+              </p>
+              <p>
+                Thank you for your interest and feedback while we continue improving this section!
               </p>
             </div>
           "),
-            easyClose = FALSE,
-            size = "s",
-            footer = modalButton("Back to the tool")
+            easyClose = TRUE,
+            size = "m",
+            footer = modalButton("Close")
           )
         )
       )
@@ -407,10 +495,6 @@ server <- function(input, output, session) {
   })
   
   # ==== HOW-TO MODAL ======================================================
-  
-  
-  
-  
 observeEvent(input$btn_howto, {
   
   # Pick the right explanation based on the current tab
@@ -427,7 +511,7 @@ observeEvent(input$btn_howto, {
         choose a country, and move the year slider to see how it changes over time.
       </p>
       <p>
-        Hover over subnational unit for details or play the animation to view trends.
+        Hover over regions for details or play the animation to view trends.
       </p>
     ",
     
@@ -511,7 +595,25 @@ observeEvent(input$btn_howto, {
   # “No data” message (map)
   output$no_data_message <- renderText("⚠ No data available for this country, variable and year.")
   
-
+  
+  # ==== 3) MAP CAPTURE CONTROLS =============================================
+  # observeEvent(input$captureMapBtn, {
+  #   session$sendCustomMessage(
+  #     type = paste0("captureMap", "map1"),
+  #     message = list(
+  #       filename = paste0("map_", input$country_sel, input$year_sel, "_", selected_vars_vector(), ".png"),
+  #       scale = 2
+  #     )
+  #   )
+  # })
+  # observe({
+  #   if (current_tab() == "map_tab") {
+  #     shinyjs::show("captureMapBtn")
+  #   } else {
+  #     shinyjs::hide("captureMapBtn")
+  #   }
+  # })
+  
   
   # ==== 4) DYNAMIC UI (SELECTORS) ===========================================
   # -- 4.1) States selector (graph - multi-country) --------------------------
@@ -546,6 +648,12 @@ observeEvent(input$btn_howto, {
     )
   })
   
+  # -- 4.2) Dataset selector (data_tab) --------------------------------------
+  # output$db_selector <- renderUI({
+  #   selectInput("db_sel", label = "Select a database to view:",
+  #               choices = c("NED", "SED", "SEED", "SLED", "CFTDFLD"))
+  # })
+  # 
 
   # -- 4.4) Country/Year selectors (map_tab) ---------------------------------
   output$country_selector <- renderUI({
@@ -555,7 +663,28 @@ observeEvent(input$btn_howto, {
                 selected = "MEXICO")
   })
   
-
+  # 
+  # output$year_selector <- renderUI({
+  #   req(input$country_sel)
+  #   
+  #   # Define the start year based on selected country
+  #   start_year <- switch(input$country_sel,
+  #                        "MEXICO" = 1986,
+  #                        "BRAZIL" = 1999,
+  #                        "ARGENTINA" = 1983,
+  #                        1983)  # default if none selected
+  #   
+  #   shinyWidgets::sliderTextInput(
+  #     inputId  = "year_sel",
+  #     label    = "Year",
+  #     choices  = as.character(seq(start_year, 2024, 1)),
+  #     grid     = TRUE,
+  #     width    = "90%",
+  #     animate  = TRUE,
+  #     selected = 2010  # select the first year automatically
+  #   )
+  # })
+  
   
   # output$year_selector <- renderUI({
   #   req(current_tab() == "map_tab", input$country_sel, selected_vars_vector())
@@ -676,7 +805,21 @@ observeEvent(input$btn_howto, {
     .batch_show(to_show)
   }, ignoreInit = FALSE)
   
-
+  # ==== 6) TEXT BLOCKS (DB & CAMERA) ========================================
+  # -- 6.1) Database info text (data_tab) ------------------------------------
+  # output$texto_db <- renderUI({ 
+  #   req(input$db_sel) 
+  #   texto <- switch(
+  #     input$db_sel, 
+  #     "NED"  = "<b>National Executive Databse:</b> Data on national executive branches per country.",
+  #     "SED"  = "<b>Subnational Executive Database:</b> Data on subnational executive branches per state/province, per country.",
+  #     "SEED" = "<b>Subnational Executive Elections Database:</b> Data on electoral results for executive branch.",
+  #     "SLED" = "<b>Subnational Legislative Elections Database:</b> Data on subnational executive elections by state/province and country. It also includes institutional and electoral information on state- or provincial-level legislatures.",
+  #     "No data"
+  #   ) 
+  #   HTML(texto) 
+  # })
+  # 
   # -- 6.2) Camera info text (camera tab) ------------------------------------
   output$text_camera <- renderUI({
     req(current_tab() == "camera", sled_cam_filtered(), input$state_sel_camera)
@@ -775,7 +918,7 @@ observeEvent(input$btn_howto, {
       var_info$description_for_ui[1], "</strong>",
       if (!is.null(chamber)) paste0(" (", chamber, ")") else "",
       "; from the Subnational <strong>", parts[1],
-      "</strong> Database.",ifelse(is.na(var_info$add_indices[1]),"",var_info$add_indices[1]),"</div>"
+      "</strong> Database.</div>"
     )
     
     HTML(text_d)
@@ -892,29 +1035,18 @@ observeEvent(input$btn_howto, {
   })
   
   # ==== 12) TABS ======================================================
-  # 
-  # observeEvent(input$tab_about, { updateTabItems(session, "tabs", "about") })
-  # observeEvent(input$tab_map, { updateTabItems(session, "tabs", "map_tab") })
-  # observeEvent(input$tab_graph, { updateTabItems(session, "tabs", "graph_tab") })
-  # observeEvent(input$tab_camera, { updateTabItems(session, "tabs", "camera") })
-  # observeEvent(input$tab_codebook, { updateTabItems(session, "tabs", "codebook") })
-  # observeEvent(input$tab_data, { updateTabItems(session, "tabs", "data_tab") })
-  # 
-  # 
-  # 
-  # 
   
-  # ==== 12) SWIPE ======================================================
-  observeEvent(input$sidebar_swipe, {
-    if (input$sidebar_swipe == "left") {
-      shinyjs::runjs("
-      console.log('Force closing sidebar (server).');
-      $('body')
-        .removeClass('sidebar-open')
-        .addClass('sidebar-collapse');
-    ");
-    }
-  })
+  observeEvent(input$tab_about, { updateTabItems(session, "tabs", "about") })
+  observeEvent(input$tab_map, { updateTabItems(session, "tabs", "map_tab") })
+  observeEvent(input$tab_graph, { updateTabItems(session, "tabs", "graph_tab") })
+  observeEvent(input$tab_camera, { updateTabItems(session, "tabs", "camera") })
+  observeEvent(input$tab_codebook, { updateTabItems(session, "tabs", "codebook") })
+  observeEvent(input$tab_data, { updateTabItems(session, "tabs", "data_tab") })
+  
+  
+ 
+  
+  
   
   
   

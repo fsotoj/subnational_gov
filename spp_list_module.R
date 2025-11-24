@@ -60,7 +60,7 @@ spp_citations <- data.frame(
     "10.7910/DVN/7TNLBW",
     "10.7910/DVN/AJJLHX",
     "10.7910/DVN/HNKQUH",
-    "10.17605/OSF.IO/H96FD"
+    "10.7910/DVN/IBSJO2"
   ),
   stringsAsFactors = FALSE
 )
@@ -149,7 +149,7 @@ spp_mvp_ui <- function(id,
           class = "card",
           open  = open_attr("datasets", open_sections),
           tags$summary(
-            tags$span(class = "card-title", "Download SPP Databases"),
+            tags$span(class = "card-title", "SPP Databases"),
             shiny::icon("chevron-down", class = "chev")
           ),
           tags$div(

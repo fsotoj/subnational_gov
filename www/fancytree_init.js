@@ -11,7 +11,6 @@ $(document).ready(function () {
       checkbox: false,
       selectMode: 1,           // single selection
       clickFolderMode: 2,      // click folders to expand, not select
-      toggleEffect: false, // remove animation
       activate: function (event, data) {
         if (data.node && !data.node.folder) {
           // send a single key (no JSON array needed unless you want it)
@@ -21,12 +20,12 @@ $(document).ready(function () {
     });
 
     // Select default, if provided
-    const tree = $.ui.fancytree.getTree($tree);
+    const tree = $tree.fancytree("getTree");
     if (message.default_selected && message.default_selected.length) {
       const key = message.default_selected[0];
       const node = tree.getNodeByKey(key);
       if (node) {
-        //console.log("STEP 1: Activating node:", node.key);
+        console.log("STEP 1: Activating node:", node.key);
       
         node.makeVisible({ scrollIntoView: true });
         node.setActive();
@@ -43,7 +42,7 @@ $(document).ready(function () {
   // ✅ Scroll directly to: element top - offset
   const newScroll = elTop - offset;
 
-//  console.log("Scrolling unconditionally to", newScroll);
+  console.log("Scrolling unconditionally to", newScroll);
 
   $box.scrollTop(newScroll);
 
@@ -74,7 +73,6 @@ Shiny.addCustomMessageHandler('fancytree_vars_data_graph', function (message) {
         checkbox: false,
         selectMode: 1,          // single selection
         clickFolderMode: 2,     // click = expand, not select
-        toggleEffect: false, // remove animation
 
         activate: function (event, data) {
             // block selection of folders (datasets)
@@ -94,8 +92,7 @@ Shiny.addCustomMessageHandler('fancytree_vars_data_graph', function (message) {
     });
 
     // Apply default selected node (optional)
-    const tree = $.ui.fancytree.getTree($tree);
-
+    const tree = $tree.fancytree("getTree");
 
     if (message.default_selected && message.default_selected.length > 0) {
         const key = message.default_selected[0];
@@ -124,7 +121,6 @@ Shiny.addCustomMessageHandler("fancytree_states_data", function (message) {
     selectMode: 3,
     icon: false,
     clickFolderMode: 2,
-    toggleEffect: false, // remove animation
 
     select: function(event, data) {
       const tree = data.tree;
@@ -134,8 +130,7 @@ Shiny.addCustomMessageHandler("fancytree_states_data", function (message) {
   });
 
   // ✅ Apply default selection
-  const tree = $.ui.fancytree.getTree($tree);
-
+  const tree = $tree.fancytree("getTree");
 
   if (message.default_selected && message.default_selected.length) {
     message.default_selected.forEach(key => {

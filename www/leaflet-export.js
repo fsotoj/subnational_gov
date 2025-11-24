@@ -91,11 +91,11 @@ Shiny.addCustomMessageHandler("addExportButton", function (message) {
     const textOverlay = document.createElement("div");
     textOverlay.id = "map-print-text";
     textOverlay.textContent =
-      message.printText || "Source: Subnational Politics Project (SPP), 2025.";
+      message.printText || "Source: Subnational Politics Project.";
     Object.assign(textOverlay.style, {
       position: "absolute",
-      bottom: "0px",
-      right: "10px",
+      bottom: "15px",
+      left: "15px",
       color: "#222",
       backgroundColor: "rgba(255,255,255,0.8)",
       padding: "3px 8px",

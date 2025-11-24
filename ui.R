@@ -26,20 +26,6 @@ ui <- dashboardPage(
     # tags$li(class = "dropdown header-tab", a(href="#", id="tab_data", icon("table"), "Databases")),
     
     
-    
-    # How to button
-    tags$li(
-      class = "dropdown",
-      tags$a(
-        id = "btn_howto",
-        href = "#",
-        icon("circle-question"),
-        span(class = "hidden-xs", " How to")
-      )
-    ),
-    
-    
-    
     # --- Logos and Contact Link (keep these as before) ---
     tags$li(
       class = "dropdown",
@@ -72,6 +58,14 @@ ui <- dashboardPage(
     width = 250,
     useShinyjs(),
     tagList(
+      div(
+        class = "sidebar-howto-container",
+        actionButton(
+          inputId = "btn_howto",
+          label = tagList(icon("circle-question"), " How to"),
+          class = "btn-howto",width = 150
+        )
+      ),
       sidebarMenu(id = "tabs",
                   menuItem("About", tabName = "about", icon = icon("info-circle")),
                   menuItem("Mapping tool", tabName = "map_tab", icon = icon("map"),selected = TRUE),
@@ -107,6 +101,15 @@ ui <- dashboardPage(
       
       hidden(uiOutput("db_selector")),
       hidden(uiOutput("country_selector")),  # default: visible
+      #hidden(selectInput("var_sel", "Variable", choices = NULL)),
+      # shinyjs::hidden(
+      #   div(
+      #     id = "jstree_container", # Agregamos un ID para poder referenciarlo
+      #     style = "padding: 15px;",
+      #     tags$label("Select a state:", `for` = "jstree_demo"),
+      #     div(id = "jstree_demo")
+      #   )),
+      
       shinyjs::hidden(
         div(
           id = "fancytree_states_container",   # new container id (renamed for clarity)
@@ -118,6 +121,9 @@ ui <- dashboardPage(
         )
       ),
       
+      
+      
+      
       hidden(
         div( id= "fancytree_vars_demo_container",
              style = "padding: 15px;",
@@ -126,6 +132,23 @@ ui <- dashboardPage(
         )
       ),
       
+      
+      # shinyjs::hidden(
+      #   div(
+      #     id = "jstree_vars_container", # Agregamos un ID para poder referenciarlo
+      #     style = "padding: 15px;",
+      #     tags$label("Select a variable:", `for` = "jstree_vars_demo"),
+      #     div(id = "jstree_vars_demo")
+      #   )),
+      
+      # shinyjs::hidden(
+      #   div(
+      #     id = "jstree_vars_container_graph", # Agregamos un ID para poder referenciarlo
+      #     style = "padding: 15px;",
+      #     tags$label("Select a variable:", `for` = "jstree_vars_demo_graph"),
+      #     div(id = "jstree_vars_demo_graph")
+      #   )),
+      
       hidden(
         div( id= "fancytree_vars_container_graph",
              style = "padding: 15px;",
@@ -133,8 +156,27 @@ ui <- dashboardPage(
              div(id = "fancytree_vars_demo_graph")
         )
       ),
+      hidden(
+        div(
+          id= "show_map_swicht",
+          style = "margin-bottom: 10px;",
+          shinyWidgets::switchInput(
+            inputId = "show_both_maps",
+            label = "Enable/Disable Comparison",
+            value = FALSE,
+            onLabel = "Enabled",
+            offLabel = "Disabled"
+            )
+          )
+        ),
+        
       
       
+      
+      
+      
+      #hidden(uiOutput("state_selector")),
+      #hidden(selectInput("var_sel2", "Variable", choices = NULL)),
       hidden(selectInput("country_sel2", "Select a country:", choices = c(unique(data$country_name)), selected = "ARGENTINA")),
       hidden(selectInput("state_sel2", "Select a state:", choices = NULL)),
       hidden(uiOutput("country_selector_camera")),
@@ -143,30 +185,19 @@ ui <- dashboardPage(
       )
   ),
   dashboardBody(
-    tags$head(includeHTML("ga.html"),
-              # --- Google Analytics: Track tab changes ---
-              includeScript("www/tab_analytics.js")
-              ),
+    tags$head(includeHTML("ga.html")),
     tags$head(
-      tags$link(rel = "icon", type = "image/svg+xml", href = "spp_logo_tab_v2.svg")
-    ),
-    tags$head(
-      # --- HOW TO TRIGGER---
+      # --- JS: make header tabs switch between tabItems ---
       tags$script(HTML("
-        $(document).on('click', '#btn_howto', function(e) {
+        $(document).on('click', '.header-tab > a', function(e) {
           e.preventDefault();
-          Shiny.setInputValue('btn_howto', Date.now(), {priority: 'event'});
+          var tabId = $(this).attr('id');
+          Shiny.setInputValue(tabId, new Date().getTime());
         });
       ")),
       
-      # SIDE BAR SWIPE
-      tags$script(src = "sidebar_swipe.js")
-      
-      
+      # --- Optional CSS for nicer look ---
     ),
-    
-    # --- FOOTER
-    
     tags$footer(
       style = "
       position: fixed;
@@ -197,14 +228,11 @@ ui <- dashboardPage(
           }
         });
       ")),
-      
-      tags$script(HTML("
-        $('#btn_howto').on('click', function(e) {
-          e.preventDefault();
-          Shiny.setInputValue('btn_howto', new Date().getTime());
-        });
+      tags$style(HTML("
+        .content-wrapper, .right-side {
+          padding-bottom: 200px;  /* adjust value as you like */
+        }
       ")),
-      
       tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/jstree.min.js"),
       tags$link(
         rel = "stylesheet",
@@ -214,12 +242,12 @@ ui <- dashboardPage(
         src = "https://cdn.jsdelivr.net/npm/jquery.fancytree@2/dist/jquery.fancytree-all-deps.min.js"
       ),
       
-      
-      tags$script(src = "fancytree_init.js"),
+      # --- Optional: your own initialization logic ---
+      tags$script(src = "fancytree_init.js"),   # put this in www/
       tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.11/themes/default/style.min.css"),
       tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"),
       tags$link(id = "theme-css", rel = "stylesheet", type = "text/css", href = "styles.css"),
-      
+      tags$script(src = "custom.js")
       
     ),
     tags$script(HTML("
@@ -265,12 +293,56 @@ ui <- dashboardPage(
       // Also run once at startup
       $(document).on('shiny:connected', fixAnimateButtons);
     ")),
+<<<<<<< Updated upstream
+    # ui.R (Add this script, or combine it with your existing JS script)
+=======
+    # tabItems(
+    #   tabItem(
+    #     tabName = "map_tab", # QUE PASA ACAAAAAA
+    #     tagList(
+    #       mapModuleUI("map1"),
+    #       
+    #       absolutePanel(
+    #         top = 90, right = 12, 
+    #         width = 300,
+    #         draggable = F,
+    #         div(class = "small-text-box",
+    #             id = "var-desc-map",
+    #             box(
+    #               solidHeader = F,
+    #               collapsible = F,
+    #               collapsed = FALSE,
+    #               width = NULL,
+    #               closable = TRUE,
+    #               uiOutput("var_description_map")
+    #             )
+    #         )),
+    #       
+    #       # Custom year selector placed at the bottom of the tab
+    #       div(
+    #         style = "position: absolute; bottom: 50%; left: 40%; z-index: 1000;",
+    #         hidden(textOutput("no_data_message"))
+    #       ),
+    #       div(
+    #         style = "position: absolute; bottom: 30px; left: 40%; right: 20%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
+    #         uiOutput("year_selector")
+    #       ),
+    # 
+    #       
+    #       
+    #     )
+    #   ),
+    
+    
+    
+    ###### DOUBLE MAP 
+>>>>>>> Stashed changes
     tabItems(
       tabItem(
-        tabName = "map_tab", # QUE PASA ACAAAAAA
+        tabName = "map_tab",
         tagList(
-          mapModuleUI("map1"),
           
+<<<<<<< Updated upstream
           absolutePanel(
             top = 90, right = 12, 
             width = 300,
@@ -278,6 +350,7 @@ ui <- dashboardPage(
             div(class = "small-text-box",
                 id = "var-desc-map",
                 box(
+                  #title = "Variable description", 
                   solidHeader = F,
                   collapsible = F,
                   collapsed = FALSE,
@@ -288,19 +361,62 @@ ui <- dashboardPage(
             )),
           
           # Custom year selector placed at the bottom of the tab
+=======
+>>>>>>> Stashed changes
           div(
-            style = "position: absolute; bottom: 50%; left: 40%; z-index: 1000;",
+            style = "display: flex; gap: 0px; width: 100%;",
+            
+            # LEFT MAP ALWAYS PRESENT
+            div(
+              style = "flex: 1; height: 99vh; position: relative;",
+              mapModuleUI("map_left"),
+              div(
+                style = "position: absolute; bottom: 5px; left: 5%; right: 20%; z-index: 1000;",
+                uiOutput("year_selector_left")
+              )
+            ),
+            
+            # RIGHT MAP ALWAYS PRESENT, BUT HIDDEN WHEN FALSE
+            div(
+              id = "right_map_container",
+              style = "flex: 1; height: 99vh; position: relative;",
+              mapModuleUI("map_right"),
+              div(
+                style = "position: absolute; bottom: 5px; left: 5%; right: 20%; z-index: 1000;",
+                uiOutput("year_selector_right")
+              )
+            )
+          ),
+          
+          # Message when no data available
+          div(
+            style = "position: absolute; bottom: 50%; left: 45%; z-index: 1000;",
             hidden(textOutput("no_data_message"))
+<<<<<<< Updated upstream
           ),
           div(
             style = "position: absolute; bottom: 30px; left: 40%; right: 20%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
             uiOutput("year_selector")
           ),
-
+          # div(
+          #   style = "position: absolute; bottom: 30px; left: 40%; margin-left: 71px; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
+          #   hidden(
+          #     actionButton(
+          #       "captureMapBtn",
+          #       label = tagList(icon("camera"), "Screenshot"),
+          #       class = "download_map_btn"
+          #     )
+          #   )
+          # )
           
           
+=======
+          )
+>>>>>>> Stashed changes
         )
       ),
+      
+    
 
       
       tabItem(
