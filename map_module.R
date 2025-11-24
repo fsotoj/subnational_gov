@@ -310,31 +310,26 @@ mapModuleUI <- function(id) {
   ns <- NS(id)
   map_id <- ns("map")
   
-  bootstrapPage(
+  tagList(
     
-      tags$head(
-        tags$script(src = "https://unpkg.com/leaflet-easyprint@2.1.9/dist/bundle.js"),
-        tags$script(src = "leaflet-export.js")
-      ),
+    tags$head(
+      tags$script(src = "https://unpkg.com/leaflet-easyprint@2.1.9/dist/bundle.js"),
+      tags$script(src = "leaflet-export.js")
+    ),
     
+    # A flexible container that can live inside a grid or flexbox
     div(
-      class = "outer",
-      tags$style(
-        type = "text/css",
-        ".outer {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          overflow: hidden;
-          padding: 0;
-        }"
-      ),
-      leafletOutput(map_id, height = "100%")
+      class = "map-container",
+      style = "
+        width: 100%;
+        height: 100%;
+        position: relative;
+      ",
+      leafletOutput(map_id, height = "100%", width = "100%")
     )
   )
 }
+
 
 # --- Map Module Server ---
 

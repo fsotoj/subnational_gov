@@ -923,7 +923,157 @@ observeEvent(input$btn_howto, {
   })
   
   
-   
+   #### DOUBLE MAP
+  
+
+  
+  
+  #--------------------------------------------------------------
+  # YEAR SELECTOR (LEFT)
+  #--------------------------------------------------------------
+  output$year_selector_left <- renderUI({
+    req(current_tab() == "map_tab", input$country_sel, selected_vars_vector())
+    
+    df <- data
+    country_col <- "country_name"
+    year_col    <- "year"
+    
+    var_name <- selected_vars_vector()
+    if (length(var_name) > 1) var_name <- var_name[[1]]
+    
+    df_filtered <- df |>
+      dplyr::filter(.data[[country_col]] == input$country_sel) |>
+      dplyr::select(dplyr::all_of(c(country_col, year_col, var_name)))
+    
+    valid_years <- df_filtered |>
+      dplyr::filter(!is.na(.data[[var_name]])) |>
+      dplyr::pull(.data[[year_col]])
+    
+    y_min <- if (length(valid_years) > 0) min(valid_years) else min(df_filtered[[year_col]])
+    y_max <- max(df_filtered[[year_col]])
+    
+    shinyWidgets::sliderTextInput(
+      inputId  = "year_sel_left",
+      label    = "Year (Left)",
+      choices  = as.character(seq(y_min, y_max, by = 1)),
+      grid     = TRUE,
+      width    = "90%",
+      animate  = TRUE,
+      selected = y_min
+    )
+  })
+  
+  
+  #--------------------------------------------------------------
+  # YEAR SELECTOR (RIGHT)
+  #--------------------------------------------------------------
+  output$year_selector_right <- renderUI({
+    req(current_tab() == "map_tab", input$country_sel, selected_vars_vector())
+    
+    df <- data
+    country_col <- "country_name"
+    year_col    <- "year"
+    
+    var_name <- selected_vars_vector()
+    if (length(var_name) > 1) var_name <- var_name[[1]]
+    
+    df_filtered <- df |>
+      dplyr::filter(.data[[country_col]] == input$country_sel) |>
+      dplyr::select(dplyr::all_of(c(country_col, year_col, var_name)))
+    
+    valid_years <- df_filtered |>
+      dplyr::filter(!is.na(.data[[var_name]])) |>
+      dplyr::pull(.data[[year_col]])
+    
+    y_min <- if (length(valid_years) > 0) min(valid_years) else min(df_filtered[[year_col]])
+    y_max <- max(df_filtered[[year_col]])
+    
+    shinyWidgets::sliderTextInput(
+      inputId  = "year_sel_right",
+      label    = "Year (Right)",
+      choices  = as.character(seq(y_min, y_max, by = 1)),
+      grid     = TRUE,
+      width    = "90%",
+      animate  = TRUE,
+      selected = y_max
+    )
+  })
+  
+  
+  #--------------------------------------------------------------
+  # REACTIVE DATA FOR LEFT MAP
+  #--------------------------------------------------------------
+  data_map_left <- reactive({
+    req(input$country_sel, input$year_sel_left)
+    
+    geom_filtered <- geom %>%
+      dplyr::filter(country_name == input$country_sel)
+    
+    data_filtered <- data %>%
+      dplyr::filter(
+        country_name == input$country_sel,
+        year == input$year_sel_left
+      )
+    
+    dplyr::left_join(geom_filtered, data_filtered, by = "country_state_code")
+  })
+  
+  
+  #--------------------------------------------------------------
+  # REACTIVE DATA FOR RIGHT MAP
+  #--------------------------------------------------------------
+  data_map_right <- reactive({
+    req(input$country_sel, input$year_sel_right)
+    
+    geom_filtered <- geom %>%
+      dplyr::filter(country_name == input$country_sel)
+    
+    data_filtered <- data %>%
+      dplyr::filter(
+        country_name == input$country_sel,
+        year == input$year_sel_right
+      )
+    
+    dplyr::left_join(geom_filtered, data_filtered, by = "country_state_code")
+  })
+  
+  
+  #--------------------------------------------------------------
+  # LEFT MAP MODULE
+  #--------------------------------------------------------------
+  mapModuleServer(
+    id = "map_left",
+    data_map = data_map_left,
+    input_var_sel = selected_vars_vector,
+    dict = dict,
+    country_bboxes = country_bboxes,
+    input_country_sel = reactive(input$country_sel),
+    active_tab = current_tab
+  )
+  
+  
+  #--------------------------------------------------------------
+  # RIGHT MAP MODULE
+  #--------------------------------------------------------------
+  mapModuleServer(
+    id = "map_right",
+    data_map = data_map_right,
+    input_var_sel = selected_vars_vector,
+    dict = dict,
+    country_bboxes = country_bboxes,
+    input_country_sel = reactive(input$country_sel),
+    active_tab = current_tab
+  )
+  
+  
+  observeEvent(input$show_both_maps, {
+    if (input$show_both_maps) {
+      shinyjs::show("right_map_container")
+    } else {
+      shinyjs::hide("right_map_container")
+    }
+  })
+  
   
   
 }

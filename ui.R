@@ -133,7 +133,16 @@ ui <- dashboardPage(
              div(id = "fancytree_vars_demo_graph")
         )
       ),
-      
+      div(
+        style = "margin-bottom: 10px;",
+        shinyWidgets::switchInput(
+          inputId = "show_both_maps",
+          label   = "Enable/Disable Comparison",
+          value   = FALSE,              # start with left only
+          onLabel = "Enabled",
+          offLabel = "Disabled"
+        )
+      ),
       
       hidden(selectInput("country_sel2", "Select a country:", choices = c(unique(data$country_name)), selected = "ARGENTINA")),
       hidden(selectInput("state_sel2", "Select a state:", choices = NULL)),
@@ -266,42 +275,78 @@ ui <- dashboardPage(
       $(document).on('shiny:connected', fixAnimateButtons);
     ")),
     tabItems(
+      
+      
+      
+      
+      
+      
       tabItem(
         tabName = "map_tab", # QUE PASA ACAAAAAA
         tagList(
-          mapModuleUI("map1"),
           
-          absolutePanel(
-            top = 90, right = 12, 
-            width = 300,
-            draggable = F,
-            div(class = "small-text-box",
-                id = "var-desc-map",
-                box(
-                  solidHeader = F,
-                  collapsible = F,
-                  collapsed = FALSE,
-                  width = NULL,
-                  closable = TRUE,
-                  uiOutput("var_description_map")
-                )
-            )),
-          
-          # Custom year selector placed at the bottom of the tab
           div(
-            style = "position: absolute; bottom: 50%; left: 40%; z-index: 1000;",
-            hidden(textOutput("no_data_message"))
-          ),
-          div(
-            style = "position: absolute; bottom: 30px; left: 40%; right: 20%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
-            uiOutput("year_selector")
-          ),
-
+            style = "display: flex; gap: 0px; width: 100%;",
+            
+            # LEFT MAP ALWAYS PRESENT
+            div(
+              style = "flex: 1; height: 90vh; position: relative;",
+              mapModuleUI("map_left"),
+              div(
+                style = "position: absolute; bottom: 5px; left: 5%; right: 20%; z-index: 1000;",
+                uiOutput("year_selector_left")
+              )
+            ),
+            
+            # RIGHT MAP ALWAYS PRESENT, BUT HIDDEN WHEN FALSE
+            div(
+              id = "right_map_container",
+              style = "flex: 1; height: 90vh; position: relative;",
+              mapModuleUI("map_right"),
+              div(
+                style = "position: absolute; bottom: 5px; left: 5%; right: 20%; z-index: 1000;",
+                uiOutput("year_selector_right")
+              )
+            )
+          )
           
           
-        )
-      ),
+          # mapModuleUI("map1"),
+          # 
+          # absolutePanel(
+          #   top = 90, right = 12, 
+          #   width = 300,
+          #   draggable = F,
+          #   div(class = "small-text-box",
+          #       id = "var-desc-map",
+          #       box(
+          #         solidHeader = F,
+          #         collapsible = F,
+          #         collapsed = FALSE,
+          #         width = NULL,
+          #         closable = TRUE,
+          #         uiOutput("var_description_map")
+          #       )
+          #   )),
+          # 
+          # # Custom year selector placed at the bottom of the tab
+          # div(
+          #   style = "position: absolute; bottom: 50%; left: 40%; z-index: 1000;",
+          #   hidden(textOutput("no_data_message"))
+          # ),
+          # div(
+          #   style = "position: absolute; bottom: 30px; left: 40%; right: 20%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
+          #   uiOutput("year_selector")
+          #   ),
+          
+          
+          
+          )
+        ),
 
+      
+      
+      
       
       tabItem(
         tabName = "graph_tab",  # Este va directamente dentro de tabItem()
