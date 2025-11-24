@@ -25,15 +25,11 @@ library(future)
 library(later)
 
 source("map_module.R")
-#source("line_module.R")
 source("hc_line_module.R")
 source("get_jstree_data.R")
-source("get_jstree_data_vars.R")
-#source("tableModule.R")
 source("camera_module.R")
 source("about_spp_module.R")
 source("spp_list_module.R")
-#source("dataBaseInfo.R")
 
 
 data_info <- read.xlsx("data/dict_new.xlsx") %>% 
@@ -53,7 +49,7 @@ SEED <- read.xlsx("data/SEED SHINY (v.0.1).xlsx")
 SED <- read.xlsx("data/SED (v.0.1).xlsx")
 SLED <- read.xlsx("data/SLED (v.0.1).xlsx")
 CFTDFLD <- read.xlsx("data/CFTDFLD (v.0.1).xlsx")
-SDI <- read.xlsx("data/SDI (v.1).xlsx")
+SDI <- read.xlsx("data/SDI (v.1).xlsx") 
 
 cols_to_fill <- c("chamber_sub_leg",as.vector(outer(setdiff(sled_names,c("chamber_sub_leg","concurrent_election_with_nat_sub_leg")), c("_1","_2"), paste0)))
 
@@ -98,17 +94,13 @@ geom <- st_read("data/geom_simple_maps.geojson")
 
 
 party_colors <- read.xlsx("data/party_colors.xlsx")
-jstree_json_data <- get_jstree_data(data)
-jstree_json_vars <- get_jstree_data_vars(dict %>% filter(viewable_map == 1, variable != "chamber_sub_leg"))
-jstree_json_vars_graph <- get_jstree_data_vars(dict %>% filter(viewable_graph == 1, variable != "chamber_sub_leg"), FALSE)
-
 
 
 
 country_bboxes <- list(
   ARGENTINA = list(lng1 = -73.5, lat1 = -59, lng2 = -56, lat2 = -21.8),
   BRAZIL    = list(lng1 = -73.9, lat1 = -33.7, lng2 = -44.5, lat2 = 5.3),
-  MEXICO    = list(lng1 = -118.5, lat1 = 14.5, lng2 = -86.7, lat2 = 32.7)
+  MEXICO    = list(lng1 = -118.5, lat1 = 12.5, lng2 = -84.7, lat2 = 34.7)
   # ,
   # `Select a country`  = list(lng1 = -118.5, lat1 = -55.1, lng2 = -34.8, lat2 = 32.7)
 )

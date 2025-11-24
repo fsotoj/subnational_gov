@@ -269,10 +269,10 @@ sppAboutModuleUI <- function(id,
               "Giraudy, Agustina; Gonzalez, Guadalupe Andrea; Urdinez, Francisco, 2025, ",
               "“Codebook: Subnational Politics Project (SPP) (v. 1)”, ",
               tags$a(
-                href="https://doi.org/10.7910/DVN/IBSJO2",
+                href="https://doi.org/10.17605/OSF.IO/H96FD",
                 target="_blank",
                 class="spp-link",
-                "https://doi.org/10.7910/DVN/IBSJO2"
+                "https://doi.org/10.17605/OSF.IO/H96FD"
               )
             ),
             
