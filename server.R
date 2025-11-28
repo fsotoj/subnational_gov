@@ -910,7 +910,7 @@ observeEvent(input$btn_howto, {
   # 
   # 
   
-  # ==== 12) SWIPE ======================================================
+  # ==== 13) SWIPE ======================================================
   observeEvent(input$sidebar_swipe, {
     if (input$sidebar_swipe == "left") {
       shinyjs::runjs("
@@ -922,8 +922,38 @@ observeEvent(input$btn_howto, {
     }
   })
   
-  
-   
+  # ==== 13) Tab Analytics end point ====
+  session$registerDataObj(
+    name = "ga4proxy",
+    data = NULL,
+    filter = function(data, req) {
+      
+      raw <- req$rook.input$read_lines()
+      json_payload <- paste(raw, collapse = "")
+      
+      # --- Your GA credentials (kept server-side only)
+      measurement_id <- "G-2D6B3PWVGG"
+      api_secret     <- "ZKNkvKGbTV6504car3fmFw"
+      
+      url <- sprintf(
+        "https://www.google-analytics.com/mp/collect?measurement_id=%s&api_secret=%s",
+        measurement_id, api_secret
+      )
+      
+      httr::POST(
+        url,
+        body = json_payload,
+        encode = "raw",
+        httr::content_type_json()
+      )
+      
+      list(
+        status = 204L,
+        headers = list("Content-Type" = "text/plain"),
+        body = ""
+      )
+    }
+  )
   
   
 }

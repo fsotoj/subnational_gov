@@ -1,4 +1,3 @@
-
 function safeGtag() {
   if (typeof gtag === "function") {
     gtag.apply(null, arguments);
@@ -9,13 +8,13 @@ function safeGtag() {
 
 let lastTab = "map_tab";
 let lastTabStart = Date.now();
-let isInitialMap = true;  // <--- KEY FLAG
+let isInitialMap = true;  
 
-// 1) Send initial tab_open (as initial load)
+// Initial open event (landing tab)
 safeGtag("event", "tab_open", { tab_name: "map_tab_initial" });
 
 /******************************************************
- * TAB CHANGE TRACKING
+ * TAB CHANGE HANDLING
  ******************************************************/
 $(document).on("shiny:inputchanged", function (e) {
   if (e.name === "tabs") {
@@ -23,33 +22,32 @@ $(document).on("shiny:inputchanged", function (e) {
     const now = Date.now();
     const seconds = Math.round((now - lastTabStart) / 1000);
 
-    // Determine proper label for the tab we are LEAVING
-    let tabLabel;
+    // Label for tab being left
+    let tabLabel =
+      lastTab === "map_tab" && isInitialMap
+        ? "map_tab_initial"
+        : lastTab;
 
-    if (lastTab === "map_tab" && isInitialMap) {
-      tabLabel = "map_tab_initial";
-      isInitialMap = false;  // After first leave, switch off
-    } else {
-      tabLabel = lastTab;
-    }
-
-    // Send duration event
+    // Browser-side GA (safe)
     safeGtag("event", "tab_duration", {
       tab_name: tabLabel,
       seconds: seconds
     });
 
-    // Prepare new tab
+    if (lastTab === "map_tab" && isInitialMap) {
+      isInitialMap = false;
+    }
+
+    // Switch tab
     lastTab = e.value;
     lastTabStart = now;
 
-    // Determine proper label for the tab we are ENTERING
+    // Label for tab being entered
     let nextLabel =
       lastTab === "map_tab" && isInitialMap
         ? "map_tab_initial"
         : lastTab;
 
-    // Send open event
     safeGtag("event", "tab_open", {
       tab_name: nextLabel
     });
@@ -57,25 +55,18 @@ $(document).on("shiny:inputchanged", function (e) {
 });
 
 /******************************************************
- * WINDOW CLOSE / REFRESH HANDLER
+ * WINDOW CLOSE / REFRESH HANDLER (SECURE VIA PROXY)
  ******************************************************/
 window.addEventListener("beforeunload", function () {
   const now = Date.now();
   const seconds = Math.round((now - lastTabStart) / 1000);
 
-  // Determine label for closing tab
-  let tabLabel;
+  let tabLabel =
+    lastTab === "map_tab" && isInitialMap
+      ? "map_tab_initial"
+      : lastTab;
 
-  if (lastTab === "map_tab" && isInitialMap) {
-    tabLabel = "map_tab_initial";
-    isInitialMap = false;
-  } else {
-    tabLabel = lastTab;
-  }
-
-  // Prepare Measurement Protocol payload
   const payload = {
-    client_id: (window.gtagClientId || ""),
     events: [
       {
         name: "tab_duration",
@@ -87,8 +78,6 @@ window.addEventListener("beforeunload", function () {
     ]
   };
 
-  const url =
-    "https://www.google-analytics.com/mp/collect?measurement_id=G-2D6B3PWVGG&api_secret=ZKNkvKGbTV6504car3fmFw";
-
-  navigator.sendBeacon(url, JSON.stringify(payload));
+  // Send to Shiny proxy endpoint (no secret exposed)
+  navigator.sendBeacon("ga4proxy", JSON.stringify(payload));
 });
