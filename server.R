@@ -7,33 +7,17 @@ server <- function(input, output, session) {
     data = NULL,
     filter = function(data, req) {
       
-      print("GA4 Proxy has been triggered!")    # <-- TEST
-      
       raw <- req$rook.input$read_lines()
       json_payload <- paste(raw, collapse = "")
       
-      measurement_id <- "G-2D6B3PWVGG"
-      api_secret     <- "ZKNkvKGbTV6504car3fmFw"
-      
-      url <- sprintf(
-        "https://www.google-analytics.com/mp/collect?measurement_id=%s&api_secret=%s",
-        measurement_id, api_secret
-      )
-      
-      resp <- httr::POST(
-        url,
-        body = json_payload,
-        encode = "raw",
-        httr::content_type_json()
-      )
-      
-      list(
-        status = 204L,
+      return(list(
+        status = 200L,
         headers = list("Content-Type" = "text/plain"),
-        body = ""
-      )
+        body = paste0("Proxy HIT!\nPayload:\n", json_payload)
+      ))
     }
   )
+  
   
   
   
