@@ -24,14 +24,18 @@ server <- function(input, output, session) {
       req_perform()
   }
   
-  observeEvent(input$usage_event, {
-    event <- input$usage_event
-    send_ga_event(
-      client_id = event$client_id,
-      event_name = event$event_name,
-      params = event$params
-    )
+  
+  
+  pr <- plumber::pr()
+  
+  pr$handle("POST", "/ga", function(req, res) {
+    body <- jsonlite::fromJSON(req$postBody)
+    send_ga_event(body)
+    return("ok")
   })
+  
+  session$registerDataObj("ga_proxy", pr, filter = "plumber")
+  
   
   
   

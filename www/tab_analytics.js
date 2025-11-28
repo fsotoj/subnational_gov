@@ -87,13 +87,9 @@ window.addEventListener("beforeunload", function () {
     ]
   };
 
-Shiny.setInputValue("usage_event", {
-  client_id: window.gtagClientId,
-  event_name: "tab_duration",
-  params: {
-    tab_name: tabLabel,
-    seconds: seconds
-  }
-}, { priority: "event" });
+  navigator.sendBeacon(
+    "ga", 
+    JSON.stringify(payload)
+  );
 
 });

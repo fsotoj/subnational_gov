@@ -23,6 +23,7 @@ library(httr2)
 library(promises)
 library(future)
 library(later)
+library(plumber)
 
 source("map_module.R")
 source("hc_line_module.R")
