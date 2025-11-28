@@ -143,7 +143,7 @@ ui <- dashboardPage(
       )
   ),
   dashboardBody(
-    tags$script(src = "tab_analytics.js"),
+    #tags$script(src = "tab_analytics.js"),
     
     tags$head(includeHTML("ga.html")
               ),
