@@ -143,9 +143,9 @@ ui <- dashboardPage(
       )
   ),
   dashboardBody(
-    tags$head(includeHTML("ga.html"),
-              # --- Google Analytics: Track tab changes ---
-              includeScript("www/tab_analytics.js")
+    tags$script(src = "tab_analytics.js"),
+    
+    tags$head(includeHTML("ga.html")
               ),
     tags$head(
       tags$link(rel = "icon", type = "image/svg+xml", href = "spp_logo_tab_v2.svg")
