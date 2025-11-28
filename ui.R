@@ -138,7 +138,7 @@ ui <- dashboardPage(
         shinyWidgets::switchInput(
           inputId = "show_both_maps",
           label   = "Enable/Disable Comparison",
-          value   = FALSE,              # start with left only
+          value   = TRUE,              # start with left only
           onLabel = "Enabled",
           offLabel = "Disabled"
         )

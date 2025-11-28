@@ -959,7 +959,7 @@ observeEvent(input$btn_howto, {
       grid     = TRUE,
       width    = "90%",
       animate  = TRUE,
-      selected = y_min
+      selected = 1999
     )
   })
   
@@ -995,7 +995,7 @@ observeEvent(input$btn_howto, {
       grid     = TRUE,
       width    = "90%",
       animate  = TRUE,
-      selected = y_max
+      selected = 2010
     )
   })
   
