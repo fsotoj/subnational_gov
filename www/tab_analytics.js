@@ -79,5 +79,7 @@ window.addEventListener("beforeunload", function () {
   };
 
   // Send to Shiny proxy endpoint (no secret exposed)
-  navigator.sendBeacon("session/data/ga4proxy", JSON.stringify(payload));
+  const proxyUrl = Shiny.shinyapp.config.base_path + "session/data/ga4proxy";
+
+  navigator.sendBeacon(proxyUrl, JSON.stringify(payload));
 });
