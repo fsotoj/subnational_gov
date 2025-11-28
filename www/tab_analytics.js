@@ -57,31 +57,34 @@ $(document).on("shiny:inputchanged", function (e) {
 /******************************************************
  * WINDOW CLOSE / REFRESH HANDLER (SECURE VIA PROXY)
  ******************************************************/
-window.addEventListener("beforeunload", function () {
-  const now = Date.now();
-  const seconds = Math.round((now - lastTabStart) / 1000);
+$(document).on("shiny:connected", function() {
 
-  let tabLabel =
-    lastTab === "map_tab" && isInitialMap
+  window.addEventListener("beforeunload", function () {
+    const now = Date.now();
+    const seconds = Math.round((now - lastTabStart) / 1000);
+
+    let tabLabel = lastTab === "map_tab" && isInitialMap
       ? "map_tab_initial"
       : lastTab;
 
-  const payload = {
-    events: [
-      {
-        name: "tab_duration",
-        params: {
-          tab_name: tabLabel,
-          seconds: seconds
+    const payload = {
+      client_id: (window.gtagClientId || ""),
+      events: [
+        {
+          name: "tab_duration",
+          params: {
+            tab_name: tabLabel,
+            seconds: seconds
+          }
         }
-      }
-    ]
-  };
+      ]
+    };
 
-  // Send to Shiny proxy endpoint (no secret exposed)
-  const base = window.location.pathname.replace(/\/$/, "");
-  const proxyUrl = base + "/session/data/ga4proxy";
+    // ⭐ FIX: Now pathname includes the _w_ tunnel
+    const base = window.location.pathname.replace(/\/$/, "");
+    const proxyUrl = base + "/session/data/ga4proxy";
 
-  navigator.sendBeacon(proxyUrl, JSON.stringify(payload));
+    navigator.sendBeacon(proxyUrl, JSON.stringify(payload));
+  });
 
 });
