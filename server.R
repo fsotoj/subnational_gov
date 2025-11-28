@@ -36,6 +36,8 @@ server <- function(input, output, session) {
   
   session$registerDataObj("ga_proxy", pr, filter = "plumber")
   
+  #print(session$getTestEndpointUrl("ga_proxy"))
+  
   
   
   
