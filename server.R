@@ -1,31 +1,37 @@
 server <- function(input, output, session) {
   
   # ==== 0.1) END POINT =======================================
-  session$registerDataObj(
-    name = "ga4proxy",
-    data = NULL,
-    filter = function(data, req) {
-      
-      # read the JSON from sendBeacon
-      body <- req$rook.input$read()
-      payload <- jsonlite::fromJSON(rawToChar(body))
-      measurement_id <- "G-2D6B3PWVGG"
-      api_secret     <- "ZKNkvKGbTV6504car3fmFw"
-      
-      # forward to GA4 via Measurement Protocol (server-side)
-      httr2::request("https://www.google-analytics.com/mp/collect") %>% 
-       httr2::req_url_query(api_secret = api_secret, measurement_id = measurement_id) %>% 
-       httr2::req_body_json(payload) %>% 
-       httr2::req_perform()
-      
-      list(
-        status = 200L,
-        headers = list("Content-Type" = "application/json"),
-        body = jsonlite::toJSON(list(ok = TRUE))
+  send_ga_event <- function(client_id, event_name, params = list()) {
+    
+    secret <- Sys.getenv("ZKNkvKGbTV6504car3fmFw")
+    mid    <- Sys.getenv("G-2D6B3PWVGG")
+    
+    url <- paste0(
+      "https://www.google-analytics.com/mp/collect",
+      "?measurement_id=", mid,
+      "&api_secret=", secret
+    )
+    
+    body <- list(
+      client_id = client_id,
+      events = list(
+        list(name = event_name, params = params)
       )
-    }
-  )
+    )
+    
+    request(url) %>%
+      req_body_json(body) %>%
+      req_perform()
+  }
   
+  observeEvent(input$usage_event, {
+    event <- input$usage_event
+    send_ga_event(
+      client_id = event$client_id,
+      event_name = event$event_name,
+      params = event$params
+    )
+  })
   
   
   

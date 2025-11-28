@@ -87,8 +87,13 @@ window.addEventListener("beforeunload", function () {
     ]
   };
 
-  const url =
-    "https://www.google-analytics.com/mp/collect?measurement_id=G-2D6B3PWVGG&api_secret=ZKNkvKGbTV6504car3fmFw";
+Shiny.setInputValue("usage_event", {
+  client_id: window.gtagClientId,
+  event_name: "tab_duration",
+  params: {
+    tab_name: tabLabel,
+    seconds: seconds
+  }
+}, { priority: "event" });
 
-  navigator.sendBeacon(url, JSON.stringify(payload));
 });
