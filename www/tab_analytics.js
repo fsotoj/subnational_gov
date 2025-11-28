@@ -90,7 +90,7 @@ window.addEventListener("beforeunload", function () {
 //  navigator.sendBeacon(    "ga",     JSON.stringify(payload)  );
   
   
-  fetch("ga", { method: "POST", body: JSON.stringify({test:1}) });
+navigator.sendBeacon(window.location.pathname + "ga", body)
 
 
 });
