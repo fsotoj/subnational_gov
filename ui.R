@@ -143,10 +143,15 @@ ui <- dashboardPage(
       )
   ),
   dashboardBody(
-    #tags$script(src = "tab_analytics.js"),
+    #
     
-    tags$head(includeHTML("ga.html")
-              ),
+    tags$head(includeHTML("ga.html"),
+              tags$script(src="tab_analytics.js")),
+    
+    
+    
+    
+    
     tags$head(
       tags$link(rel = "icon", type = "image/svg+xml", href = "spp_logo_tab_v2.svg")
     ),
@@ -381,6 +386,7 @@ ui <- dashboardPage(
       
     ),
     skin = "blue"
+    
     
   )
 )

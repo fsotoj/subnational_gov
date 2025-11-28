@@ -1,20 +1,28 @@
 server <- function(input, output, session) {
   
   # ==== 0.1) END POINT =======================================
-  
   session$registerDataObj(
     name = "ga4proxy",
     data = NULL,
     filter = function(data, req) {
       
-      raw <- req$rook.input$read_lines()
-      json_payload <- paste(raw, collapse = "")
+      # read the JSON from sendBeacon
+      body <- req$rook.input$read()
+      payload <- jsonlite::fromJSON(rawToChar(body))
+      measurement_id <- "G-2D6B3PWVGG"
+      api_secret     <- "ZKNkvKGbTV6504car3fmFw"
       
-      return(list(
+      # forward to GA4 via Measurement Protocol (server-side)
+      httr2::request("https://www.google-analytics.com/mp/collect") %>% 
+       httr2::req_url_query(api_secret = api_secret, measurement_id = measurement_id) %>% 
+       httr2::req_body_json(payload) %>% 
+       httr2::req_perform()
+      
+      list(
         status = 200L,
-        headers = list("Content-Type" = "text/plain"),
-        body = paste0("Proxy HIT!\nPayload:\n", json_payload)
-      ))
+        headers = list("Content-Type" = "application/json"),
+        body = jsonlite::toJSON(list(ok = TRUE))
+      )
     }
   )
   
