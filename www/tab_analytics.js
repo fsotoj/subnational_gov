@@ -59,6 +59,10 @@ $(document).on("shiny:inputchanged", function (e) {
  ******************************************************/
 $(document).on("shiny:connected", function() {
 
+  const base = Shiny.shinyapp.config.base_path;   // ALWAYS correct
+  const proxyUrl = base + "session/data/ga4proxy";    
+
+
   window.addEventListener("beforeunload", function () {
     const now = Date.now();
     const seconds = Math.round((now - lastTabStart) / 1000);
@@ -81,8 +85,6 @@ $(document).on("shiny:connected", function() {
     };
 
     // ⭐ FIX: Now pathname includes the _w_ tunnel
-    const base = window.location.pathname.replace(/\/$/, "");
-    const proxyUrl = base + "/session/data/ga4proxy";
 
     navigator.sendBeacon(proxyUrl, JSON.stringify(payload));
   });
