@@ -79,5 +79,5 @@ window.addEventListener("beforeunload", function () {
   };
 
   // Send to Shiny proxy endpoint (no secret exposed)
-  navigator.sendBeacon("ga4proxy", JSON.stringify(payload));
+  navigator.sendBeacon("session/ga4proxy", JSON.stringify(payload));
 });
