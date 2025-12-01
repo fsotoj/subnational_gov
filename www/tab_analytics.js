@@ -1,3 +1,41 @@
+/******************************************************
+ * USER ACTIVITY TRACKER (IDLE TIME HANDLING)
+ ******************************************************/
+let lastActivity = Date.now();
+let idleThreshold = 60 * 1000; // 60 seconds of inactivity = IDLE
+
+function refreshActivity() {
+  lastActivity = Date.now();
+}
+
+// Register activity events
+["mousemove", "keydown", "click", "scroll", "touchstart"].forEach(event => {
+  window.addEventListener(event, refreshActivity, { passive: true });
+});
+
+// Returns ONLY active seconds
+function getActiveSeconds() {
+  const now = Date.now();
+  const rawSeconds = Math.round((now - lastTabStart) / 1000);
+
+  // Compute idle time
+  const idleTime = now - lastActivity;
+
+  if (idleTime > idleThreshold) {
+    // User became idle → only count activity BEFORE going idle
+    const activeMillis = idleThreshold;
+    return Math.round(activeMillis / 1000);
+  }
+
+  return rawSeconds;
+}
+
+
+
+
+
+
+
 
 function safeGtag() {
   if (typeof gtag === "function") {
@@ -21,7 +59,7 @@ $(document).on("shiny:inputchanged", function (e) {
   if (e.name === "tabs") {
 
     const now = Date.now();
-    const seconds = Math.round((now - lastTabStart) / 1000);
+    const seconds = getActiveSeconds();
 
     // Determine proper label for the tab we are LEAVING
     let tabLabel;
@@ -61,7 +99,7 @@ $(document).on("shiny:inputchanged", function (e) {
  ******************************************************/
 window.addEventListener("beforeunload", function () {
   const now = Date.now();
-  const seconds = Math.round((now - lastTabStart) / 1000);
+  const seconds = getActiveSeconds();
 
   // Determine label for closing tab
   let tabLabel;
