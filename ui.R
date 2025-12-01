@@ -146,7 +146,9 @@ ui <- dashboardPage(
     #
     
     tags$head(includeHTML("ga.html"),
-              tags$script(src="tab_analytics.js")),
+              tags$script(src="tab_analytics.js"),
+              tags$script(src = "input_analytics.js")
+    ),
     
     
     
