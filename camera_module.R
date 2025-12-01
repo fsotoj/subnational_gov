@@ -112,33 +112,98 @@ camaraLegendUI <- function(id) {
   tagList(
     tags$style(HTML(sprintf('
       #%1$s-legend { width: 100%%; }
-        #%1$s-legend .legend-title {margin: 0 0 8px 0; color: #4D4D4D; font-weight: 600; font-size: 20px;}
-        #%1$s-legend .legend-wrap { display: flex; flex-direction: column; gap: 12px; }
 
-        #%1$s-legend .legend-group { display: flex; flex-direction: column; gap: 8px; }
-        #%1$s-legend .legend-country { display: inline-flex; align-items: center; gap: 8px; color: #4D4D4D; font-weight: 700; font-size: 12px; opacity: 0.95; }
-        #%1$s-legend .country-swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; box-shadow: 0 0 0 1px #DDDDDD; }
+      #%1$s-legend .legend-title {
+        margin: 0 0 8px 0;
+        color: #4D4D4D;
+        font-weight: 600;
+        font-size: 20px;
+      }
 
-        #%1$s-legend .legend-row { display: flex; flex-wrap: wrap; gap: 8px 10px; }
-        #%1$s-legend .legend-item { 
-          display: inline-flex; align-items: center; gap: 8px; 
-          padding: 6px 10px; border-radius: 9999px; 
-          background: #FFFFFF; 
-          box-shadow: 0 0 0 1px #E6E6E6 inset; 
-          color: #4D4D4D; font-size: 12px; transition: box-shadow .12s ease;
-        }
-        #%1$s-legend .legend-item:hover { box-shadow: 0 0 0 1px #FFA92A inset; }
+      /* NOW SCROLLABLE */
+      #%1$s-legend .legend-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
 
-        #%1$s-legend .legend-swatch { width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; }
-        #%1$s-legend .legend-text { white-space: nowrap; }
-        #%1$s-legend svg { display: block; }
+        max-height: 240px;   /* Adjust height as needed */
+        overflow-y: auto;
+        padding-right: 6px;  /* Space for scrollbar */
+      }
+      #%1$s-legend .legend-wrap::-webkit-scrollbar {
+        width: 6px;
+      }
+      #%1$s-legend .legend-wrap::-webkit-scrollbar-thumb {
+        background: #CCCCCC;
+        border-radius: 3px;
+      }
+
+      #%1$s-legend .legend-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      #%1$s-legend .legend-country {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #4D4D4D;
+        font-weight: 700;
+        font-size: 12px;
+        opacity: 0.95;
+      }
+
+      #%1$s-legend .country-swatch {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        display: inline-block;
+        box-shadow: 0 0 0 1px #DDDDDD;
+      }
+
+      #%1$s-legend .legend-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 10px;
+      }
+
+      #%1$s-legend .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 9999px;
+        background: #FFFFFF;
+        box-shadow: 0 0 0 1px #E6E6E6 inset;
+        color: #4D4D4D;
+        font-size: 12px;
+        transition: box-shadow .12s ease;
+      }
+      #%1$s-legend .legend-item:hover {
+        box-shadow: 0 0 0 1px #FFA92A inset;
+      }
+
+      #%1$s-legend .legend-swatch {
+        width: 14px;
+        height: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #%1$s-legend .legend-text { white-space: nowrap; }
+      #%1$s-legend svg { display: block; }
     ', ns("chart")))),
-    div(id = paste0(ns("chart"), "-legend"),
-        tags$div(class = "legend-title", "Chamber parties"),
-        uiOutput(ns("legend"), container = div, inline = FALSE)
+    
+    div(
+      id = paste0(ns("chart"), "-legend"),
+      tags$div(class = "legend-title", "Chamber parties"),
+      uiOutput(ns("legend"), container = div, inline = FALSE)
     )
   )
 }
+
 
 #-------------------------------
 # Module Server
@@ -193,6 +258,10 @@ camaraServer <- function(id,
       df[[seats_col]]          <- suppressWarnings(as.integer(df[[seats_col]]))
       df[[year_col]]           <- suppressWarnings(as.integer(df[[year_col]]))
       df[[chamber_filter_col]] <- suppressWarnings(as.integer(df[[chamber_filter_col]]))
+      df$total_chamber_seats_sub_leg <- suppressWarnings(
+        as.integer(as.character(df$total_chamber_seats_sub_leg))
+      )
+      
       
       # inputs
       sel_states  <- tryCatch(state_r(), error = function(e) NULL)
@@ -227,6 +296,8 @@ camaraServer <- function(id,
         transmute(party = .data[[party_col]], seats = .data[[seats_col]]) %>%
         group_by(party) %>%
         summarise(seats = sum(seats, na.rm = TRUE), .groups = "drop")
+
+      
       
       # total chamber + NON-CONTESTED seats (exactly as requested)
       total_chamber_vec <- suppressWarnings(as.integer(na.omit(dff$total_chamber_seats_sub_leg)))
@@ -247,6 +318,7 @@ camaraServer <- function(id,
         }
       }
       
+
       # order: real by size, non-contested last
       agg <- agg %>%
         mutate(.is_prev = as.integer(party == previous_name)) %>%
@@ -355,6 +427,7 @@ camaraServer <- function(id,
         col <- pal[[p]] %||% "#888"
         htmltools::tags$span(
           class = "legend-item",
+          `data-party` = p, 
           htmltools::span(class = "legend-swatch", style = paste0("background:", col, ";")),
           htmltools::span(class = "legend-text", p)
         )

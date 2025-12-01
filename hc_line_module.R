@@ -9,7 +9,14 @@ linePlotLegendUI <- function(id, width = NULL) {
   tagList(
     div(
       id = paste0(ns("line_plot"), "-legend"),
-      style = "max-width:100%;",
+      style = paste(
+        "max-width:100%;",
+        "max-height:300px;",         # you can change this
+        "overflow-y:auto;",          # enables scrolling
+        "padding-right:6px;",        # avoids cutting off box-shadows
+        "scrollbar-width:thin;",     # nicer Firefox scrollbar
+        "-webkit-overflow-scrolling:touch;"  # smooth scrolling in mobile
+        ),
       tags$div(style = "margin:0 0 8px 0; color:#4D4D4D; font-weight:600; font-size:18px;",
                "States"),
       uiOutput(ns("legend"), container = div, inline = FALSE)
@@ -33,19 +40,19 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Y
     }
     
     # Small helper to draw Highcharts-like symbols as inline SVG
-    symbol_svg_hc <- function(symbol = "circle", color = "#60A5FA") {
-      s <- tolower(symbol)
-      svg <- switch(
-        s,
-        "circle" = sprintf('<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="5" fill="%1$s"/></svg>', color),
-        "square" = sprintf('<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="8" height="8" fill="%1$s"/></svg>', color),
-        "diamond" = sprintf('<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><polygon points="7,2 12,7 7,12 2,7" fill="%1$s"/></svg>', color),
-        "triangle" = sprintf('<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><polygon points="7,2 12,12 2,12" fill="%1$s"/></svg>', color),
-        "triangle-down" = sprintf('<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><polygon points="2,2 12,2 7,12" fill="%1$s"/></svg>', color),
-        sprintf('<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="5" fill="%1$s"/></svg>', color)
-      )
-      htmltools::HTML(svg)
-    }
+    # symbol_svg_hc <- function(symbol = "circle", color = "#60A5FA") {
+    #   s <- tolower(symbol)
+    #   svg <- switch(
+    #     s,
+    #     "circle" = sprintf('<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="5" fill="%1$s"/></svg>', color),
+    #     "square" = sprintf('<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="8" height="8" fill="%1$s"/></svg>', color),
+    #     "diamond" = sprintf('<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><polygon points="7,2 12,7 7,12 2,7" fill="%1$s"/></svg>', color),
+    #     "triangle" = sprintf('<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><polygon points="7,2 12,12 2,12" fill="%1$s"/></svg>', color),
+    #     "triangle-down" = sprintf('<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><polygon points="2,2 12,2 7,12" fill="%1$s"/></svg>', color),
+    #     sprintf('<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="5" fill="%1$s"/></svg>', color)
+    #   )
+    #   htmltools::HTML(svg)
+    # }
     
     output$line_plot <- highcharter::renderHighchart({
       req(data(), input_variable(), input_states(), active_tab() == "graph_tab")
@@ -79,13 +86,15 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Y
         country_colors <- c(country_colors_base, fallback_cols)
       } else country_colors <- country_colors_base
       
-      symbols <- c("circle", "diamond", "square", "triangle", "triangle-down")
       selected_states <- input_states()
+      # symbols <- c("circle", "diamond", "square", "triangle", "triangle-down")
       # Map symbols to states (match Highcharts markers)
-      symbols <- c("circle", "diamond", "square", "triangle", "triangle-down")
-      symbol_map <- setNames(rep(symbols, length.out = length(selected_states)), selected_states)
-      symbol_map <- setNames(rep(symbols, length.out = length(selected_states)), selected_states)
+      # symbol_map <- setNames(rep(symbols, length.out = length(selected_states)), selected_states)
       
+      
+
+      
+
       y_min <- Ymin()
       y_max <- max(df$value, na.rm = TRUE)
       y_max_pad <- as.numeric(y_max) * 1.05
@@ -111,7 +120,10 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Y
           )),
           color = color,
           lineWidth = 2,
-          marker = list(enabled = TRUE, radius = 4, symbol = symbol_map[[st]]),
+          marker = list(enabled = TRUE, radius = 4
+                        # , 
+                        # symbol = symbol_map[[st]]
+                        ),
           states = list(hover = list(lineWidthPlus = 1)),
           tooltip = list(valueDecimals = ifelse(var_type == "continuous" || var_type == "percentage", 2, 0))
         )
@@ -137,73 +149,126 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Y
           panning = FALSE,
           events = list(
             load = highcharter::JS(sprintf("
-                    function() {
-                      var chart = this;
-                      var root = document.getElementById('%s');
-                      if(!root) return;
-                      var locked = null;
-                    
-                      function setInactiveAllExcept(name){
-                        chart.series.forEach(function(s){
-                          if(!s.visible) return;
-                          if(s.name === name){
-                            s.setState('hover');
-                            if(s.group) s.group.toFront();
-                            if(s.markerGroup) s.markerGroup.toFront();
-                          } else {
-                            s.setState('inactive');
-                          }
-                        });
-                        // Highlight corresponding tag
-                        root.querySelectorAll('[data-state]').forEach(function(el){
-                          el.style.opacity = (el.getAttribute('data-state') === name) ? '1.0' : '0.4';
-                          el.style.boxShadow = (el.getAttribute('data-state') === name) ? 'inset 0 0 0 1px #FFA92A' : 'inset 0 0 0 1px #E6E6E6';
-                        });
-                      }
-                    
-                      function clearStates(){
-                        chart.series.forEach(function(s){
-                          if(!s.visible) return;
-                          s.setState('normal');
-                        });
-                        root.querySelectorAll('[data-state]').forEach(function(el){
-                          el.style.opacity = '1';
-                          el.style.boxShadow = 'inset 0 0 0 1px #E6E6E6';
-                        });
-                      }
-                    
-                      chart.series.forEach(function(s){
-                        s.update({
-                          events: {
-                            click: function(){
-                              var name = this.name;
-                              if(locked === name){ locked = null; clearStates(); }
-                              else { locked = name; setInactiveAllExcept(name); }
-                            }
-                          }
-                        });
-                      });
-                    
-                      root.querySelectorAll('[data-state]').forEach(function(el){
-                        el.style.cursor = 'pointer';
-                        el.addEventListener('mouseenter', function(){
-                          if(locked) return;
-                          var sName = this.getAttribute('data-state');
-                          setInactiveAllExcept(sName);
-                        });
-                        el.addEventListener('mouseleave', function(){
-                          if(locked) return;
-                          clearStates();
-                        });
-                        el.addEventListener('click', function(){
-                          var sName = this.getAttribute('data-state');
-                          if(locked === sName){ locked = null; clearStates(); }
-                          else { locked = sName; setInactiveAllExcept(sName); }
-                        });
-                      });
-                    }", paste0(session$ns("line_plot"), "-legend")
+    function() {
+
+      var legendId = '%s';
+      var chartId  = '%s';
+
+      function getChart(){
+        return Highcharts.charts.find(function(c){
+          return c && c.renderTo && c.renderTo.id === chartId;
+        });
+      }
+
+      var locked = null;
+      var isBinding = false;
+
+      function bindLegendEvents(){
+        if (isBinding) return;
+        isBinding = true;
+
+        var root = document.getElementById(legendId);
+        if(!root){
+          isBinding = false;
+          return;
+        }
+
+        function setInactive(name){
+          var chart = getChart();
+          if(!chart) {
+            isBinding = false;
+            return;
+          }
+          chart.series.forEach(function(s){
+            if(!s.visible) return;
+            if(s.name === name){
+              s.setState('hover');
+              if(s.group) s.group.toFront();
+              if(s.markerGroup) s.markerGroup.toFront();
+            } else {
+              s.setState('inactive');
+            }
+          });
+          root.querySelectorAll('[data-state]').forEach(function(el){
+            var st = el.getAttribute('data-state');
+            el.style.opacity = (st === name ? '1' : '0.4');
+            el.style.boxShadow = (st === name
+              ? 'inset 0 0 0 1px #FFA92A'
+              : 'inset 0 0 0 1px #E6E6E6');
+          });
+        }
+
+        function clearStates(){
+          var chart = getChart();
+          if(!chart){
+            isBinding = false;
+            return;
+          }
+          chart.series.forEach(function(s){
+            if(!s.visible) return;
+            s.setState('normal');
+          });
+          root.querySelectorAll('[data-state]').forEach(function(el){
+            el.style.opacity = '1';
+            el.style.boxShadow = 'inset 0 0 0 1px #E6E6E6';
+          });
+        }
+
+        // Bind only once per element using a flag
+        root.querySelectorAll('[data-state]').forEach(function(el){
+          if (el.dataset.bound === '1') return; // already has listeners
+          el.dataset.bound = '1';
+
+          el.style.cursor = 'pointer';
+
+          el.addEventListener('mouseenter', function(){
+            if(locked) return;
+            setInactive(this.getAttribute('data-state'));
+          });
+
+          el.addEventListener('mouseleave', function(){
+            if(locked) return;
+            clearStates();
+          });
+
+          el.addEventListener('click', function(){
+            var st = this.getAttribute('data-state');
+            if(locked === st){
+              locked = null;
+              clearStates();
+            } else {
+              locked = st;
+              setInactive(st);
+            }
+          });
+        });
+
+        isBinding = false;
+      }
+
+      // Initial bind
+      bindLegendEvents();
+
+      // Watch for future changes (adding/removing states)
+      var legendRoot = document.getElementById(legendId);
+      if(!legendRoot) return;
+
+      var obs = new MutationObserver(function(){
+        bindLegendEvents();
+      });
+
+      obs.observe(legendRoot, { childList: true, subtree: true });
+
+    }
+  ",
+                                           paste0(session$ns("line_plot"), "-legend"),
+                                           session$ns("line_plot")
             ))
           )
+          
+          
+          
+          
           
         ) %>%
         highcharter::hc_title(text = NULL) %>%
@@ -245,7 +310,17 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Y
           sourceWidth = 1400,
           sourceHeight = 800
         ) %>%
-        highcharter::hc_credits(enabled = FALSE)
+        highcharter::hc_credits(enabled = FALSE) %>% 
+        hc_exporting(
+          enabled = TRUE,
+          sourceWidth = 1400,
+          sourceHeight = 900,
+          buttons = list(
+            contextButton = list(
+              menuItems = c("downloadPNG", "")
+            )
+          )
+        )
       
       if (length(series_list) > 0) {
         hc <- highcharter::hc_add_series_list(hc, series_list)
@@ -255,62 +330,155 @@ linePlotModuleServer <- function(id, data, dict, input_variable, input_states, Y
     })
     
     output$legend <- renderUI({
-      req(data(), input_states())
-      df <- data() %>% dplyr::filter(state_name %in% input_states())
-      if (nrow(df) == 0) return(NULL)
+      req(data(), input_states(), input_variable())
       
+      selected_states <- input_states()
+      var <- input_variable()
+      
+      # ===============================================
+      # 1. Determine which states have data for THIS variable
+      # ===============================================
+      df_var <- data() %>%
+        dplyr::filter(state_name %in% selected_states) %>%
+        dplyr::select(state_name, value = !!sym(var))
+      
+      states_with_data <- df_var %>%
+        dplyr::filter(!is.na(value)) %>%
+        dplyr::pull(state_name) %>%
+        unique()
+      
+      states_without_data <- setdiff(selected_states, states_with_data)
+      
+      # LOGS
+      # message("Selected states: ", paste(selected_states, collapse=", "))
+      # message("States with data: ", paste(states_with_data, collapse=", "))
+      # message("States without data: ", paste(states_without_data, collapse=", "))
+      # 
+      # ===============================================
+      # 2. Build df only for states WITH data
+      # ===============================================
+      df <- data() %>% dplyr::filter(state_name %in% states_with_data)
+      
+      if (length(states_with_data) == 0 && length(states_without_data) == 0)
+        return(NULL)
+      
+      # ===============================================
+      # COLORS
+      # ===============================================
       country_colors_base <- c(
         "ARGENTINA" = "#74ACDF",
         "BRAZIL"    = "#3CB371",
         "MEXICO"    = "#E03C31"
       )
+      
       countries_in_df <- unique(df$country_name)
       missing_countries <- setdiff(countries_in_df, names(country_colors_base))
       if (length(missing_countries) > 0) {
-        fallback_cols <- grDevices::hcl.colors(length(missing_countries), palette = "TealGrn")
+        fallback_cols <- grDevices::hcl.colors(length(missing_countries), "TealGrn")
         names(fallback_cols) <- missing_countries
         country_colors <- c(country_colors_base, fallback_cols)
-      } else country_colors <- country_colors_base
+      } else {
+        country_colors <- country_colors_base
+      }
       
-      selected_states <- input_states()
-      # Map symbols to states (match Highcharts markers)
-      symbols <- c("circle", "diamond", "square", "triangle", "triangle-down")
-      symbol_map <- setNames(rep(symbols, length.out = length(selected_states)), selected_states)
-      order_df <- df %>%
-        dplyr::mutate(state_order = match(state_name, selected_states)) %>%
-        dplyr::arrange(state_order)
-      country_order <- unique(order_df$country_name)
+      # ===============================================
+      # 3. Build "States WITH data" grouped by country
+      # ===============================================
+      groups_with_data_ui <- list()
       
-      groups_ui <- lapply(country_order, function(ctry) {
-        col <- if (!is.null(country_colors[[ctry]])) country_colors[[ctry]] else "#666666"
-        states_ctry <- selected_states[selected_states %in% (df %>% dplyr::filter(country_name == ctry) %>% dplyr::pull(state_name) %>% unique())]
-        items <- lapply(states_ctry, function(st) {
+      if (length(states_with_data) > 0) {
+        
+        df_ordered <- df %>%
+          dplyr::mutate(order = match(state_name, selected_states)) %>%
+          dplyr::arrange(order)
+        
+        country_order <- unique(df_ordered$country_name)
+        
+        groups_with_data_ui <- lapply(country_order, function(ctry) {
+          col <- country_colors[[ctry]] %||% "#666666"
+          
+          states_ctry <- states_with_data[
+            states_with_data %in% (df %>%
+                                     dplyr::filter(country_name == ctry) %>%
+                                     dplyr::pull(state_name) %>% unique())
+          ]
+          
+          items <- lapply(states_ctry, function(st) {
+            tags$span(
+              `data-state` = st,   # <-- interactive
+              style = paste(
+                "display:inline-flex;align-items:center;gap:8px;",
+                "padding:4px 10px;border-radius:9999px;",
+                "background:#FFFFFF;box-shadow:inset 0 0 0 1px #E6E6E6;",
+                "color:#4D4D4D;font-size:12px;margin:2px;"
+              ),
+              st
+            )
+          })
+          
+          htmltools::div(
+            style = "display:flex;flex-direction:column;gap:6px;margin-bottom:8px;",
+            htmltools::span(
+              style = "display:inline-flex;align-items:center;gap:8px;color:#4D4D4D;font-weight:700;font-size:12px;",
+              htmltools::span(
+                style = paste(
+                  "width:10px;height:10px;border-radius:2px;display:inline-block;",
+                  sprintf("box-shadow:0 0 0 1px #DDDDDD;background:%s;", col)
+                )
+              ),
+              ctry
+            ),
+            htmltools::div(style = "display:flex;flex-wrap:wrap;gap:6px;", items)
+          )
+        })
+      }
+      
+      # ===============================================
+      # 4. Build "States WITHOUT data" section (non-clickable)
+      # ===============================================
+      no_data_ui <- NULL
+      
+      if (length(states_without_data) > 0) {
+        
+        items_missing <- lapply(states_without_data, function(st) {
           tags$span(
-            `data-state` = st,
+            `data-state-missing` = st,  # <-- NOT interactive
             style = paste(
               "display:inline-flex;align-items:center;gap:8px;",
               "padding:4px 10px;border-radius:9999px;",
-              "background:#FFFFFF;box-shadow:inset 0 0 0 1px #E6E6E6;",
-              "color:#4D4D4D;font-size:12px;margin:2px;"
+              "background:#F0F0F0;",
+              "box-shadow:inset 0 0 0 1px #CCCCCC;",
+              "color:#8A8A8A;font-size:10px;margin:2px;",
+              "opacity:0.6;",
+              "cursor:not-allowed;"
             ),
-            htmltools::span(
-              style = "display:inline-flex;width:14px;height:14px;align-items:center;justify-content:center;",
-              symbol_svg_hc(symbol_map[[st]], col)
-            ),
-            tags$span(st)
+            st
           )
         })
-        htmltools::div(
-          style = "display:flex;flex-direction:column;gap:6px;margin-bottom:8px;",
-          htmltools::span(style = "display:inline-flex;align-items:center;gap:8px;color:#4D4D4D;font-weight:700;font-size:12px;", 
-                          htmltools::span(style = paste("width:10px;height:10px;border-radius:2px;display:inline-block;",
-                                                        sprintf("box-shadow:0 0 0 1px #DDDDDD;background:%s;", col))),
-                          ctry),
-          htmltools::div(style = "display:flex;flex-wrap:wrap;gap:6px;", items)
+        
+        no_data_ui <- htmltools::div(
+          style = "display:flex;flex-direction:column;gap:6px;margin-top:4px;padding-top:4px;border-top:1px solid #E0E0E0;",
+          htmltools::span(
+            style = "color:#4D4D4D;font-weight:700;font-size:12px;",
+            "No data available"
+          ),
+          htmltools::div(style = "display:flex;flex-wrap:wrap;gap:6px;", items_missing)
         )
-      })
+      }
       
-      htmltools::div(style = "display:flex;flex-direction:column;gap:8px;", groups_ui)
+      # ===============================================
+      # Final output
+      # ===============================================
+      htmltools::div(
+        style = "display:flex;flex-direction:column;gap:14px;",
+        if (length(states_with_data) > 0) groups_with_data_ui,
+        no_data_ui
+      )
     })
+    
+    
+    
+    
+    
   })
 }

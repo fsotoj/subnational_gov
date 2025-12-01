@@ -261,30 +261,66 @@ server <- function(input, output, session) {
   # Year scoping helpers (camera)
   sled_years_scoped_camera <- reactive({
     df <- SLED
+    
+    # country filter
     if (!is.null(input$country_sel_camera) && nzchar(input$country_sel_camera)) {
       df <- df[df$country_name == input$country_sel_camera, , drop = FALSE]
     }
+    
+    # state filter
     if (!is.null(input$state_sel_camera) && nzchar(input$state_sel_camera)) {
       df <- df[df$state_name == input$state_sel_camera, , drop = FALSE]
     }
+    
+    # chamber filter  ← THIS WAS MISSING
+    if (!is.null(input$chamber_sel_camera) && nzchar(input$chamber_sel_camera)) {
+      df <- df[df$chamber_election_sub_leg == input$chamber_sel_camera, , drop = FALSE]
+    }
+    
+    
     sort(unique(df$year))
+    
   })
   
+  
   # Keep year slider in sync (camera)
-  observeEvent(list(current_tab(), input$country_sel_camera, input$state_sel_camera), {
-    req(current_tab() == "camera")
-    yrs <- sled_years_scoped_camera()
-    shinyWidgets::updateSliderTextInput(
-      session, "year_sel_camera",
-      choices  = as.character(yrs),
-      selected = if (!is.null(input$year_sel_camera) &&
-                     input$year_sel_camera %in% as.character(yrs)) {
-        input$year_sel_camera
-      } else {
-        as.character(tail(yrs, 1))
+  observeEvent(
+    list(current_tab(), input$country_sel_camera, input$state_sel_camera, input$chamber_sel_camera),
+    {
+      req(current_tab() == "camera")
+      
+      yrs <- sled_years_scoped_camera()
+      
+      # no available years → reset slider cleanly
+      if (length(yrs) == 0 || all(is.na(yrs))) {
+        shinyWidgets::updateSliderTextInput(
+          session, "year_sel_camera",
+          choices  = character(0),
+          selected = NULL
+        )
+        return()
       }
-    )
-  }, ignoreInit = FALSE)
+      
+      # ensure years are character for the slider
+      yrs_chr <- as.character(sort(yrs))
+      
+      # preserve current selection *if still valid*
+      current <- input$year_sel_camera
+      if (!is.null(current) && current %in% yrs_chr) {
+        selected_year <- current
+      } else {
+        # fallback to LAST valid year (as you were doing)
+        selected_year <- tail(yrs_chr, 1)
+      }
+      
+      shinyWidgets::updateSliderTextInput(
+        session, "year_sel_camera",
+        choices  = yrs_chr,
+        selected = selected_year
+      )
+    },
+    ignoreInit = TRUE
+  )
   
   # Available chambers (scoped)
   available_chambers_camera <- reactive({
@@ -337,24 +373,7 @@ server <- function(input, output, session) {
   )
   
   
-  # ==== 1.4) FILTERED DATA FOR CAMERA =======================================
-  sled_cam_filtered <- reactive({
-    df <- SLED
-    if (!is.null(input$country_sel_camera) && nzchar(input$country_sel_camera)) {
-      df <- df[df$country_name == input$country_sel_camera, , drop = FALSE]
-    }
-    if (!is.null(input$state_sel_camera) && nzchar(input$state_sel_camera)) {
-      df <- df[df$state_name == input$state_sel_camera, , drop = FALSE]
-    }
-    if (!is.null(input$chamber_sel_camera)) {
-      df <- df[df$chamber_election_sub_leg == as.integer(input$chamber_sel_camera), , drop = FALSE]
-    }
-    if (!is.null(input$year_sel_camera) && nzchar(input$year_sel_camera)) {
-      df <- df[df$year == as.integer(input$year_sel_camera), , drop = FALSE]
-    }
-    df
-  })
-  
+
   
   # ==== 2) MODALS / MESSAGES ================================================
   observe({
@@ -724,6 +743,31 @@ observeEvent(input$btn_howto, {
   }, ignoreInit = FALSE)
   
 
+  
+  # ==== 6.1) FILTERED DATA FOR CAMERA =======================================
+  sled_cam_filtered <- reactive({
+    df <- SLED
+    if (!is.null(input$country_sel_camera) && nzchar(input$country_sel_camera)) {
+      df <- df[df$country_name == input$country_sel_camera, , drop = FALSE]
+    }
+    if (!is.null(input$state_sel_camera) && nzchar(input$state_sel_camera)) {
+      df <- df[df$state_name == input$state_sel_camera, , drop = FALSE]
+    }
+    if (!is.null(input$chamber_sel_camera)) {
+      df <- df[df$chamber_election_sub_leg == as.integer(input$chamber_sel_camera), , drop = FALSE]
+    }
+    if (!is.null(input$year_sel_camera) && nzchar(input$year_sel_camera)) {
+      df <- df[df$year == as.integer(input$year_sel_camera), , drop = FALSE]
+    }
+    df
+  })
+  
+  
+  
+  
+  
+  
+  
   # -- 6.2) Camera info text (camera tab) ------------------------------------
   output$text_camera <- renderUI({
     req(current_tab() == "camera", sled_cam_filtered(), input$state_sel_camera)
@@ -767,7 +811,7 @@ observeEvent(input$btn_howto, {
     renewal_type   <- map_renewal(df$renewal_type_sub_leg)
     elec_system    <- map_system(df$electoral_system_sub_leg)
     n_parties_cont <- first_or_summary(df$num_parties_election_contest_sub_leg)
-    
+
     enp_vals <- sort(unique(na.omit(as.numeric(df$enp_sub_leg))))
     enp_txt <- if (!length(enp_vals)) {
       "—"
