@@ -1,42 +1,6 @@
 /******************************************************
- * USER ACTIVITY TRACKER (IDLE TIME HANDLING)
+ * SAFE GTAG WRAPPER
  ******************************************************/
-let lastActivity = Date.now();
-let idleThreshold = 60 * 1000; // 60 seconds of inactivity = IDLE
-
-function refreshActivity() {
-  lastActivity = Date.now();
-}
-
-// Register activity events
-["mousemove", "keydown", "click", "scroll", "touchstart"].forEach(event => {
-  window.addEventListener(event, refreshActivity, { passive: true });
-});
-
-// Returns ONLY active seconds
-function getActiveSeconds() {
-  const now = Date.now();
-  const rawSeconds = Math.round((now - lastTabStart) / 1000);
-
-  // Compute idle time
-  const idleTime = now - lastActivity;
-
-  if (idleTime > idleThreshold) {
-    // User became idle → only count activity BEFORE going idle
-    const activeMillis = idleThreshold;
-    return Math.round(activeMillis / 1000);
-  }
-
-  return rawSeconds;
-}
-
-
-
-
-
-
-
-
 function safeGtag() {
   if (typeof gtag === "function") {
     gtag.apply(null, arguments);
@@ -45,11 +9,64 @@ function safeGtag() {
   }
 }
 
+/******************************************************
+ * TAB STATE
+ ******************************************************/
 let lastTab = "map_tab";
 let lastTabStart = Date.now();
-let isInitialMap = true;  // <--- KEY FLAG
+let isInitialMap = true;
 
-// 1) Send initial tab_open (as initial load)
+/******************************************************
+ * ACTIVE TIME TRACKING (IDLE FREEZE)
+ ******************************************************/
+let idleThreshold = 60000; // 60s inactivity → idle
+let idleTimer = null;
+let isIdle = false;
+let accumulatedActiveSeconds = 0;
+
+// Start idle timer and detect user activity
+function resetIdleTimer() {
+  if (isIdle) {
+    // User returns from idle → resume timing
+    isIdle = false;
+    lastTabStart = Date.now();
+  }
+
+  if (idleTimer) clearTimeout(idleTimer);
+
+  idleTimer = setTimeout(() => {
+    // User becomes idle → freeze timer
+    isIdle = true;
+
+    const now = Date.now();
+    accumulatedActiveSeconds += Math.round((now - lastTabStart) / 1000);
+  }, idleThreshold);
+}
+
+// Register activity events
+["mousemove", "keydown", "click", "scroll", "touchstart"].forEach(ev => {
+  window.addEventListener(ev, resetIdleTimer, { passive: true });
+});
+
+// Initialize idle tracking immediately
+resetIdleTimer();
+
+// Compute active seconds for the current tab
+function getActiveSeconds() {
+  if (isIdle) {
+    return accumulatedActiveSeconds;
+  } else {
+    const now = Date.now();
+    return (
+      accumulatedActiveSeconds +
+      Math.round((now - lastTabStart) / 1000)
+    );
+  }
+}
+
+/******************************************************
+ * INITIAL OPEN EVENT
+ ******************************************************/
 safeGtag("event", "tab_open", { tab_name: "map_tab_initial" });
 
 /******************************************************
@@ -57,37 +74,36 @@ safeGtag("event", "tab_open", { tab_name: "map_tab_initial" });
  ******************************************************/
 $(document).on("shiny:inputchanged", function (e) {
   if (e.name === "tabs") {
-
-    const now = Date.now();
     const seconds = getActiveSeconds();
 
-    // Determine proper label for the tab we are LEAVING
-    let tabLabel;
+    // Determine correct label for LEAVING tab
+    let tabLabel =
+      lastTab === "map_tab" && isInitialMap
+        ? "map_tab_initial"
+        : lastTab;
 
-    if (lastTab === "map_tab" && isInitialMap) {
-      tabLabel = "map_tab_initial";
-      isInitialMap = false;  // After first leave, switch off
-    } else {
-      tabLabel = lastTab;
-    }
-
-    // Send duration event
+    // Send tab duration
     safeGtag("event", "tab_duration", {
       tab_name: tabLabel,
       seconds: seconds
     });
 
-    // Prepare new tab
+    /*************** Prepare next tab ***************/
     lastTab = e.value;
-    lastTabStart = now;
+    accumulatedActiveSeconds = 0;
+    lastTabStart = Date.now();
+    resetIdleTimer();
 
-    // Determine proper label for the tab we are ENTERING
+    // Label for ENTERING tab
     let nextLabel =
       lastTab === "map_tab" && isInitialMap
         ? "map_tab_initial"
         : lastTab;
 
-    // Send open event
+    // First time leaving map_tab_initial
+    isInitialMap = false;
+
+    // Send tab_open event
     safeGtag("event", "tab_open", {
       tab_name: nextLabel
     });
@@ -95,25 +111,18 @@ $(document).on("shiny:inputchanged", function (e) {
 });
 
 /******************************************************
- * WINDOW CLOSE / REFRESH HANDLER
+ * WINDOW CLOSE / REFRESH
  ******************************************************/
 window.addEventListener("beforeunload", function () {
-  const now = Date.now();
   const seconds = getActiveSeconds();
 
-  // Determine label for closing tab
-  let tabLabel;
+  let tabLabel =
+    lastTab === "map_tab" && isInitialMap
+      ? "map_tab_initial"
+      : lastTab;
 
-  if (lastTab === "map_tab" && isInitialMap) {
-    tabLabel = "map_tab_initial";
-    isInitialMap = false;
-  } else {
-    tabLabel = lastTab;
-  }
-
-  // Prepare Measurement Protocol payload
   const payload = {
-    client_id: (window.gtagClientId || ""),
+    client_id: window.gtagClientId || "",
     events: [
       {
         name: "tab_duration",
@@ -125,10 +134,8 @@ window.addEventListener("beforeunload", function () {
     ]
   };
 
-//  navigator.sendBeacon(    "ga",     JSON.stringify(payload)  );
-  
-  
-navigator.sendBeacon(window.location.pathname + "ga", body)
-
-
+  navigator.sendBeacon(
+    window.location.pathname + "ga",
+    JSON.stringify(payload)
+  );
 });
