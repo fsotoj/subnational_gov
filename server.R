@@ -258,6 +258,20 @@ server <- function(input, output, session) {
     )
   })
   
+  
+  # output$year_selector_camera <- renderUI({
+  #   shinyWidgets::sliderTextInput(
+  #     inputId  = "year_sel_camera", label = "Year",
+  #     choices  = as.character(seq(1983, 2024, 1)),
+  #     grid     = TRUE, width = "90%",
+  #     selected = 2019,
+  #     animate  = shiny::animationOptions(
+  #       interval = 1000,
+  #       loop = FALSE
+  #     )
+  #   )
+  # })
+  
   # Year scoping helpers (camera)
   sled_years_scoped_camera <- reactive({
     df <- SLED
@@ -273,9 +287,9 @@ server <- function(input, output, session) {
     }
     
     # chamber filter  ← THIS WAS MISSING
-    if (!is.null(input$chamber_sel_camera) && nzchar(input$chamber_sel_camera)) {
-      df <- df[df$chamber_election_sub_leg == input$chamber_sel_camera, , drop = FALSE]
-    }
+    # if (!is.null(input$chamber_sel_camera) && nzchar(input$chamber_sel_camera)) {
+    #   df <- df[df$chamber_election_sub_leg == input$chamber_sel_camera, , drop = FALSE]
+    # }
     
     
     sort(unique(df$year))
@@ -288,6 +302,8 @@ server <- function(input, output, session) {
     list(current_tab(), input$country_sel_camera, input$state_sel_camera, input$chamber_sel_camera),
     {
       req(current_tab() == "camera")
+      if (is.null(input$year_sel_camera)) return()
+      #shiny::invalidateLater(1, session)  # ← lets UI finish rebuilding first
       
       yrs <- sled_years_scoped_camera()
       
@@ -322,6 +338,16 @@ server <- function(input, output, session) {
     ignoreInit = TRUE
   )
   
+  
+  # output$chamber_selector_camera <- renderUI({
+  #   selectInput(
+  #     "chamber_sel_camera", "Chamber",
+  #     choices = c("Lower chamber" = 1, "Upper chamber" = 2),
+  #     selected = 1
+  #   )
+  # })
+  
+  
   # Available chambers (scoped)
   available_chambers_camera <- reactive({
     df <- SLED
@@ -349,6 +375,10 @@ server <- function(input, output, session) {
     list(current_tab(), input$country_sel_camera, input$state_sel_camera, input$year_sel_camera),
     {
       req(current_tab() == "camera")
+      if (is.null(input$chamber_sel_camera)) return()
+      
+      #shiny::invalidateLater(1, session)  # ← lets UI finish rebuilding first
+      
       ch <- available_chambers_camera()
       
       if (!length(ch)) {
@@ -677,19 +707,6 @@ observeEvent(input$btn_howto, {
   })
   
   
-  # -- 4.5) Camera year selector (UI; updated above) -------------------------
-  output$year_selector_camera <- renderUI({
-    shinyWidgets::sliderTextInput(
-      inputId  = "year_sel_camera", label = "Year",
-      choices  = as.character(seq(1983, 2024, 1)),
-      grid     = TRUE, width = "90%",
-      selected = 2019,
-      animate  = shiny::animationOptions(
-        interval = 1000,
-        loop = FALSE
-      )
-    )
-  })
   
   
   # ==== 5) SHOW / HIDE CONTROLS BY TAB ======================================
@@ -720,7 +737,9 @@ observeEvent(input$btn_howto, {
     # legacy camera selector
     "camera_selector",
     # camera-tab selectors (SLED driven)
-    "country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera"
+    "country_selector_camera","state_selector_camera",
+    #"chamber_selector_camera", "year_selector_camera"
+    "chamber_sel_camera","year_sel_camera"
   )
   
   # Given a tab, return vector of IDs to show
@@ -729,7 +748,10 @@ observeEvent(input$btn_howto, {
            "map_tab"   = c("country_selector","var_sel","var_description_map","fancytree_vars_demo_container"),
            "graph_tab" = c("var_description_graph","state_selector","fancytree_states_container","fancytree_vars_container_graph"),
            #"data_tab"  = c("country_sel2","state_sel2","db_selector","years"),
-           "camera"    = c("country_selector_camera","state_selector_camera","chamber_selector_camera","year_selector_camera"),
+           "camera"    = c("country_selector_camera","state_selector_camera",
+                           #"chamber_selector_camera","year_selector_camera"
+                           "chamber_sel_camera","year_sel_camera"
+                           ),
            character(0)
     )
   }

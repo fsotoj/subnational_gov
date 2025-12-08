@@ -139,7 +139,11 @@ ui <- dashboardPage(
       hidden(selectInput("state_sel2", "Select a state:", choices = NULL)),
       hidden(uiOutput("country_selector_camera")),
       hidden(uiOutput("state_selector_camera")),
-      hidden(uiOutput("chamber_selector_camera"))
+      hidden(selectInput(
+        "chamber_sel_camera", "Chamber",
+        choices = c("Lower chamber" = 1, "Upper chamber" = 2),
+        selected = 1
+      ))
       )
   ),
   dashboardBody(
@@ -349,7 +353,16 @@ ui <- dashboardPage(
                          camaraUI("cam"),
                          div(
                            style = "left: 40%; right: 40%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
-                           uiOutput("year_selector_camera")
+                           shinyWidgets::sliderTextInput(
+                             inputId  = "year_sel_camera", label = "Year",
+                             choices  = as.character(seq(1983, 2024, 1)),
+                             grid     = TRUE, width = "90%",
+                             selected = 2019,
+                             animate  = shiny::animationOptions(
+                               interval = 1000,
+                               loop = FALSE
+                             )
+                           )
                          )
                   ),
                   column(3,
