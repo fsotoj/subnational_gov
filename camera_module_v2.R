@@ -1,3 +1,33 @@
+#--------
+# Party palette
+
+palette_from_table <- function(parties, color_table,
+                               party_col = "party_name_sub_leg",
+                               color_col = "color",
+                               default = "#888888") {
+  
+  pal <- color_table %>%
+    dplyr::filter(.data[[party_col]] %in% parties) %>%
+    dplyr::select(
+      party = .data[[party_col]],
+      color = .data[[color_col]]
+    ) %>%
+    tibble::deframe()
+  
+  # ensure every party has a color
+  missing <- setdiff(parties, names(pal))
+  if (length(missing) > 0) {
+    pal[missing] <- default
+  }
+  
+  pal
+}
+
+
+
+
+
+
 #-------------------------------
 # Hemicycle layout (clean wedges)
 #-------------------------------
@@ -85,14 +115,14 @@ expand_and_assign <- function(df_agg,
 #-------------------------------
 # Distinct palette
 #-------------------------------
-palette_distinct <- function(labels) {
-  labs <- unique(as.character(labels))
-  n <- length(labs)
-  if (n == 0) return(character())
-  hues <- seq(15, 375, length.out = n + 1)[-1]
-  cols <- grDevices::hcl(h = hues, c = 100, l = 60)
-  stats::setNames(cols, labs)
-}
+# palette_distinct <- function(labels) {
+#   labs <- unique(as.character(labels))
+#   n <- length(labs)
+#   if (n == 0) return(character())
+#   hues <- seq(15, 375, length.out = n + 1)[-1]
+#   cols <- grDevices::hcl(h = hues, c = 100, l = 60)
+#   stats::setNames(cols, labs)
+# }
 
 
 
@@ -373,8 +403,25 @@ camaraServer <- function(id,
       pts <- pts %>% dplyr::mutate(party = factor(party, levels = agg$party))
       
       
-      pal <- palette_distinct(levels(pts$party))
-      if (previous_name %in% names(pal)) pal[previous_name] <- previous_color
+      # pal <- palette_distinct(levels(pts$party))
+      # if (previous_name %in% names(pal)) pal[previous_name] <- previous_color
+      
+      
+      pal <- palette_from_table(
+        parties = levels(pts$party),
+        color_table = party_colors_leg
+      )
+      
+      if (previous_name %in% names(pal)) {
+        pal[previous_name] <- previous_color
+      }
+      
+      
+      
+      
+      
+      
+      
       
       # Add total_votes_party_sub_leg grouped per party
       vote_lookup <- dff %>%
@@ -589,7 +636,7 @@ camaraServer <- function(id,
         hc_plotOptions(
           scatter = list(
             animation = list(
-              duration = 400,    # quick
+              duration = 0,    # quick
               easing = "easeOutQuad"
             ),
             states = list(
@@ -603,7 +650,7 @@ camaraServer <- function(id,
           series = list(
             turboThreshold = 0,
             animation = list(
-              duration = 400,
+              duration = 0,
               easing = "easeOutQuad"
             )
           )
@@ -670,8 +717,20 @@ camaraServer <- function(id,
       
       if (nrow(agg) == 0) return(NULL)
       
-      pal <- palette_distinct(agg$party)
-      if (previous_name %in% names(pal)) pal[previous_name] <- previous_color
+      # pal <- palette_distinct(agg$party)
+      # if (previous_name %in% names(pal)) pal[previous_name] <- previous_color
+      
+      pal <- palette_from_table(
+        parties = agg$party,
+        color_table = party_colors_leg
+      )
+      
+      if (previous_name %in% names(pal)) {
+        pal[previous_name] <- previous_color
+      }
+      
+      
+      
       
       items <- lapply(seq_len(nrow(agg)), function(i) {
         p <- agg$party[i]

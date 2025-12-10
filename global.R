@@ -96,7 +96,7 @@ geom <- st_read("data/geom_simple_maps.geojson")
 
 
 party_colors <- read.xlsx("data/party_colors.xlsx")
-
+party_colors_leg  <- read.xlsx("data/party_colors_leg.xlsx")
 
 
 country_bboxes <- list(
