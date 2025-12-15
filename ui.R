@@ -133,16 +133,16 @@ ui <- dashboardPage(
              div(id = "fancytree_vars_demo_graph")
         )
       ),
-      div(
-        style = "margin-bottom: 10px;",
-        shinyWidgets::switchInput(
-          inputId = "show_both_maps",
-          label   = "Enable/Disable Comparison",
-          value   = TRUE,              # start with left only
-          onLabel = "Enabled",
-          offLabel = "Disabled"
-        )
-      ),
+      # div(
+      #   style = "margin-bottom: 10px;",
+      #   shinyWidgets::switchInput(
+      #     inputId = "show_both_maps",
+      #     label   = "Enable/Disable Comparison",
+      #     value   = TRUE,              # start with left only
+      #     onLabel = "Enabled",
+      #     offLabel = "Disabled"
+      #   )
+      # ),
       
       hidden(selectInput("country_sel2", "Select a country:", choices = c(unique(data$country_name)), selected = "ARGENTINA")),
       hidden(selectInput("state_sel2", "Select a state:", choices = NULL)),
@@ -322,9 +322,33 @@ ui <- dashboardPage(
             # LEFT MAP ALWAYS PRESENT
             div(
               style = "flex: 1; height: 90vh; position: relative;",
+              
               mapModuleUI("map_left"),
+              
+              # 🔘 COMPARISON TOGGLE (TOP-LEFT OVERLAY)
               div(
-                style = "position: absolute; bottom: 5px; left: 5%; right: 20%; z-index: 1000;",
+                style = "
+                position: absolute;
+                top: 10px;
+                left: 10px;",
+                shinyWidgets::switchInput(
+                  inputId  = "show_both_maps",
+                  label    = NULL,
+                  value    = TRUE,
+                  onLabel  = "Comparison on",
+                  offLabel = "Comparison off"
+                )
+              ),
+              
+              # YEAR SELECTOR (BOTTOM OVERLAY)
+              div(
+                style = "
+      position: absolute;
+      bottom: 5px;
+      left: 5%;
+      right: 20%;
+      z-index: 1000;
+    ",
                 uiOutput("year_selector_left")
               )
             ),

@@ -1165,7 +1165,44 @@ background-color: var(--purple) !important; color: #fff !important;
     left: 27% !important;
     right: 15% !important;
   }
-
-
+  
 }
 
+
+
+
+/* =====================================
+   FINAL BOOTSTRAP SWITCH COLOR OVERRIDE
+   ===================================== */
+
+/* ON = ORANGE */
+.bootstrap-switch.bootstrap-switch-on,
+.bootstrap-switch.bootstrap-switch-on .bootstrap-switch-container,
+.bootstrap-switch.bootstrap-switch-on .bootstrap-switch-handle-on {
+  background-color: var(--orange) !important;
+  border-color: var(--orange) !important;
+  color: #000 !important;
+}
+
+/* OFF = PURPLE */
+.bootstrap-switch.bootstrap-switch-off,
+.bootstrap-switch.bootstrap-switch-off .bootstrap-switch-container,
+.bootstrap-switch.bootstrap-switch-off .bootstrap-switch-handle-off {
+  background-color: var(--purple) !important;
+  border-color: var(--purple) !important;
+  color: #ffffff !important;
+}
+
+/* Neutralize ALL bootstrap defaults */
+.bootstrap-switch-primary,
+.bootstrap-switch-default {
+  background-color: inherit !important;
+  border-color: inherit !important;
+}
+
+/* Prevent flicker */
+.bootstrap-switch,
+.bootstrap-switch * {
+  font-weight: bold !important;   /* bold */
+  transition: background-color 0.12s linear, border-color 0.12s linear !important;
+}
