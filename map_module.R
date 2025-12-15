@@ -334,9 +334,34 @@ mapModuleUI <- function(id) {
 # --- Map Module Server ---
 
 # mapModuleServer function
-mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, input_country_sel = "ARGENTINA", active_tab) {
+mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, input_country_sel = "ARGENTINA", 
+                            show_both_maps = reactiveVal(TRUE),
+                            active_tab) {
   moduleServer(id, function(input, output, session) {
+    
+    
+    
+    observeEvent(show_both_maps, {
+      
+      # Only applies to the right map
+      if (id != "map_right") return()
+      if (!isTRUE(input$show_both_maps)) return()
+      
+      # Wait for flexbox + display:none to settle
+      later::later(function() {
+        session$sendCustomMessage(
+          "invalidateLeaflet",
+          paste0(id, "-map")
+        )
+      }, 0.05)
+    })
+    
+
+    
     ns <- session$ns
+    
+    
+    
     
     
     var_info <- reactive({
@@ -393,12 +418,23 @@ mapModuleServer <- function(id, data_map, input_var_sel, dict, country_bboxes, i
 
     
     observe({
+      if (active_tab() != "map_tab") return()
+      
+      
+      if (id == "map_right" && !isTRUE(show_both_maps())) {
+        print(paste0(id,": ", isTRUE(show_both_maps())))
+              
+        return()
+      }
+      
+      
+      print(paste0(id,": ", isTRUE(show_both_maps())))
+      
       # Detecta cambio de tab primero, sin req que bloquee
       tab_changed <- !identical(active_tab(), prev_tab())
       prev_tab(active_tab())  # Actualiza inmediatamente el tab anterior
       
       # Solo procede si estamos en map_tab
-      if (active_tab() != "map_tab") return()
       
       # Ahora sí requerimos los datos
       req(df_map(), input_var_sel(), input_country_sel())

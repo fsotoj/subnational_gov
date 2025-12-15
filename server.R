@@ -1,5 +1,9 @@
 server <- function(input, output, session) {
   
+  # ==== 0.1) LOGS =======================================
+
+  
+  
   # ==== 0) CONSTANTS / INITIALIZATION =======================================
   current_tab <- reactiveVal("map_tab")
   
@@ -849,15 +853,15 @@ observeEvent(input$btn_howto, {
   
 
   
-  mapModuleServer(
-    id = "map1",
-    data_map = data_map,
-    input_var_sel = selected_vars_vector,
-    dict = dict,
-    country_bboxes = country_bboxes,
-    input_country_sel = reactive(input$country_sel),
-    active_tab = current_tab
-  )
+  # mapModuleServer(
+  #   id = "map1",
+  #   data_map = data_map,
+  #   input_var_sel = selected_vars_vector,
+  #   dict = dict,
+  #   country_bboxes = country_bboxes,
+  #   input_country_sel = reactive(input$country_sel),
+  #   active_tab = current_tab
+  # )
   
   linePlotModuleServer(
     id = "lp",
@@ -1049,12 +1053,10 @@ observeEvent(input$btn_howto, {
     country_bboxes = country_bboxes,
     input_country_sel = reactive(input$country_sel),
     active_tab = current_tab
-  )
+    )
   
   
-  #--------------------------------------------------------------
-  # RIGHT MAP MODULE
-  #--------------------------------------------------------------
+  # RIGHT MAP MODULE ----------------------
   mapModuleServer(
     id = "map_right",
     data_map = data_map_right,
@@ -1062,8 +1064,9 @@ observeEvent(input$btn_howto, {
     dict = dict,
     country_bboxes = country_bboxes,
     input_country_sel = reactive(input$country_sel),
-    active_tab = current_tab
-  )
+    active_tab = current_tab,
+    show_both_maps = reactive(input$show_both_maps)
+    )
   
   
   observeEvent(input$show_both_maps, {
@@ -1073,6 +1076,22 @@ observeEvent(input$btn_howto, {
       shinyjs::hide("right_map_container")
     }
   })
+  
+
+  observeEvent(input$show_both_maps, {
+    
+    shinyjs::show("map_resize_overlay")
+    
+    session$sendCustomMessage(
+      "invalidateLeaflet",
+      "map_left-map"
+    )
+    
+    session$onFlushed(function() {
+      shinyjs::hide("map_resize_overlay")
+    }, once = TRUE)
+  })
+  
   
   
   

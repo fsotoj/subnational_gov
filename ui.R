@@ -152,13 +152,24 @@ ui <- dashboardPage(
       )
   ),
   dashboardBody(
+    
+
+# TAGS HEAD ---------------------------------------------------------------
+
+    
     tags$head(includeHTML("ga.html"),
               # --- Google Analytics: Track tab changes ---
               includeScript("www/tab_analytics.js")
               ),
+    
+    
+    
+    
     tags$head(
       tags$link(rel = "icon", type = "image/svg+xml", href = "spp_logo_tab_v2.svg")
-    ),
+      ),
+
+
     tags$head(
       # --- HOW TO TRIGGER---
       tags$script(HTML("
@@ -279,11 +290,31 @@ ui <- dashboardPage(
       
       
       
+
+      # map tab -----------------------------------------------------------------
+
       
       
       tabItem(
-        tabName = "map_tab", # QUE PASA ACAAAAAA
+        tabName = "map_tab", 
         tagList(
+          
+          div(
+            id = "map_resize_overlay",
+            style = "
+              position: absolute;
+              top: 0; left: 0;
+              width: 100%; height: 100%;
+              background: rgba(255,255,255,0);
+              z-index: 2000;
+              display: none;
+              align-items: center;
+              justify-content: center;",
+              tags$div(class = "loader")
+            ),
+          
+          
+          
           
           div(
             style = "display: flex; gap: 0px; width: 100%;",
@@ -297,6 +328,7 @@ ui <- dashboardPage(
                 uiOutput("year_selector_left")
               )
             ),
+
             
             # RIGHT MAP ALWAYS PRESENT, BUT HIDDEN WHEN FALSE
             div(
@@ -309,36 +341,6 @@ ui <- dashboardPage(
               )
             )
           )
-          
-          
-          # mapModuleUI("map1"),
-          # 
-          # absolutePanel(
-          #   top = 90, right = 12, 
-          #   width = 300,
-          #   draggable = F,
-          #   div(class = "small-text-box",
-          #       id = "var-desc-map",
-          #       box(
-          #         solidHeader = F,
-          #         collapsible = F,
-          #         collapsed = FALSE,
-          #         width = NULL,
-          #         closable = TRUE,
-          #         uiOutput("var_description_map")
-          #       )
-          #   )),
-          # 
-          # # Custom year selector placed at the bottom of the tab
-          # div(
-          #   style = "position: absolute; bottom: 50%; left: 40%; z-index: 1000;",
-          #   hidden(textOutput("no_data_message"))
-          # ),
-          # div(
-          #   style = "position: absolute; bottom: 30px; left: 40%; right: 20%; z-index: 1000; overflow-y: hidden; overflow-x: hidden;",
-          #   uiOutput("year_selector")
-          #   ),
-          
           
           
           )
