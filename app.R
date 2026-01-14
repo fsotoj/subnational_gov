@@ -16,8 +16,7 @@ server <- function(input, output, session) {
     
     div(style = "text-align: center; padding: 25px;",
         # 1. Branded Logo
-        img(src = "SPP.svg", height = "100px", style = "margin-bottom: 25px;"),
-        
+        img(src = "SPP.svg", class = "spp-logo"),        
         # 2. Migration Message
         h2(style = "font-weight: 800; color: #4D4D4D;", "We've Moved!"),
         p(style = "font-size: 1.15em; color: #4D4D4D; line-height: 1.6; margin-top: 15px;",

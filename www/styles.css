@@ -44,3 +44,33 @@
 .btn-spp:active {
   transform: translateY(0);
 }
+
+
+/* --- Responsive Logo Design --- */
+.spp-logo {
+  height: 100px; /* Desktop height */
+  width: auto;
+  margin-bottom: 25px;
+  transition: height 0.3s ease;
+}
+
+/* For screens smaller than 600px (Mobile) */
+@media (max-width: 600px) {
+  .spp-logo {
+    height: 50px; /* Smaller height for mobile */
+    margin-bottom: 15px;
+  }
+  
+  h2 {
+    font-size: 1.5rem !important; /* Smaller heading */
+  }
+  
+  p {
+    font-size: 1rem !important; /* Smaller description */
+  }
+
+  .btn-spp {
+    padding: 14px 30px; /* Smaller button padding */
+    width: 100%;       /* Full-width button on mobile */
+  }
+}
